@@ -84,7 +84,7 @@ if __name__ == "__main__":
         name="mlx-data",
         author="Ronan Collobert",
         author_email="collobert@apple.com",
-        url="https://github.pie.apple.com/ml-explore/data",
+        url="https://github.com/ml-explore/data",
         license="MIT",
         description="Universal data loaders",
         packages=packages,
