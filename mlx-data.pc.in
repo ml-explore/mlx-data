@@ -1,0 +1,26 @@
+# Find MLX Data
+#
+# Defines the following variables:
+#
+#   MLX_DATA_FOUND            : True if MLX Data is found
+#   MLX_DATA_INCLUDE_DIRS     : Include directory
+#   MLX_DATA_LIBRARIES        : Libraries to link against
+#   MLX_DATA_CXX_FLAGS        : Additional compiler flags
+
+@PACKAGE_INIT@
+
+include(@PACKAGE_MLX_DATA_CMAKE_INSTALL_MODULE_DIR@/MLXDataTargets.cmake)
+
+set_and_check(MLX_DATA_LIBRARY_DIRS @PACKAGE_CMAKE_INSTALL_LIBDIR@)
+set_and_check(MLX_DATA_INCLUDE_DIRS @PACKAGE_CMAKE_INSTALL_INCLUDEDIR@)
+set(MLX_DATA_LIBRARIES mlxdata)
+
+find_library(MLX_DATA_LIBRARY mlxdata PATHS ${MLX_DATA_LIBRARY_DIRS})
+
+set_target_properties(mlx PROPERTIES
+    CXX_STANDARD 17
+    INTERFACE_COMPILE_OPTIONS "${MLX_DATA_CXX_FLAGS}"
+)
+
+include(FindPackageHandleStandardArgs)
+find_package_handle_standard_args(MLX_DATA DEFAULT_MSG MLX_DATA_LIBRARY MLX_DATA_INCLUDE_DIRS)

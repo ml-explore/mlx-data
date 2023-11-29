@@ -1,0 +1,9 @@
+# build artifacts
+build/
+xcode/
+dist/
+__pycache__/
+*.egg-info/
+*.so
+*.c
+*.swp
