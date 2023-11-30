@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tokenizing with MLX data &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlx.data.core.Tokenizer" href="_autosummary/mlx.data.core.Tokenizer.html" />
+    <link rel="prev" title="mlx.data.datasets.load_wikitext_lines" href="_autosummary/mlx.data.datasets.load_wikitext_lines.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tokenizing with MLX data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.html">mlx.data.core.Tokenizer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.html">mlx.data.core.CharTrie</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/mlx.data.tokenizer_helpers.read_trie_from_vocab.html">mlx.data.tokenizer_helpers.read_trie_from_vocab</a></li>
+<li class="toctree-l2"><a class="reference internal" href="_autosummary/mlx.data.tokenizer_helpers.read_trie_from_spm.html">mlx.data.tokenizer_helpers.read_trie_from_spm</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Tokenizing with MLX data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python/tokenizing.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="tokenizing-with-mlx-data">
+<h1>Tokenizing with MLX data<a class="headerlink" href="#tokenizing-with-mlx-data" title="Permalink to this headline"></a></h1>
+<p>MLX data allows sample transformations with the full flexibility of python which
+means that you could use any python tokenizer in a
+<a class="reference internal" href="_autosummary/mlx.data.Buffer.key_transform.html#mlx.data.Buffer.key_transform" title="mlx.data.Buffer.key_transform"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Buffer.key_transform()</span></code></a>. However, this is likely to be subject to the GIL
+which means that effectively only one sample can be tokenized at a time.</p>
+<p>A better choice is to use an <a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.html#mlx.data.core.CharTrie" title="mlx.data.core.CharTrie"><code class="xref py py-class docutils literal notranslate"><span class="pre">mlx.data.core.CharTrie</span></code></a> to tokenize your
+data, taking full advatage of a multicore system. You can build the trie
+yourself or use one of the provided helpers to build a trie from an SentencePiece model
+or a plain text vocabulary file.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">mlx.data.core</span> <span class="kn">import</span> <span class="n">CharTrie</span><span class="p">,</span> <span class="n">Tokenizer</span>
+
+<span class="c1"># We can build a trie ourselves</span>
+<span class="n">trie</span> <span class="o">=</span> <span class="n">CharTrie</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="sa">b</span><span class="s2">&quot;a quick brown fox jumped over the lazy dog&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">():</span>
+    <span class="n">trie</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+<span class="n">trie</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot; &quot;</span><span class="p">)</span>
+
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">trie</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize_shortest</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;a quick brown fox jumped over the lazy dog&quot;</span><span class="p">))</span>
+<span class="c1"># [0, 9, 1, 9, 2, 9, 3, 9, 4, 9, 5, 9, 6, 9, 7, 9, 8]</span>
+
+<span class="c1"># We can also add all the letters in the trie and then tokenize anything we want</span>
+<span class="kn">import</span> <span class="nn">string</span>
+<span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">string</span><span class="o">.</span><span class="n">ascii_letters</span><span class="p">:</span>
+    <span class="n">trie</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="nb">bytes</span><span class="p">(</span><span class="n">l</span><span class="p">,</span> <span class="s2">&quot;utf-8&quot;</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize_shortest</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;This is a quick example&quot;</span><span class="p">))</span>
+<span class="c1"># [54, 16, 17, 27, 9, 17, 27, 9, 0, 9, 1, 9, 13, 32, 0, 21, 24, 20, 13]</span>
+
+<span class="c1"># The more useful option is to read the trie from a file, for instance an spm model</span>
+<span class="kn">from</span> <span class="nn">mlx.data.tokenizer_helpers</span> <span class="kn">import</span> <span class="n">read_trie_from_spm</span>
+
+<span class="n">trie</span> <span class="o">=</span> <span class="n">read_trie_from_spm</span><span class="p">(</span><span class="s2">&quot;path/to/spm/model&quot;</span><span class="p">)</span>
+<span class="n">tokenizer</span> <span class="o">=</span> <span class="n">Tokenizer</span><span class="p">(</span><span class="n">trie</span><span class="p">)</span>
+<span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize_shortest</span><span class="p">(</span><span class="sa">b</span><span class="s2">&quot;This is some more text to tokenize&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.html#mlx.data.core.Tokenizer" title="mlx.data.core.Tokenizer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.Tokenizer</span></code></a></p></td>
+<td><p>A Tokenizer that can be used to tokenize arbitrary strings.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.html#mlx.data.core.CharTrie" title="mlx.data.core.CharTrie"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.CharTrie</span></code></a></p></td>
+<td><p>A Trie implementation for characters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.tokenizer_helpers.read_trie_from_vocab.html#mlx.data.tokenizer_helpers.read_trie_from_vocab" title="mlx.data.tokenizer_helpers.read_trie_from_vocab"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokenizer_helpers.read_trie_from_vocab</span></code></a>(...)</p></td>
+<td><p>Read an <a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.html#mlx.data.core.CharTrie" title="mlx.data.core.CharTrie"><code class="xref py py-class docutils literal notranslate"><span class="pre">mlx.data.core.CharTrie</span></code></a> from a file with one token per line.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.tokenizer_helpers.read_trie_from_spm.html#mlx.data.tokenizer_helpers.read_trie_from_spm" title="mlx.data.tokenizer_helpers.read_trie_from_spm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">tokenizer_helpers.read_trie_from_spm</span></code></a>(spm_file)</p></td>
+<td><p>Read an <a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.html#mlx.data.core.CharTrie" title="mlx.data.core.CharTrie"><code class="xref py py-class docutils literal notranslate"><span class="pre">mlx.data.core.CharTrie</span></code></a> from a sentencepiece file.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_autosummary/mlx.data.datasets.load_wikitext_lines.html" class="btn btn-neutral float-left" title="mlx.data.datasets.load_wikitext_lines" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_autosummary/mlx.data.core.Tokenizer.html" class="btn btn-neutral float-right" title="mlx.data.core.Tokenizer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

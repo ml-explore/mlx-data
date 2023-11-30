@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buffers, Streams and Samples &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Common operations" href="python/dataset.html" />
+    <link rel="prev" title="Quick Start Guide" href="quick_start.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Buffers, Streams and Samples</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#samples">Samples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#buffers">Buffers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#streams">Streams</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="python/dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Buffers, Streams and Samples</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/buffers_streams_samples.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="buffers-streams-and-samples">
+<h1>Buffers, Streams and Samples<a class="headerlink" href="#buffers-streams-and-samples" title="Permalink to this headline"></a></h1>
+<p>In MLX data there are three main concepts that you need to know about buffers,
+streams and samples. For instance, <a class="reference internal" href="python/_autosummary/mlx.data.buffer_from_vector.html#mlx.data.buffer_from_vector" title="mlx.data.buffer_from_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">buffer_from_vector()</span></code></a> and
+<a class="reference internal" href="python/_autosummary/mlx.data.stream_csv_reader.html#mlx.data.stream_csv_reader" title="mlx.data.stream_csv_reader"><code class="xref py py-func docutils literal notranslate"><span class="pre">stream_csv_reader()</span></code></a> return a buffer and stream respectively and
+are often the beginning of a data pipeline written in MLX data.</p>
+<div class="section" id="samples">
+<h2>Samples<a class="headerlink" href="#samples" title="Permalink to this headline"></a></h2>
+<p>Before describing the buffers and streams we should mention what it is they
+contain. In MLX data <strong>samples</strong> are dictionaries that map string keys to array
+values. In C++ they are simply instances of <code class="docutils literal notranslate"><span class="pre">std::unordered_map&lt;std::string,</span>
+<span class="pre">std::shared_ptr&lt;mlx::data::Array&gt;&gt;</span></code> or simply <code class="docutils literal notranslate"><span class="pre">mlx::data::Sample</span></code> and in
+Python they are a dictionary from strings to anything that implements the
+<a class="reference external" href="https://docs.python.org/3/c-api/buffer.html">buffer protocol</a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is a valid sample</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;hello&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">)}</span>
+
+<span class="c1"># So is this because scalars are cast to scalar arrays</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;scalar&quot;</span><span class="p">:</span> <span class="mi">42</span><span class="p">}</span>
+
+<span class="c1"># Strings can also be used, however, they will be represented in unicode.</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="p">}</span>
+
+<span class="c1"># Most likely you would want to write it as bytes in the sample as follows</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="sa">b</span><span class="s2">&quot;path/to/my/file&quot;</span><span class="p">}</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;key&quot;</span><span class="p">:</span> <span class="s2">&quot;value&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">)}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="buffers">
+<h2>Buffers<a class="headerlink" href="#buffers" title="Permalink to this headline"></a></h2>
+<p>Buffers are an indexable container of samples. They have a known length and
+they can be shuffled or accessed in random order. They can of course also be
+iterated upon.</p>
+<p>Buffers allow to define operations on their samples that create other buffers
+lazily evaluated. For instance if we have a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> that
+contains samples of image filenames, calling <a class="reference internal" href="python/_autosummary/mlx.data.Buffer.load_image.html#mlx.data.Buffer.load_image" title="mlx.data.Buffer.load_image"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Buffer.load_image()</span></code></a>
+would create a buffer that loads the images <strong>when accessed</strong> and not in
+advance in memory. For a full list of supported operations check out
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code>.</p>
+<p>The API of <code class="docutils literal notranslate"><span class="pre">Buffer</span></code> is mirrored in C++ and Python and it would be trivial to
+port a pipeline from one to the other.</p>
+<p>The easiest way to make a buffer is to use <a class="reference internal" href="python/_autosummary/mlx.data.buffer_from_vector.html#mlx.data.buffer_from_vector" title="mlx.data.buffer_from_vector"><code class="xref py py-func docutils literal notranslate"><span class="pre">buffer_from_vector()</span></code></a> which
+makes a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> from a list of samples. It can be used for instance to
+make a buffer from a list of files as follows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+
+<span class="kn">import</span> <span class="nn">mlx.data</span> <span class="k">as</span> <span class="nn">dx</span>
+
+<span class="k">def</span> <span class="nf">files_and_classes</span><span class="p">(</span><span class="n">root</span><span class="p">:</span> <span class="n">Path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load the files and classes from an image dataset that contains one folder per class.&quot;&quot;&quot;</span>
+    <span class="n">images</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">root</span><span class="o">.</span><span class="n">rglob</span><span class="p">(</span><span class="s2">&quot;*.jpg&quot;</span><span class="p">))</span>
+    <span class="n">categories</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">root</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">images</span><span class="p">]</span>
+    <span class="n">category_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">categories</span><span class="p">)</span>
+    <span class="n">category_map</span> <span class="o">=</span> <span class="p">{</span><span class="n">c</span><span class="p">:</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">category_set</span><span class="p">))}</span>
+
+    <span class="k">return</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;image&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">relative_to</span><span class="p">(</span><span class="n">root</span><span class="p">))</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">),</span>
+            <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">c</span><span class="p">,</span>
+            <span class="s2">&quot;label&quot;</span><span class="p">:</span> <span class="n">category_map</span><span class="p">[</span><span class="n">c</span><span class="p">]</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">categories</span><span class="p">,</span> <span class="n">images</span><span class="p">)</span>
+    <span class="p">]</span>
+
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">buffer_from_vector</span><span class="p">(</span><span class="n">files_and_classes</span><span class="p">(</span><span class="n">Path</span><span class="p">(</span><span class="s2">&quot;path/to/dataset)))</span>
+<span class="c1"># We can now apply transformations to the dataset</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="streams">
+<h2>Streams<a class="headerlink" href="#streams" title="Permalink to this headline"></a></h2>
+<p>Often datasets are too big, stored remotely or are nested in ways that prevent
+random access. This is what streams are for. A <code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> is a potentially
+infinite iterable of samples.</p>
+<p>Similar to buffers, streams allow to define operations on their samples that
+will be executed when the sample is accessed. Contrary to buffers, streams
+allow nesting of streams. For instance, from a strem of filenames pointing to
+csv files we can read these files line by line and return these in the stream.
+This would be impossible to implement with a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> as we don’t know
+how many lines each file would have prior to reading it.</p>
+<p>Once again, the API of <code class="docutils literal notranslate"><span class="pre">Stream</span></code> is mirrored in C++ and Python and it would be
+trivial to port a pipeline from one to the other.</p>
+<p>The easiest way to make a stream is from file using <a class="reference internal" href="python/_autosummary/mlx.data.stream_csv_reader.html#mlx.data.stream_csv_reader" title="mlx.data.stream_csv_reader"><code class="xref py py-func docutils literal notranslate"><span class="pre">stream_csv_reader()</span></code></a>
+and <a class="reference internal" href="python/_autosummary/mlx.data.stream_line_reader.html#mlx.data.stream_line_reader" title="mlx.data.stream_line_reader"><code class="xref py py-func docutils literal notranslate"><span class="pre">stream_line_reader()</span></code></a> or from a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> by calling its
+<a class="reference internal" href="python/_autosummary/mlx.data.Buffer.to_stream.html#mlx.data.Buffer.to_stream" title="mlx.data.Buffer.to_stream"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Buffer.to_stream()</span></code></a> method.</p>
+<p>Notably streams enable prefetching (<a class="reference internal" href="python/_autosummary/mlx.data.Stream.prefetch.html#mlx.data.Stream.prefetch" title="mlx.data.Stream.prefetch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.prefetch()</span></code></a>) for efficient
+iteration. Continuing the example from above:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># We can define the rest of the processing pipeline using streams.</span>
+<span class="c1"># 1. First shuffle the buffer</span>
+<span class="c1"># 2. Make a stream</span>
+<span class="c1"># 3. Batch and then prefetch</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">dset</span>
+    <span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">to_stream</span><span class="p">()</span>  <span class="c1"># &lt;-- making a stream from the shuffled buffer</span>
+    <span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>  <span class="c1"># &lt;-- prefetch 8 batches using 4 threads</span>
+<span class="p">)</span>
+
+<span class="c1"># Now we can iterate over dset</span>
+<span class="n">sample</span> <span class="o">=</span> <span class="nb">next</span><span class="p">(</span><span class="n">dset</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="quick_start.html" class="btn btn-neutral float-left" title="Quick Start Guide" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="python/dataset.html" class="btn btn-neutral float-right" title="Common operations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

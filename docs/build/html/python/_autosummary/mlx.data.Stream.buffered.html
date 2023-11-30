@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlx.data.Stream.buffered &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="mlx.data.Stream.repeat" href="mlx.data.Stream.repeat.html" />
+    <link rel="prev" title="mlx.data.Stream.partition" href="mlx.data.Stream.partition.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer.html">Buffer</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stream.html">Stream</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../stream.html#factory-methods">Factory methods</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../stream.html#stream-specific-api">Stream specific API</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.csv_reader_from_key.html">mlx.data.Stream.csv_reader_from_key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.line_reader_from_key.html">mlx.data.Stream.line_reader_from_key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.dynamic_batch.html">mlx.data.Stream.dynamic_batch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.partition.html">mlx.data.Stream.partition</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mlx.data.Stream.buffered</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.repeat.html">mlx.data.Stream.repeat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.shuffle.html">mlx.data.Stream.shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.sliding_window.html">mlx.data.Stream.sliding_window</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Stream.prefetch.html">mlx.data.Stream.prefetch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stream.html">Stream</a></li>
+      <li class="breadcrumb-item active">mlx.data.Stream.buffered</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/python/_autosummary/mlx.data.Stream.buffered.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="mlx-data-stream-buffered">
+<h1>mlx.data.Stream.buffered<a class="headerlink" href="#mlx-data-stream-buffered" title="Permalink to this headline"></a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlx.data.Stream.buffered">
+<span class="sig-prename descclassname"><span class="pre">Stream.</span></span><span class="sig-name descname"><span class="pre">buffered</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">self:</span> <span class="pre">mlx.data._c.Stream,</span> <span class="pre">buffer_size:</span> <span class="pre">int,</span> <span class="pre">on_refill:</span> <span class="pre">Optional[Callable[[mlx::data::Buffer],</span> <span class="pre">mlx::data::Buffer]]</span> <span class="pre">=</span> <span class="pre">None,</span> <span class="pre">num_threads:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mlx.data._c.Stream</span></span></span><a class="headerlink" href="#mlx.data.Stream.buffered" title="Permalink to this definition"></a></dt>
+<dd><p>Gather a buffer of samples, apply a function on the buffer and
+then iterate over the buffer samples.</p>
+<p>This function can be used to implement any logic that requires
+a buffer of samples. For instance it can be used for pseudo
+shuffling by shuffling the buffer or sorting the buffer based
+on sequence lengths to minimize padding and wasted computation.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Shuffling the buffer is not the same as a shuffle buffer.
+In a shuffle buffer of size 1000 the 500th element
+is a random choice in the range 0-1500 while here it would
+be a random choice in the range 0-1000. If you need a
+shuffle buffer use <a class="reference internal" href="mlx.data.Stream.shuffle.html#mlx.data.Stream.shuffle" title="mlx.data.Stream.shuffle"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Stream.shuffle()</span></code></a> .</p>
+</div>
+<p>The following examples demonstrate the use of <code class="docutils literal notranslate"><span class="pre">buffered</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Pseudo shuffling</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">buffered</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">buff</span><span class="p">:</span> <span class="n">buff</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(),</span> <span class="n">num_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+
+<span class="c1"># Sort by the length of samples in order to minimize padding when batching.</span>
+<span class="c1"># You might also want to check out `dynamic_batch`</span>
+<span class="k">def</span> <span class="nf">sort_by_length</span><span class="p">(</span><span class="n">buff</span><span class="p">):</span>
+    <span class="n">perm</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="p">)),</span> <span class="n">key</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">buff</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;x&quot;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">buff</span><span class="o">.</span><span class="n">perm</span><span class="p">(</span><span class="n">perm</span><span class="p">)</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">buffered</span><span class="p">(</span><span class="mi">128</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">sort_by_length</span><span class="p">,</span> <span class="n">num_threads</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>buffer_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – How big should the buffer be.</p></li>
+<li><p><strong>on_refill</strong> (<em>callable</em><em>, </em><em>optional</em>) – The function to apply to the buffer. (default: identity)</p></li>
+<li><p><strong>num_threads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – How many parallel threads to use when filling the buffer. (default: 1)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlx.data.Stream.partition.html" class="btn btn-neutral float-left" title="mlx.data.Stream.partition" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlx.data.Stream.repeat.html" class="btn btn-neutral float-right" title="mlx.data.Stream.repeat" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

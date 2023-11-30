@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Miscellaneous &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlx.data.core.AWSFileFetcher.__init__" href="_autosummary/mlx.data.core.AWSFileFetcher.__init__.html" />
+    <link rel="prev" title="mlx.data.features.mfsc" href="_autosummary/mlx.data.features.mfsc.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature extraction</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Miscellaneous</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#filefetcher">FileFetcher</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.__init__.html">mlx.data.core.AWSFileFetcher.__init__</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.fetch.html">mlx.data.core.AWSFileFetcher.fetch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.prefetch.html">mlx.data.core.AWSFileFetcher.prefetch</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Miscellaneous</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python/miscellaneous.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="miscellaneous">
+<h1>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline"></a></h1>
+<div class="section" id="filefetcher">
+<h2>FileFetcher<a class="headerlink" href="#filefetcher" title="Permalink to this headline"></a></h2>
+<p>Several functions in MLX data can make use of a <code class="xref py py-class docutils literal notranslate"><span class="pre">FileFetcher</span></code> object to
+fetch files from a remote location. See the <a class="reference external" href="install.html">installation instructions</a> to build MLX data with AWS support which adds the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">core.AWSFileFetcher</span></code> described below.</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.__init__.html#mlx.data.core.AWSFileFetcher.__init__" title="mlx.data.core.AWSFileFetcher.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.AWSFileFetcher.__init__</span></code></a>(self, bucket[, ...])</p></td>
+<td><p>Make an AWSFileFetcher to fetch files from S3.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.fetch.html#mlx.data.core.AWSFileFetcher.fetch" title="mlx.data.core.AWSFileFetcher.fetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.AWSFileFetcher.fetch</span></code></a>(self, filename)</p></td>
+<td><p>Ensures the filename is in the local cache.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.core.AWSFileFetcher.prefetch.html#mlx.data.core.AWSFileFetcher.prefetch" title="mlx.data.core.AWSFileFetcher.prefetch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core.AWSFileFetcher.prefetch</span></code></a>(self, filenames)</p></td>
+<td><p>Start prefetching these files.</p></td>
+</tr>
+</tbody>
+</table>
+<p>A <code class="xref py py-class docutils literal notranslate"><span class="pre">FileFetcher</span></code> can also be used standalone in your scripts to
+efficiently fetch remote content in background threads.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pathlib</span> <span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span> <span class="nn">mlx.data.core</span> <span class="kn">import</span> <span class="n">AWSFileFetcher</span>
+
+<span class="n">LOCAL_CACHE</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="s2">&quot;/path/to/local/cache&quot;</span><span class="p">)</span>
+
+<span class="n">ff</span> <span class="o">=</span> <span class="n">AWSFileFetcher</span><span class="p">(</span>
+    <span class="s2">&quot;my-cool-bucket&quot;</span><span class="p">,</span>
+    <span class="n">endpoint</span><span class="o">=</span><span class="s2">&quot;https://my.endpoint.com/&quot;</span>
+    <span class="n">local_prefix</span><span class="o">=</span><span class="n">LOCAL_CACHE</span><span class="p">,</span>
+    <span class="n">num_kept_files</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># When fetch returns my/remote/path/foo.npy will be in LOCAL_CACHE</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;my/remote/path/foo.npy&quot;</span><span class="p">)</span>
+<span class="k">assert</span> <span class="p">(</span><span class="n">LOCAL_CACHE</span> <span class="o">/</span> <span class="s2">&quot;my/remote/path/foo.npy&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">is_file</span><span class="p">()</span>
+
+<span class="c1"># We can prefetch in the background</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">prefetch</span><span class="p">([</span><span class="s2">&quot;foo_1.npy&quot;</span><span class="p">,</span> <span class="s2">&quot;foo_2.npy&quot;</span><span class="p">])</span>
+<span class="n">ff</span><span class="o">.</span><span class="n">fetch</span><span class="p">(</span><span class="s2">&quot;foo_1.npy&quot;</span><span class="p">)</span>
+<span class="c1"># process foo_1 while foo_2 downloads in the background</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_autosummary/mlx.data.features.mfsc.html" class="btn btn-neutral float-left" title="mlx.data.features.mfsc" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_autosummary/mlx.data.core.AWSFileFetcher.__init__.html" class="btn btn-neutral float-right" title="mlx.data.core.AWSFileFetcher.__init__" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

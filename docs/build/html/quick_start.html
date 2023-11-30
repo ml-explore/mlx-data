@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quick Start Guide &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Buffers, Streams and Samples" href="buffers_streams_samples.html" />
+    <link rel="prev" title="Build and Install" href="install.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#load-some-data">Load some data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#about-the-gil">About the GIL</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="python/dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="python/miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Quick Start Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/quick_start.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="quick-start-guide">
+<h1>Quick Start Guide<a class="headerlink" href="#quick-start-guide" title="Permalink to this headline"></a></h1>
+<p>MLX Data is a data loading framework agnostic of the array library you are
+using or whether it is a machine learning training job or a data pre-processing
+job.</p>
+<p>You can use MLX Data with PyTorch, Jax or <a class="reference external" href="https://ml-explore.github.io/mlx/">MLX</a>.</p>
+<p>The goal of this library is to allow users to leverage multiple threads for
+data processing pipelines without the inflexibility of dealing with multiple
+processes or having to write in a symbolic language.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In MLX Data pipelines you can use Python to process data, implement logic or cause side effects!</p>
+</div>
+<div class="section" id="load-some-data">
+<h2>Load some data<a class="headerlink" href="#load-some-data" title="Permalink to this headline"></a></h2>
+<p>In MLX data all samples are dictionaries of arrays. The library provides
+functions to download and iterate over some common datasets but the goal is to
+<strong>provide functions that allow the user to load and process on the fly their
+own datasets</strong>.</p>
+<p>Let’s start with the simplest example on MNIST.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># This is the standard way to import and access mlx.data</span>
+<span class="kn">import</span> <span class="nn">mlx.data</span> <span class="k">as</span> <span class="nn">dx</span>
+
+<span class="c1"># Let&#39;s import MNIST loading</span>
+<span class="kn">from</span> <span class="nn">mlx.data.datasets</span> <span class="kn">import</span> <span class="n">load_mnist</span>
+
+<span class="c1"># Loads a buffer with the MNIST images</span>
+<span class="n">mnist_train</span> <span class="o">=</span> <span class="n">load_mnist</span><span class="p">(</span><span class="n">train</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Let&#39;s shuffle flatten and batch to prepare for MLP training</span>
+<span class="n">mnist_mlp</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">mnist_train</span>
+    <span class="o">.</span><span class="n">shuffle</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">to_stream</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">key_transform</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="mi">32</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span>
+
+<span class="c1"># Now we can iterate over the batches in normal python</span>
+<span class="k">for</span> <span class="n">batch</span> <span class="ow">in</span> <span class="n">mnist_mlp</span><span class="p">:</span>
+    <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;image&quot;</span><span class="p">],</span> <span class="n">batch</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+</pre></div>
+</div>
+<p>MLX Data provides many <a class="reference external" href="python/dataset.html">operations</a> that transform
+samples so you can create arbitrarily complex pipelines.</p>
+</div>
+<div class="section" id="about-the-gil">
+<h2>About the GIL<a class="headerlink" href="#about-the-gil" title="Permalink to this headline"></a></h2>
+<p>Python functions called by MLX data still run under the Global Interpreter
+Lock. To avoid serializing your data pipeline, either drop into Numpy or some
+other optimized library as quickly as possible or limit the processing time of
+the python part of the data pipeline.</p>
+<p>We would advise, however, to avoid premature optimization and only try to
+reduce GIL overhead if you are certain that it is limiting your data processing
+pipeline.</p>
+<p>The following are examples where we would use a python function for flexibility
+rather than have a specific C++ transformation.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Normalizing images in [0, 1]</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">key_transform</span><span class="p">(</span><span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;float32&quot;</span><span class="p">)</span> <span class="o">/</span> <span class="mi">255</span><span class="p">)</span>
+
+<span class="c1"># Extracting mel spectrogram features</span>
+<span class="c1"># A big chunk of the time is spent computing the FFT which is done with the GIL off so...</span>
+<span class="kn">from</span> <span class="nn">mlx.data.features</span> <span class="kn">import</span> <span class="n">mfsc</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">key_transform</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="n">mfsc</span><span class="p">(</span><span class="n">n_filterbank</span><span class="o">=</span><span class="mi">80</span><span class="p">,</span> <span class="n">sampling_freq</span><span class="o">=</span><span class="mi">16000</span><span class="p">))</span>
+
+<span class="c1"># Filter stream samples based on values (empty dict means drop the sample)</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="n">dset</span><span class="o">.</span><span class="n">sample_transform</span><span class="p">(</span><span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="n">s</span> <span class="k">if</span> <span class="n">s</span><span class="p">[</span><span class="s2">&quot;length&quot;</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">10</span> <span class="k">else</span> <span class="nb">dict</span><span class="p">())</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="install.html" class="btn btn-neutral float-left" title="Build and Install" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="buffers_streams_samples.html" class="btn btn-neutral float-right" title="Buffers, Streams and Samples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

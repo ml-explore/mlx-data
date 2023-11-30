@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buffer &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlx.data.buffer_from_vector" href="_autosummary/mlx.data.buffer_from_vector.html" />
+    <link rel="prev" title="mlx.data.Buffer.tokenize" href="_autosummary/mlx.data.Buffer.tokenize.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="dataset.html">Common operations</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Buffer</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#factory-methods">Factory methods</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.buffer_from_vector.html">mlx.data.buffer_from_vector</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.files_from_tar.html">mlx.data.files_from_tar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#buffer-specific-api">Buffer specific API</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.partition.html">mlx.data.Buffer.partition</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.perm.html">mlx.data.Buffer.perm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.shuffle.html">mlx.data.Buffer.shuffle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.to_stream.html">mlx.data.Buffer.to_stream</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Buffer</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python/buffer.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="buffer">
+<span id="id1"></span><h1>Buffer<a class="headerlink" href="#buffer" title="Permalink to this headline"></a></h1>
+<p>As also mentioned in <a class="reference external" href="buffers_streams_samples.html">Buffers, Streams and Samples</a> a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> is an indexable container of
+samples. Using a buffer in python should feel very similar to accessing a list
+of samples.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">mlx.data</span> <span class="k">as</span> <span class="nn">dx</span>
+
+<span class="n">numbers</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">buffer_from_vector</span><span class="p">([{</span><span class="s2">&quot;x&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">}</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)])</span>
+<span class="n">evens</span> <span class="o">=</span> <span class="n">numbers</span><span class="o">.</span><span class="n">key_transform</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">evens</span><span class="p">)</span>
+<span class="c1"># prints Buffer(size=10, keys={&#39;x&#39;})</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">evens</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+<span class="c1"># prints {&#39;x&#39;: array(6)}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">evens</span><span class="p">))</span>
+<span class="c1"># prints 10</span>
+</pre></div>
+</div>
+<div class="section" id="factory-methods">
+<h2>Factory methods<a class="headerlink" href="#factory-methods" title="Permalink to this headline"></a></h2>
+<p>We provide the following factory methods to create a buffer.</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.buffer_from_vector.html#mlx.data.buffer_from_vector" title="mlx.data.buffer_from_vector"><code class="xref py py-obj docutils literal notranslate"><span class="pre">buffer_from_vector</span></code></a>(data)</p></td>
+<td><p>Make a buffer from a list of dictionaries.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.files_from_tar.html#mlx.data.files_from_tar" title="mlx.data.files_from_tar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">files_from_tar</span></code></a>(tarfile[, nested, num_threads])</p></td>
+<td><p>Return the list of files contained in a tar archive.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="buffer-specific-api">
+<h2>Buffer specific API<a class="headerlink" href="#buffer-specific-api" title="Permalink to this headline"></a></h2>
+<p>The random access characteristics of a <code class="docutils literal notranslate"><span class="pre">Buffer</span></code> allow us to define some
+transformations that cannot be implemented or do not make sense for a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code>.</p>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.partition.html#mlx.data.Buffer.partition" title="mlx.data.Buffer.partition"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.partition</span></code></a>(self, num_partitions, partition)</p></td>
+<td><p>Equivalent to slicing the buffer with a step equal to <code class="docutils literal notranslate"><span class="pre">num_partitions</span></code> and starting offset of <code class="docutils literal notranslate"><span class="pre">partition</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.perm.html#mlx.data.Buffer.perm" title="mlx.data.Buffer.perm"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.perm</span></code></a>(self, perm)</p></td>
+<td><p>Arbitrarily reorder the buffer with the provided indices.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.shuffle.html#mlx.data.Buffer.shuffle" title="mlx.data.Buffer.shuffle"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.shuffle</span></code></a>(self)</p></td>
+<td><p>Create a random permutation of equal size to the buffer and apply it thus shuffling the buffer.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.to_stream.html#mlx.data.Buffer.to_stream" title="mlx.data.Buffer.to_stream"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.to_stream</span></code></a>(self)</p></td>
+<td><p>Make a stream that yields the elements of the buffer.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="_autosummary/mlx.data.Buffer.tokenize.html" class="btn btn-neutral float-left" title="mlx.data.Buffer.tokenize" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_autosummary/mlx.data.buffer_from_vector.html" class="btn btn-neutral float-right" title="mlx.data.buffer_from_vector" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

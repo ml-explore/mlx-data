@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Common operations &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="mlx.data.Buffer.batch" href="_autosummary/mlx.data.Buffer.batch.html" />
+    <link rel="prev" title="Buffers, Streams and Samples" href="../buffers_streams_samples.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Common operations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#general-sample-operations">General sample operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.batch.html">mlx.data.Buffer.batch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.filter_by_shape.html">mlx.data.Buffer.filter_by_shape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.filter_key.html">mlx.data.Buffer.filter_key</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.key_transform.html">mlx.data.Buffer.key_transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.sample_transform.html">mlx.data.Buffer.sample_transform</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.remove_value.html">mlx.data.Buffer.remove_value</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.rename_key.html">mlx.data.Buffer.rename_key</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#image-operations">Image operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_center_crop.html">mlx.data.Buffer.image_center_crop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_channel_reduction.html">mlx.data.Buffer.image_channel_reduction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_area_crop.html">mlx.data.Buffer.image_random_area_crop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_crop.html">mlx.data.Buffer.image_random_crop</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_h_flip.html">mlx.data.Buffer.image_random_h_flip</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_resize.html">mlx.data.Buffer.image_resize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_resize_smallest_side.html">mlx.data.Buffer.image_resize_smallest_side</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_rotate.html">mlx.data.Buffer.image_rotate</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#i-o-operations">I/O operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_audio.html">mlx.data.Buffer.load_audio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_file.html">mlx.data.Buffer.load_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_numpy.html">mlx.data.Buffer.load_numpy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_image.html">mlx.data.Buffer.load_image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_video.html">mlx.data.Buffer.load_video</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.read_from_tar.html">mlx.data.Buffer.read_from_tar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#padding-operations">Padding operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad.html">mlx.data.Buffer.pad</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad_to_multiple.html">mlx.data.Buffer.pad_to_multiple</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad_to_size.html">mlx.data.Buffer.pad_to_size</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#shape-operations">Shape operations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.shape.html">mlx.data.Buffer.shape</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.shard.html">mlx.data.Buffer.shard</a></li>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.squeeze.html">mlx.data.Buffer.squeeze</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#tokenization">Tokenization</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.Buffer.tokenize.html">mlx.data.Buffer.tokenize</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#conditional-operations">Conditional operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Common operations</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/python/dataset.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="common-operations">
+<h1>Common operations<a class="headerlink" href="#common-operations" title="Permalink to this headline"></a></h1>
+<p>Both <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> allow to apply transformations to
+samples when they are accessed. These transformations share the same API which
+is described below in terms of the <code class="docutils literal notranslate"><span class="pre">Buffer</span></code> class (but <code class="docutils literal notranslate"><span class="pre">Stream</span></code> is
+identical). For the methods specific to <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> see
+the corresponding pages.</p>
+<div class="section" id="general-sample-operations">
+<h2>General sample operations<a class="headerlink" href="#general-sample-operations" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.batch.html#mlx.data.Buffer.batch" title="mlx.data.Buffer.batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.batch</span></code></a>(self, batch_size[, pad, dim])</p></td>
+<td><p>Creates batches from <code class="docutils literal notranslate"><span class="pre">batch_size</span></code> consecutive samples.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.filter_by_shape.html#mlx.data.Buffer.filter_by_shape" title="mlx.data.Buffer.filter_by_shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.filter_by_shape</span></code></a>(self, key, dim[, ...])</p></td>
+<td><p>Filter samples based on the shape of the array.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.filter_key.html#mlx.data.Buffer.filter_key" title="mlx.data.Buffer.filter_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.filter_key</span></code></a>(self, key[, remove])</p></td>
+<td><p>Transform the samples to either only contain this <code class="docutils literal notranslate"><span class="pre">key</span></code> or never contain this <code class="docutils literal notranslate"><span class="pre">key</span></code> based on the value of <code class="docutils literal notranslate"><span class="pre">remove</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.key_transform.html#mlx.data.Buffer.key_transform" title="mlx.data.Buffer.key_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.key_transform</span></code></a>(self, key, func[, ...])</p></td>
+<td><p>Apply the python function <code class="docutils literal notranslate"><span class="pre">func</span></code> on the arrays in the selected <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.sample_transform.html#mlx.data.Buffer.sample_transform" title="mlx.data.Buffer.sample_transform"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.sample_transform</span></code></a>(self, func)</p></td>
+<td><p>Apply the python function <code class="docutils literal notranslate"><span class="pre">func</span></code> on whole samples.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.remove_value.html#mlx.data.Buffer.remove_value" title="mlx.data.Buffer.remove_value"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.remove_value</span></code></a>(self, key, size_key, ...)</p></td>
+<td><p>Remove instances of a certain value from an array and shift the whole array to the left.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.rename_key.html#mlx.data.Buffer.rename_key" title="mlx.data.Buffer.rename_key"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.rename_key</span></code></a>(self, key, output_key)</p></td>
+<td><p>Rename a sample key.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="image-operations">
+<h2>Image operations<a class="headerlink" href="#image-operations" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_center_crop.html#mlx.data.Buffer.image_center_crop" title="mlx.data.Buffer.image_center_crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_center_crop</span></code></a>(self, key, w, h[, ...])</p></td>
+<td><p>Center crop the image at <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_channel_reduction.html#mlx.data.Buffer.image_channel_reduction" title="mlx.data.Buffer.image_channel_reduction"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_channel_reduction</span></code></a>(self, key[, ...])</p></td>
+<td><p>Reduce an RGB image to gray-scale with various weights for red, green and blue.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_area_crop.html#mlx.data.Buffer.image_random_area_crop" title="mlx.data.Buffer.image_random_area_crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_random_area_crop</span></code></a>(self, key, ...)</p></td>
+<td><p>Crop the image randomly such that the result is a portion of the original area and within the given aspect ratio range.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_crop.html#mlx.data.Buffer.image_random_crop" title="mlx.data.Buffer.image_random_crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_random_crop</span></code></a>(self, key, w, h[, ...])</p></td>
+<td><p>Extract a random crop of the requested size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_random_h_flip.html#mlx.data.Buffer.image_random_h_flip" title="mlx.data.Buffer.image_random_h_flip"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_random_h_flip</span></code></a>(self, key, prob)</p></td>
+<td><p>Horizontally flip the image <code class="docutils literal notranslate"><span class="pre">prob</span></code> percent of the time.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_resize.html#mlx.data.Buffer.image_resize" title="mlx.data.Buffer.image_resize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_resize</span></code></a>(self, key, w, h[, ...])</p></td>
+<td><p>Resize the image to the requested size.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_resize_smallest_side.html#mlx.data.Buffer.image_resize_smallest_side" title="mlx.data.Buffer.image_resize_smallest_side"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_resize_smallest_side</span></code></a>(self, key, ...)</p></td>
+<td><p>Resize the image such that its smallest side is <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_rotate.html#mlx.data.Buffer.image_rotate" title="mlx.data.Buffer.image_rotate"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_rotate</span></code></a>(self, key, angle[, ...])</p></td>
+<td><p>Rotate an image around its center point.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="i-o-operations">
+<h2>I/O operations<a class="headerlink" href="#i-o-operations" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_audio.html#mlx.data.Buffer.load_audio" title="mlx.data.Buffer.load_audio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_audio</span></code></a>(self, key, prefix, info, ...)</p></td>
+<td><p>Load an audio file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_file.html#mlx.data.Buffer.load_file" title="mlx.data.Buffer.load_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_file</span></code></a>(self, key[, prefix, output_key])</p></td>
+<td><p>Load the contents of a file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_numpy.html#mlx.data.Buffer.load_numpy" title="mlx.data.Buffer.load_numpy"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_numpy</span></code></a>(self, key[, prefix, ...])</p></td>
+<td><p>Load an array from a .npy file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_image.html#mlx.data.Buffer.load_image" title="mlx.data.Buffer.load_image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_image</span></code></a>(self, key[, prefix, info, ...])</p></td>
+<td><p>Load an image file.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_video.html#mlx.data.Buffer.load_video" title="mlx.data.Buffer.load_video"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_video</span></code></a>(self, key[, prefix, info, ...])</p></td>
+<td><p>Load a video file.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.read_from_tar.html#mlx.data.Buffer.read_from_tar" title="mlx.data.Buffer.read_from_tar"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.read_from_tar</span></code></a>(self, tarkey, ikey, ...)</p></td>
+<td><p>Read data from tarfiles.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="padding-operations">
+<h2>Padding operations<a class="headerlink" href="#padding-operations" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad.html#mlx.data.Buffer.pad" title="mlx.data.Buffer.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.pad</span></code></a>(self, key, dim, lpad, rpad, pad_value)</p></td>
+<td><p>Pad the array at <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad_to_multiple.html#mlx.data.Buffer.pad_to_multiple" title="mlx.data.Buffer.pad_to_multiple"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.pad_to_multiple</span></code></a>(self, key, dim, ...)</p></td>
+<td><p>Pad the end of an array such that its size is a multiple of <code class="docutils literal notranslate"><span class="pre">pad_multiple</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad_to_size.html#mlx.data.Buffer.pad_to_size" title="mlx.data.Buffer.pad_to_size"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.pad_to_size</span></code></a>(self, key, dim, size, ...)</p></td>
+<td><p>Pad the end of an array such that its size is <code class="docutils literal notranslate"><span class="pre">size</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="shape-operations">
+<h2>Shape operations<a class="headerlink" href="#shape-operations" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.shape.html#mlx.data.Buffer.shape" title="mlx.data.Buffer.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.shape</span></code></a>(self, key, output_key[, dim])</p></td>
+<td><p>Extracts the shape of an array in the sample.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.shard.html#mlx.data.Buffer.shard" title="mlx.data.Buffer.shard"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.shard</span></code></a>(self, key, num_shards[, output_key])</p></td>
+<td><p>Split the first dimension in <code class="docutils literal notranslate"><span class="pre">num_shards</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.squeeze.html#mlx.data.Buffer.squeeze" title="mlx.data.Buffer.squeeze"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.squeeze</span></code></a>(self, key[, dim, output_key])</p></td>
+<td><p>Squeeze singleton dimensions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="tokenization">
+<h2>Tokenization<a class="headerlink" href="#tokenization" title="Permalink to this headline"></a></h2>
+<table class="autosummary longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.tokenize.html#mlx.data.Buffer.tokenize" title="mlx.data.Buffer.tokenize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.tokenize</span></code></a>(self, key, trie, mode, ...)</p></td>
+<td><p>Tokenize the contents of the array at <code class="docutils literal notranslate"><span class="pre">key</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="conditional-operations">
+<h2>Conditional operations<a class="headerlink" href="#conditional-operations" title="Permalink to this headline"></a></h2>
+<p>A common issue when writing pipelines is configuring them according to the
+command line or configuration arguments. This usually results in code with a
+lot of redirections that is hard to read and reason about what operations are
+actually applied to the data.</p>
+<p>For this reason all of the above methods have a conditional variant defined as
+follows <code class="docutils literal notranslate"><span class="pre">*_if(cond:</span> <span class="pre">bool,</span> <span class="pre">*args,</span> <span class="pre">**kwargs)</span></code>. This allows writing pipelines
+that read from top to bottom without having to resort to redirection statements
+in python.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Assuming we have a buffer with image files and labels in dset</span>
+<span class="n">dset</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">dset</span>
+    <span class="o">.</span><span class="n">load_image</span><span class="p">(</span><span class="s2">&quot;image_file&quot;</span><span class="p">,</span> <span class="n">output_key</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">image_random_crop_if</span><span class="p">(</span><span class="n">enable_random_crop</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="mi">256</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">image_random_h_flip_if</span><span class="p">(</span><span class="n">flip_prob</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span> <span class="n">flip_prob</span><span class="p">)</span>
+    <span class="o">.</span><span class="n">key_transform_if</span><span class="p">(</span><span class="n">brightness_range</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;image&quot;</span><span class="p">,</span>
+                      <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">((</span><span class="mi">1</span> <span class="o">+</span> <span class="n">brightness_range</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[:</span><span class="mi">2</span><span class="p">])[</span><span class="o">...</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">dtype</span><span class="p">))</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../buffers_streams_samples.html" class="btn btn-neutral float-left" title="Buffers, Streams and Samples" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="_autosummary/mlx.data.Buffer.batch.html" class="btn btn-neutral float-right" title="mlx.data.Buffer.batch" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

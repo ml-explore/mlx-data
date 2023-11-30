@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlx.data.stream_line_reader &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="mlx.data.stream_python_iterable" href="mlx.data.stream_python_iterable.html" />
+    <link rel="prev" title="mlx.data.stream_csv_reader_from_string" href="mlx.data.stream_csv_reader_from_string.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../dataset.html">Common operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer.html">Buffer</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stream.html">Stream</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../stream.html#factory-methods">Factory methods</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.stream_csv_reader.html">mlx.data.stream_csv_reader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.stream_csv_reader_from_string.html">mlx.data.stream_csv_reader_from_string</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mlx.data.stream_line_reader</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.stream_python_iterable.html">mlx.data.stream_python_iterable</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../stream.html#stream-specific-api">Stream specific API</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stream.html">Stream</a></li>
+      <li class="breadcrumb-item active">mlx.data.stream_line_reader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/python/_autosummary/mlx.data.stream_line_reader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="mlx-data-stream-line-reader">
+<h1>mlx.data.stream_line_reader<a class="headerlink" href="#mlx-data-stream-line-reader" title="Permalink to this headline"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="mlx.data.stream_line_reader">
+<span class="sig-prename descclassname"><span class="pre">mlx.data.</span></span><span class="sig-name descname"><span class="pre">stream_line_reader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file:</span> <span class="pre">object</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unzip:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_prefix:</span> <span class="pre">str</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_fetcher:</span> <span class="pre">mlx::data::core::FileFetcher</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_fetcher_handle:</span> <span class="pre">mlx::data::core::FileFetcherHandle</span> <span class="pre">=</span> <span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mlx.data._c.Stream</span></span></span><a class="headerlink" href="#mlx.data.stream_line_reader" title="Permalink to this definition"></a></dt>
+<dd><p>Stream lines from a file.</p>
+<p>Similar to <a class="reference internal" href="mlx.data.stream_csv_reader.html#mlx.data.stream_csv_reader" title="mlx.data.stream_csv_reader"><code class="xref py py-func docutils literal notranslate"><span class="pre">stream_csv_reader()</span></code></a>, a file can be a filename or a
+python object with a <code class="docutils literal notranslate"><span class="pre">read()</span></code> and a <code class="docutils literal notranslate"><span class="pre">seek()</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The newline characters are <strong>not</strong> included in the samples.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em> or </em><em>python readable object</em>) – The file to read the csv from.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The destination key for the lines of the file.</p></li>
+<li><p><strong>unzip</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Treat the file as a compressed stream and decompress it
+on the fly. (default: False)</p></li>
+<li><p><strong>local_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The filepath prefix to use to read the files. (default: ‘’)</p></li>
+<li><p><strong>file_fetcher</strong> (<em>mlx.data.core.FileFetcher</em><em>, </em><em>optional</em>) – A file fetcher to
+read the csv files possibly from a remote location.</p></li>
+<li><p><strong>file_fetcher_handle</strong> (<em>mlx.data.core.FileFetcherHandle</em><em>, </em><em>optional</em>) – A
+handle to ensure that the file is kept on disk if a stream is
+passed instead of a filename.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlx.data.stream_csv_reader_from_string.html" class="btn btn-neutral float-left" title="mlx.data.stream_csv_reader_from_string" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlx.data.stream_python_iterable.html" class="btn btn-neutral float-right" title="mlx.data.stream_python_iterable" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

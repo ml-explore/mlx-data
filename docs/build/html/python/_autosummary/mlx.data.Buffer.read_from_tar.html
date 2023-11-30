@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mlx.data.Buffer.read_from_tar &mdash; MLX Data 0.0.0 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="mlx.data.Buffer.pad" href="mlx.data.Buffer.pad.html" />
+    <link rel="prev" title="mlx.data.Buffer.load_video" href="mlx.data.Buffer.load_video.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            MLX Data
+          </a>
+              <div class="version">
+                0.0.0
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Install</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Build and Install</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Usage</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../dataset.html">Common operations</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#general-sample-operations">General sample operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#image-operations">Image operations</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../dataset.html#i-o-operations">I/O operations</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Buffer.load_audio.html">mlx.data.Buffer.load_audio</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Buffer.load_file.html">mlx.data.Buffer.load_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Buffer.load_numpy.html">mlx.data.Buffer.load_numpy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Buffer.load_image.html">mlx.data.Buffer.load_image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="mlx.data.Buffer.load_video.html">mlx.data.Buffer.load_video</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">mlx.data.Buffer.read_from_tar</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#padding-operations">Padding operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#shape-operations">Shape operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#tokenization">Tokenization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../dataset.html#conditional-operations">Conditional operations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../buffer.html">Buffer</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stream.html">Stream</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../common_datasets.html">Common Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../features.html">Feature extraction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">MLX Data</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../dataset.html">Common operations</a></li>
+      <li class="breadcrumb-item active">mlx.data.Buffer.read_from_tar</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/python/_autosummary/mlx.data.Buffer.read_from_tar.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <div class="section" id="mlx-data-buffer-read-from-tar">
+<h1>mlx.data.Buffer.read_from_tar<a class="headerlink" href="#mlx-data-buffer-read-from-tar" title="Permalink to this headline"></a></h1>
+<dl class="py method">
+<dt class="sig sig-object py" id="mlx.data.Buffer.read_from_tar">
+<span class="sig-prename descclassname"><span class="pre">Buffer.</span></span><span class="sig-name descname"><span class="pre">read_from_tar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self:</span> <span class="pre">mlx.data._c.Buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tarkey:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ikey:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">okey:</span> <span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prefix:</span> <span class="pre">os.PathLike</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tar_prefix:</span> <span class="pre">os.PathLike</span> <span class="pre">=</span> <span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">from_key:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_fetcher:</span> <span class="pre">mlx::data::core::FileFetcher</span> <span class="pre">=</span> <span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nested:</span> <span class="pre">bool</span> <span class="pre">=</span> <span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">num_threads:</span> <span class="pre">int</span> <span class="pre">=</span> <span class="pre">1</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">mlx.data._c.Buffer</span></span></span><a class="headerlink" href="#mlx.data.Buffer.read_from_tar" title="Permalink to this definition"></a></dt>
+<dd><p>Read data from tarfiles.</p>
+<p>This function reads whole files from one or many tarfiles. It is
+commonly used to read the data in memory before decoding them with
+<code class="docutils literal notranslate"><span class="pre">load_image</span></code> or <code class="docutils literal notranslate"><span class="pre">load_video</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">tarkey</span></code> can refer to a filename or a sample key that defines the tar
+file name to load from. This function first indexes the whole tar so it
+is most efficient when reading many files from each tar archive.</p>
+<p>When reading nested tar archives (ie tar archives that contain tar
+archives), we can parallelize the indexing process using the
+<code class="docutils literal notranslate"><span class="pre">num_threads</span></code> argument.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>tarkey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The path to the tar file or the sample key containing
+the path to the tarfile based on the value of <code class="docutils literal notranslate"><span class="pre">from_key</span></code>.</p></li>
+<li><p><strong>ikey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The sample key containing the file name to read from the
+tar archive.</p></li>
+<li><p><strong>okey</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The sample key to write the data to.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The filepath prefix to use when <strong>loading the files
+from the tar archive</strong>. (default: ‘’)</p></li>
+<li><p><strong>tar_prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a>) – The filepath prefix to use for the tar archive.
+(default: ‘’)</p></li>
+<li><p><strong>from_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True treat the sample value at <code class="docutils literal notranslate"><span class="pre">tarkey</span></code> as a
+filename, otherwise treat <code class="docutils literal notranslate"><span class="pre">tarkey</span></code> as a filename. (default: False)</p></li>
+<li><p><strong>file_fetcher</strong> (<em>mlx.data.core.FileFetcher</em><em>, </em><em>optional</em>) – A file fetcher to
+read the tar files possibly from a remote location.</p></li>
+<li><p><strong>nested</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – If True then process nested tar files as folder and
+expand them inline. (default: False)</p></li>
+<li><p><strong>num_threads</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.12)"><em>int</em></a>) – When <code class="docutils literal notranslate"><span class="pre">nested</span></code> is True use that many parallel
+threads to index the nested archives. (default: 1)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="mlx.data.Buffer.load_video.html" class="btn btn-neutral float-left" title="mlx.data.Buffer.load_video" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mlx.data.Buffer.pad.html" class="btn btn-neutral float-right" title="mlx.data.Buffer.pad" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, MLX Contributors.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
