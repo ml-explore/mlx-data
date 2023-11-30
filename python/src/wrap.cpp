@@ -2,6 +2,9 @@
 
 #include "mlx/data/Dataset.h"
 
+#define STRINGIFY(x) #x
+#define TOSTRING(x) STRINGIFY(x)
+
 namespace py = pybind11;
 
 using namespace mlx::data;
@@ -172,8 +175,6 @@ PYBIND11_MODULE(_c, m) {
 
   py::module_ m_core = m.def_submodule("core", "mlx.data.core");
   init_mlx_data_core(m_core);
-  // py::module_ m_ops = m.def_submodule("ops", "mlx.data.ops");
-  // init_mlx_data_ops_buffer(m_ops);
-  // init_mlx_data_ops_op(m_ops);
-  // init_mlx_data_ops_image(m_ops);
+
+  m.attr("__version__") = TOSTRING(_VERSION_);
 }

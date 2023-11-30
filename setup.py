@@ -5,7 +5,7 @@ import subprocess
 from pathlib import Path
 import platform
 import sys
-import distutils.sysconfig
+import sysconfig
 import pybind11
 
 from setuptools import Extension, find_namespace_packages, setup
@@ -27,20 +27,20 @@ class CMakeBuild(build_ext):
 
         if platform.system() == "Windows":
             cmake_python_library = "{}/libs/python{}.lib".format(
-                distutils.sysconfig.get_config_var("prefix"),
-                distutils.sysconfig.get_config_var("VERSION"),
+                sysconfig.get_config_var("prefix"),
+                sysconfig.get_config_var("VERSION"),
             )
             if not os.path.exists(cmake_python_library):
                 cmake_python_library = "{}/libs/python{}.lib".format(
                     sys.base_prefix,
-                    distutils.sysconfig.get_config_var("VERSION"),
+                    sysconfig.get_config_var("VERSION"),
                 )
         else:
             cmake_python_library = "{}/{}".format(
-                distutils.sysconfig.get_config_var("LIBDIR"),
-                distutils.sysconfig.get_config_var("INSTSONAME"),
+                sysconfig.get_config_var("LIBDIR"),
+                sysconfig.get_config_var("INSTSONAME"),
             )
-        cmake_python_include_dir = distutils.sysconfig.get_python_inc()
+        cmake_python_include_dir = sysconfig.get_path("include")
 
         ext_fullpath = Path.cwd() / self.get_ext_fullpath("dummy")
         extdir = ext_fullpath.parent.resolve()
@@ -48,6 +48,7 @@ class CMakeBuild(build_ext):
 
         cmake_args = [
             "-DMLX_BUILD_PYTHON_BINDINGS=ON",
+            "-DMLX_DATA_VERSION={}".format(self.distribution.get_version()),
             "-DCMAKE_INSTALL_PREFIX={}".format(extdir),
             "-DPython_EXECUTABLE={}".format(sys.executable),
             "-DPython_LIBRARIES={}".format(cmake_python_library),

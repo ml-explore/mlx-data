@@ -8,5 +8,6 @@ pybind11_add_module(
 
 target_include_directories(_c PUBLIC ${CMAKE_SOURCE_DIR})
 target_link_libraries(_c PRIVATE mlxdata)
+target_compile_definitions(_c PRIVATE _VERSION_=${MLX_DATA_VERSION})
 
 install(TARGETS _c DESTINATION mlx/data)
