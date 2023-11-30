@@ -34,5 +34,5 @@ clear and has sufficient instructions to be able to reproduce the issue.
 
 ## License
 
-By contributing to MLX, you agree that your contributions will be licensed
+By contributing to MLX data, you agree that your contributions will be licensed
 under the LICENSE file in the root directory of this source tree.
