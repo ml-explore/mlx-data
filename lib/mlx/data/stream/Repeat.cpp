@@ -1,3 +1,4 @@
+// Copyright © 2023 Apple Inc.
 
 #include <stdexcept>
 

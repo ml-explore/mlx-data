@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <aws/core/client/DefaultRetryStrategy.h>
 #include <aws/s3/model/GetObjectRequest.h>
 #include <aws/s3/model/HeadObjectRequest.h>

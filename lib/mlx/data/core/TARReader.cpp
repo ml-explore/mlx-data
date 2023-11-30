@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <cstring>
 #include <functional>
 #include <string>

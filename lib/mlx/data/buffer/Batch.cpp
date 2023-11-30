@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/buffer/Batch.h"
 #include "mlx/data/core/Utils.h"
 

@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <random>
 
 #include "mlx/data/core/State.h"

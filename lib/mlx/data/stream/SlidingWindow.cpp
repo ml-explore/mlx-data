@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <iterator>
 
 #include "mlx/data/stream/SlidingWindow.h"

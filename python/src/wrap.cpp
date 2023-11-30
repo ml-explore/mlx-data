@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "wrap.h"
 
 #include "mlx/data/Dataset.h"

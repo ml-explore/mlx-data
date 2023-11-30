@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/stream/LineReader.h"
 #include "mlx/data/core/imemstream.h"
 

@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/stream/Partition.h"
 
 namespace mlx {

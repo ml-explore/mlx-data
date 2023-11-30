@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <cmath>
 #include "mlx/data/core/audio/Audio.h"
 

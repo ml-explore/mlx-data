@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/stream/DynamicBatch.h"
 #include "mlx/data/buffer/DynamicBatch.h"
 #include "mlx/data/buffer/Shuffle.h"

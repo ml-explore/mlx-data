@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <strings.h>
 #include <filesystem>
 #include "mlx/data/core/image/ImagePrivate.h"

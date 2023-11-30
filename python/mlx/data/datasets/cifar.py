@@ -1,3 +1,5 @@
+# Copyright © 2023 Apple Inc.
+
 import hashlib
 import pickle
 import shutil

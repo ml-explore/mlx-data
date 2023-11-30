@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "wrap.h"
 
 #if MLX_HAS_AWS

@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #pragma once
 
 // from https://github.com/fbastos1/thread_pool_cpp17.git

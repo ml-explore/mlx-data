@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/Stream.h"
 #include "mlx/data/Buffer.h"
 #include "mlx/data/buffer/FromStream.h"

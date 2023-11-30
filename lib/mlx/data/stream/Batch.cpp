@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/stream/Batch.h"
 #include <functional>
 #include "mlx/data/core/ThreadPool.h"

@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include <string>
 
 #ifdef MLX_HAS_DLOPEN_NOLOAD

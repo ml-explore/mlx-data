@@ -1,3 +1,5 @@
+// Copyright © 2023 Apple Inc.
+
 #include "mlx/data/buffer/FilesFromTAR.h"
 #include "mlx/data/Array.h"
 #include "mlx/data/Sample.h"
