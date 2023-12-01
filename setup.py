@@ -1,7 +1,6 @@
 # Copyright © 2023 Apple Inc.
 
-#!/usr/bin/env python
-
+import datetime
 import os
 import subprocess
 from pathlib import Path
@@ -12,6 +11,26 @@ import pybind11
 
 from setuptools import Extension, find_namespace_packages, setup
 from setuptools.command.build_ext import build_ext
+
+
+def get_version(version):
+    if "PYPI_RELEASE" not in os.environ:
+        today = datetime.date.today()
+        version = f"{version}.dev{today.year}{today.month}{today.day}"
+
+        if "DEV_RELEASE" not in os.environ:
+            git_hash = (
+                subprocess.run(
+                    "git rev-parse --short HEAD".split(),
+                    capture_output=True,
+                    check=True,
+                )
+                .stdout.strip()
+                .decode()
+            )
+            version = f"{version}+{git_hash}"
+
+    return version
 
 
 class CMakeExtension(Extension):
@@ -79,7 +98,7 @@ if __name__ == "__main__":
 
     setup(
         name="mlx-data",
-        version="0.0.1",
+        version=get_version("0.0.1"),
         author="Ronan Collobert",
         author_email="collobert@apple.com",
         url="https://github.com/ml-explore/mlx-data",
