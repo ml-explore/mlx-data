@@ -73,80 +73,80 @@ else()
 endif()
 
 set(mlxdata-src
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Array.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Sample.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Dataset.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Buffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Stream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/BatchShape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/CSVReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/FileFetcher.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Graph.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Numpy.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/State.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/TARReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/ThreadController.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/ThreadPool.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Tokenizer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Levenshtein.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Utils.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/Audio.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/AudioSndfile.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/AudioSampleRate.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageIO.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageSTBI.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageJPEG.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/video/Video.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/video/VideoFFMPEG.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Buffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Batch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/DynamicBatch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FromStream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FromVector.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FilesFromTAR.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Partition.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Perm.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Shuffle.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Transform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Stream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Batch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Buffered.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/DynamicBatch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Compose.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/CSVReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/FromBuffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/LineReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Partition.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Prefetch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Repeat.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Shuffle.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/SlidingWindow.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Transform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Op.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/FilterByShape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/FilterKey.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/ReadFromTAR.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/KeyTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/SampleTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Shape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/RenameKey.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/SaveImage.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadAudio.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadImage.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadFile.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadNumpy.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadVideo.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Pad.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Shard.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Squeeze.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Tokenize.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/ImageTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/RemoveValue.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Array.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Sample.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Dataset.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Buffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Stream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/BatchShape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/CSVReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/FileFetcher.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Graph.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Numpy.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/State.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/TARReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadController.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadPool.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Tokenizer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Levenshtein.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Utils.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/Audio.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSndfile.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSampleRate.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageIO.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageSTBI.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageJPEG.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/Video.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/VideoFFMPEG.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Buffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Batch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/DynamicBatch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FromStream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FromVector.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FilesFromTAR.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Partition.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Perm.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Shuffle.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Transform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Stream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Batch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Buffered.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/DynamicBatch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Compose.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/CSVReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/FromBuffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/LineReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Partition.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Prefetch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Repeat.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Shuffle.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/SlidingWindow.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Transform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Op.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/FilterByShape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/FilterKey.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ReadFromTAR.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/KeyTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SampleTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RenameKey.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SaveImage.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadAudio.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadImage.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadFile.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadNumpy.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadVideo.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Pad.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shard.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Squeeze.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Tokenize.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ImageTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp
 )
 
 if(AWSSDK_FOUND)
-  list(APPEND mlxdata-src ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/AWSFileFetcher.cpp)
+  list(APPEND mlxdata-src ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/AWSFileFetcher.cpp)
 endif()
 
 add_library(
@@ -173,7 +173,7 @@ target_link_libraries(
 target_include_directories(
     mlxdata
     PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/lib
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:include>
 )
 set_property(TARGET mlxdata PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -250,7 +250,7 @@ install(
 
 # Install headers
 install(
-    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib/mlx
+    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/mlx
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     COMPONENT headers
     FILES_MATCHING PATTERN "*.h"
