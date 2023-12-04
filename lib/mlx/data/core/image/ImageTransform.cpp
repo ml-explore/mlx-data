@@ -7,7 +7,7 @@
 #define STB_IMAGE_RESIZE_IMPLEMENTATION
 #define STBIR_DEFAULT_FILTER_UPSAMPLE STBIR_FILTER_TRIANGLE
 #define STBIR_DEFAULT_FILTER_DOWNSAMPLE STBIR_FILTER_TRIANGLE
-#include <stb/stb_image_resize2.h>
+#include <stb_image_resize2.h>
 
 namespace mlx {
 namespace data {

@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.18)
+cmake_minimum_required(VERSION 3.18)
 
 # ----------------------------- Setup -----------------------------
 project(mlx.data LANGUAGES CXX C)
@@ -13,7 +13,29 @@ if(NOT MLX_DATA_VERSION)
   set(MLX_DATA_VERSION 0.0.1)
 endif()
 
-# ----------------------------- Lib -----------------------------
+# ----------------------------- 3rdparty -----------------------------
+
+include(FetchContent)
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+cmake_policy(SET CMP0135 NEW)
+
+FetchContent_Declare(
+  stb
+  GIT_REPOSITORY "https://github.com/nothings/stb.git"
+  GIT_TAG "03f50e343d796e492e6579a11143a085429d7f5d"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+)
+FetchContent_Declare(
+  bxzstr
+  GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
+  GIT_TAG "a6e5d743b5547a3ec23fd842813dec8067c8aff1"
+)
+FetchContent_MakeAvailable(stb bxzstr)
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+
+# ----------------------------- lib -----------------------------
 
 if (MLX_BUILD_PYTHON_BINDINGS)
     find_package(
@@ -142,6 +164,12 @@ elseif(HAS_DYLD_GET_IMAGE_NAME)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_DYLD_GET_IMAGE_NAME)
   target_link_libraries(mlxdata PRIVATE ${CMAKE_DL_LIBS})
 endif()
+target_link_libraries(
+    mlxdata
+    PRIVATE
+    $<BUILD_INTERFACE:stb>
+    $<BUILD_INTERFACE:bxzstr::bxzstr>
+)
 target_include_directories(
     mlxdata
     PUBLIC

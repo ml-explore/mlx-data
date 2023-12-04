@@ -6,7 +6,7 @@
 #include <istream>
 #include <mutex>
 
-#include "bxzstr/include/bxzstr.hpp"
+#include "bxzstr.hpp"
 
 #include "mlx/data/core/FileFetcher.h"
 #include "mlx/data/stream/Compose.h"
