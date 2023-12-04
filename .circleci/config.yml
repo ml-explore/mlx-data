@@ -119,6 +119,11 @@ jobs:
           path: dist/
 
 workflows:
+  build_on_commit:
+    jobs:
+      - linux_build
+      - mac_build
+
   build_release:
     when:
       and:
