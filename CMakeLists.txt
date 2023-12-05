@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.12...3.18)
+cmake_minimum_required(VERSION 3.16)
 
 # ----------------------------- Setup -----------------------------
 project(mlx.data LANGUAGES CXX C)
@@ -13,7 +13,74 @@ if(NOT MLX_DATA_VERSION)
   set(MLX_DATA_VERSION 0.0.1)
 endif()
 
-# ----------------------------- Lib -----------------------------
+# ----------------------------- 3rdparty -----------------------------
+
+include(FetchContent)
+# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
+
+# stb
+FetchContent_Declare(
+  stb
+  GIT_REPOSITORY "https://github.com/nothings/stb.git"
+  GIT_TAG "03f50e343d796e492e6579a11143a085429d7f5d"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+)
+FetchContent_GetProperties(stb)
+if(NOT stb_POPULATED)
+  FetchContent_Populate(stb)
+endif()
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+
+# bxzstr
+find_package(ZLIB)
+find_package(BZip2)
+find_package(LibLZMA)
+add_library(bxzstr INTERFACE)
+if(ZLIB_FOUND)
+  target_include_directories(bxzstr INTERFACE ${ZLIB_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${ZLIB_LIBRARIES})
+  set(BXZSTR_Z_SUPPORT 1)
+else()
+  set(BXZSTR_Z_SUPPORT 0)
+endif()
+if(BZIP2_FOUND)
+  target_include_directories(bxzstr INTERFACE ${BZIP2_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${BZIP2_LIBRARIES})
+  set(BXZSTR_BZ2_SUPPORT 1)
+else()
+  set(BXZSTR_BZ2_SUPPORT 0)
+endif()
+if(LIBLZMA_FOUND)
+  target_include_directories(bxzstr INTERFACE ${LIBLZMA_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${LIBLZMA_LIBRARIES})
+  set(BXZSTR_LZMA_SUPPORT 1)
+else()
+  set(BXZSTR_LZMA_SUPPORT 0)
+endif()
+set(BXZSTR_ZSTD_SUPPORT 0)
+set(bxzstr_patch git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr.patch)
+FetchContent_Declare(
+  bxzstr
+  GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
+  GIT_TAG "a6e5d743b5547a3ec23fd842813dec8067c8aff1"
+  # patch is always applied, so we silently fail if already patched
+  PATCH_COMMAND ${bxzstr_patch} || true
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  )
+FetchContent_GetProperties(bxzstr)
+if(NOT bxzstr_POPULATED)
+  FetchContent_Populate(bxzstr)
+  configure_file(${bxzstr_SOURCE_DIR}/bxzstr/config.hpp.in ${bxzstr_SOURCE_DIR}/bxzstr/config.hpp)
+endif()
+target_include_directories(bxzstr INTERFACE ${bxzstr_SOURCE_DIR})
+
+# ----------------------------- lib -----------------------------
 
 if (MLX_BUILD_PYTHON_BINDINGS)
     find_package(
@@ -25,9 +92,6 @@ endif()
 find_package(SndFile)
 find_package(SampleRate)
 find_package(Threads REQUIRED)
-find_package(ZLIB)
-find_package(BZip2)
-find_package(LibLZMA)
 find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale)
 
 if(MLX_ENABLE_AWS)
@@ -51,80 +115,80 @@ else()
 endif()
 
 set(mlxdata-src
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Array.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Sample.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Dataset.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Buffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/Stream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/BatchShape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/CSVReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/FileFetcher.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Graph.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Numpy.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/State.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/TARReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/ThreadController.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/ThreadPool.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Tokenizer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Levenshtein.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/Utils.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/Audio.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/AudioSndfile.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/audio/AudioSampleRate.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageIO.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageSTBI.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/image/ImageJPEG.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/video/Video.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/video/VideoFFMPEG.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Buffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Batch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/DynamicBatch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FromStream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FromVector.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/FilesFromTAR.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Partition.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Perm.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Shuffle.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/buffer/Transform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Stream.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Batch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Buffered.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/DynamicBatch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Compose.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/CSVReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/FromBuffer.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/LineReader.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Partition.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Prefetch.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Repeat.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Shuffle.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/SlidingWindow.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/stream/Transform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Op.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/FilterByShape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/FilterKey.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/ReadFromTAR.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/KeyTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/SampleTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Shape.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/RenameKey.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/SaveImage.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadAudio.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadImage.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadFile.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadNumpy.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/LoadVideo.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Pad.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Shard.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Squeeze.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/Tokenize.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/ImageTransform.cpp
-  ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/op/RemoveValue.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Array.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Sample.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Dataset.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Buffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/Stream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/BatchShape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/CSVReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/FileFetcher.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Graph.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Numpy.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/State.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/TARReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadController.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadPool.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Tokenizer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Levenshtein.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Utils.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/Audio.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSndfile.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSampleRate.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageIO.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageSTBI.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageJPEG.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/Video.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/VideoFFMPEG.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Buffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Batch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/DynamicBatch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FromStream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FromVector.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/FilesFromTAR.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Partition.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Perm.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Shuffle.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Transform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Stream.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Batch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Buffered.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/DynamicBatch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Compose.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/CSVReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/FromBuffer.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/LineReader.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Partition.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Prefetch.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Repeat.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Shuffle.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/SlidingWindow.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Transform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Op.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/FilterByShape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/FilterKey.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ReadFromTAR.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/KeyTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SampleTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shape.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RenameKey.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SaveImage.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadAudio.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadImage.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadFile.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadNumpy.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadVideo.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Pad.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shard.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Squeeze.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Tokenize.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ImageTransform.cpp
+  ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp
 )
 
 if(AWSSDK_FOUND)
-  list(APPEND mlxdata-src ${CMAKE_CURRENT_LIST_DIR}/lib/mlx/data/core/AWSFileFetcher.cpp)
+  list(APPEND mlxdata-src ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/AWSFileFetcher.cpp)
 endif()
 
 add_library(
@@ -142,10 +206,16 @@ elseif(HAS_DYLD_GET_IMAGE_NAME)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_DYLD_GET_IMAGE_NAME)
   target_link_libraries(mlxdata PRIVATE ${CMAKE_DL_LIBS})
 endif()
+target_link_libraries(
+    mlxdata
+    PRIVATE
+    $<BUILD_INTERFACE:stb>
+    $<BUILD_INTERFACE:bxzstr>
+)
 target_include_directories(
     mlxdata
     PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/lib
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
     $<INSTALL_INTERFACE:include>
 )
 set_property(TARGET mlxdata PROPERTY POSITION_INDEPENDENT_CODE ON)
@@ -158,24 +228,6 @@ if(SampleRate_FOUND)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_SAMPLERATE)
 endif()
 target_link_libraries(mlxdata PRIVATE Threads::Threads)
-
-if(ZLIB_FOUND)
-  target_include_directories(mlxdata PUBLIC ${ZLIB_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${ZLIB_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_Z_SUPPORT=1)
-endif()
-
-if(BZIP2_FOUND)
-  target_include_directories(mlxdata PUBLIC ${BZIP2_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${BZIP2_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_BZ2_SUPPORT=1)
-endif()
-
-if(LIBLZMA_FOUND)
-  target_include_directories(mlxdata PUBLIC ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${LIBLZMA_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_LZMA_SUPPORT=1)
-endif()
 
 if(JPEGTURBO_FOUND)
   target_include_directories(mlxdata PUBLIC ${JPEGTURBO_INCLUDE_DIRS})
@@ -222,7 +274,7 @@ install(
 
 # Install headers
 install(
-    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/lib/mlx
+    DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/mlx
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
     COMPONENT headers
     FILES_MATCHING PATTERN "*.h"

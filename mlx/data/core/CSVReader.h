@@ -7,7 +7,7 @@
 #include <string>
 #include <vector>
 
-#include "bxzstr/include/bxzstr.hpp"
+#include "bxzstr/bxzstr.hpp"
 
 namespace mlx {
 namespace data {
