@@ -1,20 +1,6 @@
 Quick Start Guide
 =================
 
-MLX Data is a data loading framework agnostic of the array library you are
-using or whether it is a machine learning training job or a data pre-processing
-job.
-
-You can use MLX Data with PyTorch, Jax or `MLX <https://ml-explore.github.io/mlx/>`_.
-
-The goal of this library is to allow users to leverage multiple threads for
-data processing pipelines without the inflexibility of dealing with multiple
-processes or having to write in a symbolic language.
-
-.. note::
-   In MLX Data pipelines you can use Python to process data, implement logic or cause side effects!
-
-
 Load some data
 --------------
 

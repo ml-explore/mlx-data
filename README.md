@@ -1,8 +1,9 @@
 MLX Data
 =========
 
-MLX Data is a dataloading framework agnostic of the training library you are
-using. It works with PyTorch, Jax or [MLX](https://ml-explore.github.io/mlx/).
+MLX Data is a framework agnostic data loading library brought to you by Apple
+machine learning research. It works with PyTorch, Jax or
+[MLX](https://ml-explore.github.io/mlx/).
 
 The goal of the project is to be efficient but also flexible, enabling for
 instance the loading and processing of 1,000s of images per second but also
