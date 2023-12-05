@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.16)
 
 # ----------------------------- Setup -----------------------------
 project(mlx.data LANGUAGES CXX C)
@@ -17,8 +17,11 @@ endif()
 
 include(FetchContent)
 # Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
-cmake_policy(SET CMP0135 NEW)
+if(POLICY CMP0135)
+  cmake_policy(SET CMP0135 NEW)
+endif()
 
+# stb
 FetchContent_Declare(
   stb
   GIT_REPOSITORY "https://github.com/nothings/stb.git"
@@ -26,14 +29,55 @@ FetchContent_Declare(
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
 )
+FetchContent_GetProperties(stb)
+if(NOT stb_POPULATED)
+  FetchContent_Populate(stb)
+endif()
+add_library(stb INTERFACE)
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+
+# bxzstr
+find_package(ZLIB)
+find_package(BZip2)
+find_package(LibLZMA)
+add_library(bxzstr INTERFACE)
+if(ZLIB_FOUND)
+  target_include_directories(bxzstr INTERFACE ${ZLIB_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${ZLIB_LIBRARIES})
+  set(BXZSTR_Z_SUPPORT 1)
+else()
+  set(BXZSTR_Z_SUPPORT 0)
+endif()
+if(BZIP2_FOUND)
+  target_include_directories(bxzstr INTERFACE ${BZIP2_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${BZIP2_LIBRARIES})
+  set(BXZSTR_BZ2_SUPPORT 1)
+else()
+  set(BXZSTR_BZ2_SUPPORT 0)
+endif()
+if(LIBLZMA_FOUND)
+  target_include_directories(bxzstr INTERFACE ${LIBLZMA_INCLUDE_DIRS})
+  target_link_libraries(bxzstr INTERFACE ${LIBLZMA_LIBRARIES})
+  set(BXZSTR_LZMA_SUPPORT 1)
+else()
+  set(BXZSTR_LZMA_SUPPORT 0)
+endif()
+set(BXZSTR_ZSTD_SUPPORT 0)
+set(bxzstr_patch git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr.patch)
 FetchContent_Declare(
   bxzstr
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
   GIT_TAG "a6e5d743b5547a3ec23fd842813dec8067c8aff1"
-)
-FetchContent_MakeAvailable(stb bxzstr)
-add_library(stb INTERFACE)
-target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+  PATCH_COMMAND ${bxzstr_patch}
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  )
+FetchContent_GetProperties(bxzstr)
+if(NOT bxzstr_POPULATED)
+  FetchContent_Populate(bxzstr)
+  configure_file(${bxzstr_SOURCE_DIR}/bxzstr/config.hpp.in ${bxzstr_SOURCE_DIR}/bxzstr/config.hpp)
+endif()
+target_include_directories(bxzstr INTERFACE ${bxzstr_SOURCE_DIR})
 
 # ----------------------------- lib -----------------------------
 
@@ -47,9 +91,6 @@ endif()
 find_package(SndFile)
 find_package(SampleRate)
 find_package(Threads REQUIRED)
-find_package(ZLIB)
-find_package(BZip2)
-find_package(LibLZMA)
 find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale)
 
 if(MLX_ENABLE_AWS)
@@ -168,7 +209,7 @@ target_link_libraries(
     mlxdata
     PRIVATE
     $<BUILD_INTERFACE:stb>
-    $<BUILD_INTERFACE:bxzstr::bxzstr>
+    $<BUILD_INTERFACE:bxzstr>
 )
 target_include_directories(
     mlxdata
@@ -186,24 +227,6 @@ if(SampleRate_FOUND)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_SAMPLERATE)
 endif()
 target_link_libraries(mlxdata PRIVATE Threads::Threads)
-
-if(ZLIB_FOUND)
-  target_include_directories(mlxdata PUBLIC ${ZLIB_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${ZLIB_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_Z_SUPPORT=1)
-endif()
-
-if(BZIP2_FOUND)
-  target_include_directories(mlxdata PUBLIC ${BZIP2_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${BZIP2_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_BZ2_SUPPORT=1)
-endif()
-
-if(LIBLZMA_FOUND)
-  target_include_directories(mlxdata PUBLIC ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(mlxdata PRIVATE ${LIBLZMA_LIBRARIES})
-  target_compile_definitions(mlxdata PUBLIC BXZSTR_LZMA_SUPPORT=1)
-endif()
 
 if(JPEGTURBO_FOUND)
   target_include_directories(mlxdata PUBLIC ${JPEGTURBO_INCLUDE_DIRS})
