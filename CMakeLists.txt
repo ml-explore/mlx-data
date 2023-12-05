@@ -68,7 +68,8 @@ FetchContent_Declare(
   bxzstr
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
   GIT_TAG "a6e5d743b5547a3ec23fd842813dec8067c8aff1"
-  PATCH_COMMAND ${bxzstr_patch}
+  # patch is always applied, so we silently fail if already patched
+  PATCH_COMMAND ${bxzstr_patch} || true
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   )
