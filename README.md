@@ -11,7 +11,7 @@ running arbitrary python transformations on the resulting batches.
 It can be used from Python as is shown in the following examples or from C++
 with a very similar intuitive API.
 
-For more details see the [documentation](https://ml-explore.github.io/data/).
+For more details see the [documentation](https://ml-explore.github.io/mlx-data/).
 
 Example
 =======
