@@ -61,12 +61,6 @@ class CMakeBuild(build_ext):
         if "CMAKE_ARGS" in os.environ:
             cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]
 
-        if "PYTHONPATH" in os.environ and "pip-build-env" in os.environ["PYTHONPATH"]:
-            # When installing in editable mode, remove the `PYTHONPATH` to make
-            # cmake work. See https://github.com/onnx/onnx/pull/5195/files for
-            # a similar problem and the current solution.
-            del os.environ["PYTHONPATH"]
-
         # Finally run install
         Path(self.build_temp).mkdir(parents=True, exist_ok=True)
         subprocess.run(
