@@ -4,6 +4,7 @@
 
 import os
 import subprocess
+import mlx.data
 
 # -- Project information -----------------------------------------------------
 
