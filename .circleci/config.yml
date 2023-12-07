@@ -114,6 +114,8 @@ jobs:
             - run:
                 name: Upload to PyPI
                 command: |
+                  eval "$(conda shell.bash hook)"
+                  conda activate runner-env
                   twine upload dist/* --repository mlx-data
       - store_artifacts:
           path: dist/
