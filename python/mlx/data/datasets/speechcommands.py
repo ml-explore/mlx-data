@@ -113,7 +113,7 @@ def load_speechcommands(
 
     References
     ----------
-    Warden, Pete. "Speech commands: A dataset for limited-vocabulary speech recognition." arXiv preprint arXiv:1804.03209 (2018).
+    [1] Warden, Pete. "Speech commands: A dataset for limited-vocabulary speech recognition." arXiv preprint arXiv:1804.03209 (2018).
     """
     target = download_speechcommands(
         root=root, quiet=quiet, validate_download=validate_download
@@ -125,19 +125,13 @@ def load_speechcommands(
 
     files_by_split, class_map = get_metadata(target)
 
+    file_list = [
+        {"file": f.encode(), "label": class_map[f.split("/")[-2]]}
+        for f in files_by_split[split]
+    ]
     dset = (
-        dx.files_from_tar(target)
-        .to_stream()
-        .sample_transform(
-            lambda s: s
-            if bytes(s["file"]).decode() in files_by_split[split]
-            else dict()
-        )
+        dx.buffer_from_vector(file_list)
         .read_from_tar(target, "file", "audio")
-        .sample_transform(_to_audio)
-        .prefetch(prefetch_size, num_threads)
-        .to_buffer()
         .load_audio("audio", from_memory=True)
-        .key_transform("label", lambda x: class_map[bytes(x).decode()])
     )
     return dset
