@@ -12,6 +12,8 @@ from .common import (
 
 URL = "http://download.tensorflow.org/data/speech_commands_v0.02.tar.gz"
 URL_HASH = "af14739ee7dc311471de98f5f9d2c9191b18aedfe957f4a6ff791c709868ff58"
+EXCLUDE_FOLDER = "_background_noise_"
+HASH_DIVIDER = "_nohash_"
 
 SPLITS_INFO = {
     "validation": "./validation_list.txt",
@@ -68,7 +70,13 @@ def get_metadata(tarfile_path):
             fileslist = ["./" + s.decode().strip() for s in f.readlines()]
             output[split] = fileslist
 
-        all_wav_files = [f.name for f in tar.getmembers() if ".wav" in f.name]
+        all_wav_files = [
+            f.name
+            for f in tar.getmembers()
+            if ".wav" in f.name
+            and HASH_DIVIDER in f.name
+            and EXCLUDE_FOLDER not in f.name
+        ]
     output["train"] = set(all_wav_files) - set(output["validation"] + output["test"])
     classes = dict(
         map(reversed, enumerate(sorted(set(f.split("/")[-2] for f in output["train"]))))
