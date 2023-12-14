@@ -136,6 +136,7 @@ def load_speechcommands(
         .read_from_tar(target, "file", "audio")
         .sample_transform(_to_audio)
         .prefetch(prefetch_size, num_threads)
+        .to_buffer()
         .load_audio("audio", from_memory=True)
         .key_transform("label", lambda x: class_map[bytes(x).decode()])
     )
