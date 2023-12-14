@@ -84,20 +84,7 @@ def get_metadata(tarfile_path):
     return output, classes
 
 
-def _to_audio(sample):
-    filename = bytes(sample["file"]).decode()
-    label = bytes(filename.split("/")[-2].encode())
-    return {"file": sample["file"], "audio": sample["audio"], "label": label}
-
-
-def load_speechcommands(
-    root=None,
-    split="train",
-    quiet=False,
-    validate_download=True,
-    prefetch_size=8,
-    num_threads=4,
-):
+def load_speechcommands(root=None, split="train", quiet=False, validate_download=True):
     """Load the Speech Commands (v0.0.2) [1] dataset directly from the TAR archive.
 
     Args:
@@ -107,9 +94,6 @@ def load_speechcommands(
             validation or test
         quiet (bool): If true do not show download (and possibly decompression)
             progress.
-        prefetch_size (int, optional): The number of samples for prefetching. Default is 8.
-        num_threads (int, optional): The number of threads to use for prefetching. Default is 4.
-
 
     References
     ----------
