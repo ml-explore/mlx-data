@@ -98,7 +98,7 @@ def load_speechcommands(
     prefetch_size=8,
     num_threads=4,
 ):
-    """Load the Speech Commands (v0.0.2) dataset directly from the TAR archive.
+    """Load the Speech Commands (v0.0.2) [1] dataset directly from the TAR archive.
 
     Args:
         root (Path or str, optional): The The directory to load/save the data. If
@@ -109,6 +109,11 @@ def load_speechcommands(
             progress.
         prefetch_size (int, optional): The number of samples for prefetching. Default is 8.
         num_threads (int, optional): The number of threads to use for prefetching. Default is 4.
+
+
+    References
+    ----------
+    Warden, Pete. "Speech commands: A dataset for limited-vocabulary speech recognition." arXiv preprint arXiv:1804.03209 (2018).
     """
     target = download_speechcommands(
         root=root, quiet=quiet, validate_download=validate_download
