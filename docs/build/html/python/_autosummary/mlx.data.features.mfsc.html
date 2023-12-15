@@ -213,6 +213,7 @@
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_imagenet.html">mlx.data.datasets.load_imagenet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_librispeech.html">mlx.data.datasets.load_librispeech</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_wikitext_lines.html">mlx.data.datasets.load_wikitext_lines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_speechcommands.html">mlx.data.datasets.load_speechcommands</a></li>
 </ul>
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
@@ -432,6 +433,13 @@ document.write(`
 <span class="sig-prename descclassname"><span class="pre">mlx.data.features.</span></span><span class="sig-name descname"><span class="pre">mfsc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_filterbank</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sampling_freq</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_size_ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">25</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">frame_stride_ms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pre_emphasis_coeff</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.97</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">window_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">WindowType.Hamming</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high_freq</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mel_floor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">FrequencyScale.MEL</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">post_process</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlx.data.features.mfsc" title="Permalink to this definition">#</a></dt>
 <dd><p>Returns a function that computes spectrogram features from audio in
 particular mel-frequency spectral coefficients (MFSCs).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This feature extractor operates on mono audio provided as a 1D array.
+Meaning the input should have shape <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> and not <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">1)</span></code>. You may
+want to look into <a class="reference internal" href="mlx.data.Buffer.squeeze.html#mlx.data.Buffer.squeeze" title="mlx.data.Buffer.squeeze"><code class="xref py py-meth docutils literal notranslate"><span class="pre">squeeze()</span></code></a> to transform arrays of shape
+<code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">1)</span></code> to <code class="docutils literal notranslate"><span class="pre">(N,)</span></code>.</p>
+</div>
 <p>The featurization function</p>
 <ol class="arabic simple">
 <li><p>computes a sliding window of the input audio</p></li>
@@ -449,6 +457,7 @@ features:</p>
 
 <span class="n">dset</span> <span class="o">=</span> <span class="p">(</span>
     <span class="n">load_librispeech</span><span class="p">()</span>
+    <span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">)</span>
     <span class="o">.</span><span class="n">key_transform</span><span class="p">(</span><span class="s2">&quot;audio&quot;</span><span class="p">,</span> <span class="n">mfsc</span><span class="p">(</span><span class="mi">80</span><span class="p">,</span> <span class="mi">16000</span><span class="p">))</span>
     <span class="o">.</span><span class="n">to_stream</span><span class="p">()</span>
     <span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
