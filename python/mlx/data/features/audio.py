@@ -174,6 +174,12 @@ def mfsc(
     """Returns a function that computes spectrogram features from audio in
     particular mel-frequency spectral coefficients (MFSCs).
 
+    .. note::
+       This feature extractor operates on mono audio provided as a 1D array.
+       Meaning the input should have shape ``(N,)`` and not ``(N, 1)``. You may
+       want to look into :meth:`~mlx.data.Buffer.squeeze` to transform arrays of shape
+       ``(N, 1)`` to ``(N,)``.
+
     The featurization function
 
     1. computes a sliding window of the input audio
@@ -194,6 +200,7 @@ def mfsc(
 
         dset = (
             load_librispeech()
+            .squeeze("audio")
             .key_transform("audio", mfsc(80, 16000))
             .to_stream()
             .prefetch(16, 8)
