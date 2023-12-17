@@ -1,3 +1,13 @@
+# Individual Contributors
+
+MLX Data was developed with contributions from the following individuals:
+
+- [David Koski](https://github.com/davidkoski): Added
+  `stream_csv_reader_from_string`, `load_file`, `save_image`, `load_video`,
+  `load_numpy`, video transformations, image `RGB->L` transform.
+
+# Third-Party Software
+
 MLX data leverages several third-party software, listed here together with
 their license copied verbatim.
 

@@ -65,3 +65,34 @@ for sample in dset:
     # access sample["image"] and sample["label"]
     pass
 ```
+
+## Contributing
+
+Check out the [contribution guidelines](CONTRIBUTING.md) for more
+information on contributing to MLX Data. See the
+[docs](https://ml-explore.github.io/mlx-data/build/html/index.html) for
+more information on building from source, and running tests.
+
+We are grateful for all [our
+contributors](ACKNOWLEDGMENTS.md#Individual-Contributors). Special thanks
+to [David Koski](https://github.com/davidkoski) who contributed to several
+features in MLX Data, before open-source. If you contribute to MLX Data and
+wish to be acknowledged, please add your name to the list in your pull
+request.
+
+## Citing MLX Data
+
+The MLX software suite was initially developed with equal contribution by
+Awni Hannun, Jagrit Digani, Angelos Katharopoulos, and Ronan Collobert. If
+you find MLX Data useful in your research and wish to cite it, please use
+the following BibTex entry:
+
+```
+@software{mlx2023,
+  author = {Awni Hannun and Jagrit Digani and Angelos Katharopoulos and Ronan Collobert},
+  title = {{MLX}: Efficient and flexible machine learning on Apple silicon},
+  url = {https://github.com/ml-explore},
+  version = {0.0},
+  year = {2023},
+}
+```
