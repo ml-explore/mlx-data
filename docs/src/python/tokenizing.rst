@@ -38,8 +38,8 @@ or a plain text vocabulary file.
     # The more useful option is to read the trie from a file, for instance an spm model
     from mlx.data.tokenizer_helpers import read_trie_from_spm
 
-    trie = read_trie_from_spm("path/to/spm/model")
-    tokenizer = Tokenizer(trie)
+    trie, weights = read_trie_from_spm("path/to/spm/model")
+    tokenizer = Tokenizer(trie, trie_key_scores=weights)
     tokenizer.tokenize_shortest(b"This is some more text to tokenize")
 
 
