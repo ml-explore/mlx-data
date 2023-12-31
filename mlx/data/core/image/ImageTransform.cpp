@@ -14,6 +14,12 @@ namespace data {
 namespace core {
 namespace image {
 
+void verify_type(const std::shared_ptr<const Array>& image) {
+  if (image->type() != UInt8) {
+    throw std::invalid_argument("image must be of type UInt8");
+  }
+}
+
 void verify_dimensions(int64_t w, int64_t h, int64_t c) {
   if (h <= 0 || w <= 0) {
     throw std::runtime_error(
@@ -38,6 +44,7 @@ resize(const std::shared_ptr<const Array>& image, int64_t dw, int64_t dh) {
   int64_t h = height(image);
   int64_t c = channels(image);
   verify_dimensions(dw, dh, c);
+  verify_type(image);
   auto result = std::make_shared<Array>(UInt8, dh, dw, c);
   if (!stbir_resize_uint8_linear(
           static_cast<unsigned char*>(image->data()),
@@ -83,6 +90,7 @@ std::shared_ptr<Array> affine(
   const float wh = w / 2.0;
   const float hh = h / 2.0;
   verify_dimensions(tw, th, c);
+  verify_type(image);
   auto result = std::make_shared<Array>(UInt8, th, tw, c);
   auto src = (unsigned char*)image->data();
   auto dst = (unsigned char*)result->data();
@@ -117,6 +125,7 @@ std::shared_ptr<Array> hflip(const std::shared_ptr<const Array>& image) {
   int64_t h = height(image);
   int64_t c = channels(image);
   verify_dimensions(w, h, c);
+  verify_type(image);
   auto result = std::make_shared<Array>(UInt8, h, w, c);
   auto src = (unsigned char*)image->data();
   auto dst = (unsigned char*)result->data();
@@ -142,6 +151,7 @@ std::shared_ptr<Array> channel_reduction(
         "image::channelReduction: expected a 3 channel uint8 array");
   }
   verify_dimensions(w, h, 1);
+  verify_type(image);
   auto result = std::make_shared<Array>(UInt8, h, w, 1);
   auto src = (unsigned char*)image->data();
   auto dst = (unsigned char*)result->data();
