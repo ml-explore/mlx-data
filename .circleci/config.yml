@@ -97,7 +97,7 @@ jobs:
             pip install numpy
             pip install twine
       - run:
-          name: Build pacakge
+          name: Build package
           command: |
             eval "$(conda shell.bash hook)"
             conda activate runner-env
