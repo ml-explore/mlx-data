@@ -1,0 +1,12 @@
+diff -Naur bzip2/Makefile bzip2-patch/Makefile
+--- bzip2/Makefile	2024-01-05 14:13:04.891566438 -0800
++++ bzip2-patch/Makefile	2024-01-05 13:57:31.611942881 -0800
+@@ -21,7 +21,7 @@
+ LDFLAGS=-fPIE
+ 
+ BIGFILES=-D_FILE_OFFSET_BITS=64
+-CFLAGS=-Wall -Winline -O2 -g $(BIGFILES)
++CFLAGS=-Wall -Winline -O2 -fPIC -g $(BIGFILES)
+ 
+ # Where you want it installed when you do 'make install'
+ PREFIX=/usr/local

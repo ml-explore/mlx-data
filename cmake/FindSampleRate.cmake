@@ -3,11 +3,12 @@
 # Provides the cmake config target - SampleRate::samplerate
 #
 # Inputs: SampleRate_INC_DIR: include directory for samplerate headers
-# SampleRate_LIB_DIR: directory containing samplerate libraries SampleRate_ROOT_DIR:
-# directory containing samplerate installation
+# SampleRate_LIB_DIR: directory containing samplerate libraries
+# SampleRate_ROOT_DIR: directory containing samplerate installation
 #
-# Defines: SampleRate_FOUND - system has libsamplerate SampleRate_INCLUDE_DIRS - the
-# libsamplerate include directory SampleRate_LIBRARIES - Link these to use libsamplerate
+# Defines: SampleRate_FOUND - system has libsamplerate SampleRate_INCLUDE_DIRS -
+# the libsamplerate include directory SampleRate_LIBRARIES - Link these to use
+# libsamplerate
 #
 
 find_package(SampleRate CONFIG)
@@ -29,8 +30,8 @@ if(NOT TARGET SampleRate::samplerate)
 
   mark_as_advanced(SampleRate_INCLUDE_DIRS SampleRate_LIBRARIES)
   include(FindPackageHandleStandardArgs)
-  find_package_handle_standard_args(SampleRate DEFAULT_MSG SampleRate_INCLUDE_DIRS
-                                    SampleRate_LIBRARIES)
+  find_package_handle_standard_args(
+    SampleRate DEFAULT_MSG SampleRate_INCLUDE_DIRS SampleRate_LIBRARIES)
 
   if(SampleRate_FOUND)
     add_library(SampleRate::samplerate UNKNOWN IMPORTED)
