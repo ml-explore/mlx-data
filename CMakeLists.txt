@@ -6,7 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 # ----------------------------- Configuration -----------------------------
-option(MLX_ENABLE_AWS "Enable AWS detection" OFF)
 option(MLX_BUILD_PYTHON_BINDINGS "Build python bindings for mlx data" OFF)
 
 if(NOT MLX_DATA_VERSION)
@@ -89,9 +88,17 @@ find_package(SndFile)
 find_package(SampleRate)
 find_package(Threads REQUIRED)
 find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale)
-
-if(MLX_ENABLE_AWS)
-  find_package(AWSSDK COMPONENTS s3)
+find_package(
+  AWSSDK
+  COMPONENTS s3
+  QUIET)
+if(AWSSDK_FOUND)
+  message(
+    STATUS
+      "AWS SDK found (includes: ${AWSSDK_INCLUDE_DIRS} libs: ${AWSSDK_LIBRARIES})"
+  )
+else()
+  message(STATUS "Could NOT find AWS SDK")
 endif()
 
 find_package(JPEGTURBO)
