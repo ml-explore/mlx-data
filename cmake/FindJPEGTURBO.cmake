@@ -71,27 +71,28 @@ unset(jpeg_names)
 unset(jpeg_names_debug)
 
 if(JPEGTURBO_INCLUDE_DIR)
-  file(GLOB _JPEGTURBO_CONFIG_HEADERS_FEDORA "${JPEGTURBO_INCLUDE_DIR}/jconfig*.h")
-  file(GLOB _JPEGTURBO_CONFIG_HEADERS_DEBIAN "${JPEGTURBO_INCLUDE_DIR}/*/jconfig.h")
+  file(GLOB _JPEGTURBO_CONFIG_HEADERS_FEDORA
+       "${JPEGTURBO_INCLUDE_DIR}/jconfig*.h")
+  file(GLOB _JPEGTURBO_CONFIG_HEADERS_DEBIAN
+       "${JPEGTURBO_INCLUDE_DIR}/*/jconfig.h")
   set(_JPEGTURBO_CONFIG_HEADERS
-    "${JPEGTURBO_INCLUDE_DIR}/jpeglib.h"
-    ${_JPEGTURBO_CONFIG_HEADERS_FEDORA}
-    ${_JPEGTURBO_CONFIG_HEADERS_DEBIAN})
-  foreach (_JPEGTURBO_CONFIG_HEADER IN LISTS _JPEGTURBO_CONFIG_HEADERS)
-    if (NOT EXISTS "${_JPEGTURBO_CONFIG_HEADER}")
-      continue ()
-    endif ()
-    file(STRINGS "${_JPEGTURBO_CONFIG_HEADER}"
-      jpeg_lib_version REGEX "^#define[\t ]+JPEGTURBO_LIB_VERSION[\t ]+.*")
+      "${JPEGTURBO_INCLUDE_DIR}/jpeglib.h" ${_JPEGTURBO_CONFIG_HEADERS_FEDORA}
+      ${_JPEGTURBO_CONFIG_HEADERS_DEBIAN})
+  foreach(_JPEGTURBO_CONFIG_HEADER IN LISTS _JPEGTURBO_CONFIG_HEADERS)
+    if(NOT EXISTS "${_JPEGTURBO_CONFIG_HEADER}")
+      continue()
+    endif()
+    file(STRINGS "${_JPEGTURBO_CONFIG_HEADER}" jpeg_lib_version
+         REGEX "^#define[\t ]+JPEGTURBO_LIB_VERSION[\t ]+.*")
 
-    if (NOT jpeg_lib_version)
-      continue ()
-    endif ()
+    if(NOT jpeg_lib_version)
+      continue()
+    endif()
 
     string(REGEX REPLACE "^#define[\t ]+JPEGTURBO_LIB_VERSION[\t ]+([0-9]+).*"
-      "\\1" JPEGTURBO_VERSION "${jpeg_lib_version}")
-    break ()
-  endforeach ()
+                         "\\1" JPEGTURBO_VERSION "${jpeg_lib_version}")
+    break()
+  endforeach()
   unset(jpeg_lib_version)
   unset(_JPEGTURBO_CONFIG_HEADER)
   unset(_JPEGTURBO_CONFIG_HEADERS)
@@ -100,7 +101,8 @@ if(JPEGTURBO_INCLUDE_DIR)
 endif()
 
 include(FindPackageHandleStandardArgs)
-find_package_handle_standard_args(JPEGTURBO
+find_package_handle_standard_args(
+  JPEGTURBO
   REQUIRED_VARS JPEGTURBO_LIBRARY JPEGTURBO_INCLUDE_DIR
   VERSION_VAR JPEGTURBO_VERSION)
 
@@ -111,27 +113,35 @@ if(JPEGTURBO_FOUND)
   if(NOT TARGET JPEGTURBO::JPEGTURBO)
     add_library(JPEGTURBO::JPEGTURBO UNKNOWN IMPORTED)
     if(JPEGTURBO_INCLUDE_DIRS)
-      set_target_properties(JPEGTURBO::JPEGTURBO PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${JPEGTURBO_INCLUDE_DIRS}")
+      set_target_properties(
+        JPEGTURBO::JPEGTURBO PROPERTIES INTERFACE_INCLUDE_DIRECTORIES
+                                        "${JPEGTURBO_INCLUDE_DIRS}")
     endif()
     if(EXISTS "${JPEGTURBO_LIBRARY}")
-      set_target_properties(JPEGTURBO::JPEGTURBO PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES "C"
-        IMPORTED_LOCATION "${JPEGTURBO_LIBRARY}")
+      set_target_properties(
+        JPEGTURBO::JPEGTURBO
+        PROPERTIES IMPORTED_LINK_INTERFACE_LANGUAGES "C" IMPORTED_LOCATION
+                                                         "${JPEGTURBO_LIBRARY}")
     endif()
     if(EXISTS "${JPEGTURBO_LIBRARY_RELEASE}")
-      set_property(TARGET JPEGTURBO::JPEGTURBO APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS RELEASE)
-      set_target_properties(JPEGTURBO::JPEGTURBO PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
-        IMPORTED_LOCATION_RELEASE "${JPEGTURBO_LIBRARY_RELEASE}")
+      set_property(
+        TARGET JPEGTURBO::JPEGTURBO
+        APPEND
+        PROPERTY IMPORTED_CONFIGURATIONS RELEASE)
+      set_target_properties(
+        JPEGTURBO::JPEGTURBO
+        PROPERTIES IMPORTED_LINK_INTERFACE_LANGUAGES_RELEASE "C"
+                   IMPORTED_LOCATION_RELEASE "${JPEGTURBO_LIBRARY_RELEASE}")
     endif()
     if(EXISTS "${JPEGTURBO_LIBRARY_DEBUG}")
-      set_property(TARGET JPEGTURBO::JPEGTURBO APPEND PROPERTY
-        IMPORTED_CONFIGURATIONS DEBUG)
-      set_target_properties(JPEGTURBO::JPEGTURBO PROPERTIES
-        IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
-        IMPORTED_LOCATION_DEBUG "${JPEGTURBO_LIBRARY_DEBUG}")
+      set_property(
+        TARGET JPEGTURBO::JPEGTURBO
+        APPEND
+        PROPERTY IMPORTED_CONFIGURATIONS DEBUG)
+      set_target_properties(
+        JPEGTURBO::JPEGTURBO
+        PROPERTIES IMPORTED_LINK_INTERFACE_LANGUAGES_DEBUG "C"
+                   IMPORTED_LOCATION_DEBUG "${JPEGTURBO_LIBRARY_DEBUG}")
     endif()
   endif()
 endif()
