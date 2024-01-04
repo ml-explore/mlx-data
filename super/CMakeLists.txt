@@ -1,0 +1,249 @@
+cmake_minimum_required(VERSION 3.6)
+
+project(mlx-data-deps)
+
+include(ExternalProject)
+
+# note: do not pass spaced-separated string to CMAKE_ARGS, as it will be
+# interpreted as a single argument. Either no quote "string" or ; separated
+
+# if (CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)") set (X86
+# TRUE) else () set (X86 FALSE) endif ()
+
+ExternalProject_Add(
+  pkg-config
+  URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
+      http://fresh-center.net/linux/misc/pkg-config-0.29.2.tar.gz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+                    --disable-shared --with-internal-glib
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  libiconv
+  URL https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+                    --disable-shared
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  zlib
+  URL https://www.zlib.net/zlib-1.3.tar.gz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  bzip2
+  URL https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND make install PREFIX=${CMAKE_BINARY_DIR}/deps
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+# lzma support
+ExternalProject_Add(
+  xz
+  URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+                    --disable-shared
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+# needed on x86 by few projects
+ExternalProject_Add(
+  nasm
+  URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  libjpeg-turbo
+  DEPENDS nasm
+  URL https://downloads.sourceforge.net/project/libjpeg-turbo/3.0.0/libjpeg-turbo-3.0.0.tar.gz
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  libsamplerate
+  URL https://github.com/libsndfile/libsamplerate/archive/refs/tags/0.2.2.tar.gz
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+             -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+# note: cmake version fails to install
+ExternalProject_Add(
+  libogg
+  URL https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.tar.gz
+  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+                    --disable-shared
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  flac
+  DEPENDS libogg pkg-config
+  GIT_REPOSITORY https://github.com/xiph/flac.git
+  GIT_TAG 1.4.3
+  GIT_SHALLOW 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DINSTALL_MANPAGES=OFF
+             -DBUILD_TESTING=OFF
+             -DBUILD_PROGRAMS=OFF
+             -DBUILD_EXAMPLES=OFF
+             -DBUILD_DOCS=OFF
+             -DBUILD_SHARED_LIBS=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  libvorbis
+  DEPENDS libogg pkg-config
+  GIT_REPOSITORY https://github.com/xiph/vorbis.git
+  GIT_TAG v1.3.7
+  GIT_SHALLOW 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  opus
+  GIT_REPOSITORY https://github.com/xiph/opus.git
+  GIT_TAG v1.4
+  GIT_SHALLOW 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
+             -DOPUS_BUILD_TESTING=OFF -DOPUS_BUILD_PROGRAMS=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  lame
+  URL https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
+  CONFIGURE_COMMAND
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug
+    --disable-frontend --disable-shared --disable-gtktest
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  mpg123
+  URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.3/mpg123-1.32.3.tar.bz2
+  CONFIGURE_COMMAND
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --with-cpu=aarch64
+    --disable-shared --with-default-audio=coreaudio --disable-components
+    --enable-libmpg123
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  libsndfile
+  DEPENDS flac
+          lame
+          libogg
+          libvorbis
+          mpg123
+          opus
+          pkg-config
+  GIT_REPOSITORY https://github.com/libsndfile/libsndfile.git
+  GIT_TAG 1.2.2
+  GIT_SHALLOW 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  aws-s3
+  GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
+  GIT_TAG 1.11.231
+  GIT_SHALLOW 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_ONLY=s3
+             -DBUILD_SHARED_LIBS=OFF
+             -DBUILD_TESTING=OFF
+             -DAUTORUN_UNIT_TESTS=OFF
+             -DENABLE_TESTING=OFF
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  xvidcore
+  DEPENDS nasm
+  URL https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.bz2
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/xvidcore-1.3.7.patch
+  CONFIGURE_COMMAND cd build/generic && ./configure
+                    --prefix=${CMAKE_BINARY_DIR}/deps
+  BUILD_COMMAND cd build/generic && make
+  INSTALL_COMMAND cd build/generic && make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+ExternalProject_Add(
+  ffmpeg
+  DEPENDS nasm
+          zlib
+          lame
+          libogg
+          opus
+          libvorbis
+          xvidcore
+          pkg-config
+  URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
+  CONFIGURE_COMMAND
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    --enable-libvorbis --enable-libopus
+    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    --pkgconfigdir=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig
+    --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib --extra-libs=-lvorbis\ -logg
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+
+# CMake does not like when source dir depends on targets which are in a
+# subdirectory of the top source dir. We thus make a symlink in the build dir to
+# avoid any error message (CMake also create the directory mlx-data beforehand,
+# expecting it to be populated -- we remove this directory first in that
+# respect)
+ExternalProject_Add(
+  mlx-data
+  DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E rm -r mlx-data && ${CMAKE_COMMAND} -E
+                   create_symlink ${CMAKE_SOURCE_DIR}/.. mlx-data
+  UPDATE_COMMAND ""
+  DEPENDS zlib bzip2 xz libsndfile libsamplerate libjpeg-turbo
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps;${CMAKE_PREFIX_PATH}
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
+             -DMLX_BUILD_PYTHON_BINDINGS=${MLX_BUILD_PYTHON_BINDINGS}
+             -DMLX_DATA_VERSION=${MLX_DATA_VERSION}
+             -DPython_EXECUTABLE=${Python_EXECUTABLE}
+             -DPython_INCLUDE_DIRS=${Python_INCLUDE_DIRS}
+             -DPython_LIBRARIES=${Python_LIBRARIES})

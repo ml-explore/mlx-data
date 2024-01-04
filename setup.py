@@ -37,6 +37,8 @@ class CMakeExtension(Extension):
     def __init__(self, name: str, sourcedir: str = "") -> None:
         super().__init__(name, sources=[])
         self.sourcedir = os.fspath(Path(sourcedir).resolve())
+        if "SUPER_BUILD" in os.environ:
+            self.sourcedir = os.path.join(self.sourcedir, "super")
 
 
 class CMakeBuild(build_ext):
@@ -85,11 +87,18 @@ class CMakeBuild(build_ext):
         subprocess.run(
             ["cmake", ext.sourcedir] + cmake_args, cwd=self.build_temp, check=True
         )
-        subprocess.run(
-            ["cmake", "--build", ".", "--target", "install"],
-            cwd=self.build_temp,
-            check=True,
-        )
+        if "SUPER_BUILD" in os.environ:
+            subprocess.run(
+                ["cmake", "--build", "."],
+                cwd=self.build_temp,
+                check=True,
+            )
+        else:
+            subprocess.run(
+                ["cmake", "--build", ".", "--target", "install"],
+                cwd=self.build_temp,
+                check=True,
+            )
 
 
 if __name__ == "__main__":
