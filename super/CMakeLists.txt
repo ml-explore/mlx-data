@@ -7,6 +7,10 @@ include(ExternalProject)
 # note: do not pass spaced-separated string to CMAKE_ARGS, as it will be
 # interpreted as a single argument. Either no quote "string" or ; separated
 
+# note: we use DOWNLOAD_EXTRACT_TIMESTAMP 1 as recent versions of cmake (>=
+# 3.24) changed the previous behavior. This causes problems in some packages,
+# where configure feels it is not up-to-date and try to run automake.
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
   set(X86 TRUE)
 else()
@@ -22,7 +26,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libiconv
@@ -32,7 +36,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   zlib
@@ -41,7 +45,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   bzip2
@@ -50,7 +54,7 @@ ExternalProject_Add(
   BUILD_COMMAND ""
   INSTALL_COMMAND make install PREFIX=${CMAKE_BINARY_DIR}/deps
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # lzma support
 ExternalProject_Add(
@@ -61,7 +65,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # needed on x86 by few projects
 ExternalProject_Add(
@@ -71,7 +75,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libjpeg-turbo
@@ -81,7 +85,7 @@ ExternalProject_Add(
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libsamplerate
@@ -90,7 +94,7 @@ ExternalProject_Add(
              -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # note: cmake version fails to install
 ExternalProject_Add(
@@ -101,7 +105,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   flac
@@ -118,7 +122,7 @@ ExternalProject_Add(
              -DBUILD_SHARED_LIBS=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libvorbis
@@ -130,7 +134,7 @@ ExternalProject_Add(
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   opus
@@ -141,7 +145,7 @@ ExternalProject_Add(
              -DOPUS_BUILD_TESTING=OFF -DOPUS_BUILD_PROGRAMS=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   lame
@@ -152,7 +156,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 set(MPG123_COMPILE_OPTIONS "")
 if(APPLE)
@@ -174,7 +178,7 @@ ExternalProject_Add(
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libsndfile
@@ -191,7 +195,7 @@ ExternalProject_Add(
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   openssl
@@ -227,7 +231,7 @@ ExternalProject_Add(
              -DENABLE_TESTING=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   xvidcore
@@ -239,7 +243,7 @@ ExternalProject_Add(
   BUILD_COMMAND cd build/generic && make
   INSTALL_COMMAND cd build/generic && make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   ffmpeg
@@ -262,7 +266,7 @@ ExternalProject_Add(
   BUILD_COMMAND PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 0)
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # CMake does not like when source dir depends on targets which are in a
 # subdirectory of the top source dir. We thus make a symlink in the build dir to
