@@ -7,8 +7,11 @@ include(ExternalProject)
 # note: do not pass spaced-separated string to CMAKE_ARGS, as it will be
 # interpreted as a single argument. Either no quote "string" or ; separated
 
-# if (CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)") set (X86
-# TRUE) else () set (X86 FALSE) endif ()
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+  set(X86 TRUE)
+else()
+  set(X86 FALSE)
+endif()
 
 ExternalProject_Add(
   pkg-config
@@ -76,6 +79,7 @@ ExternalProject_Add(
   URL https://downloads.sourceforge.net/project/libjpeg-turbo/3.0.0/libjpeg-turbo-3.0.0.tar.gz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 0)
 
@@ -150,13 +154,23 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 0)
 
+set(MPG123_COMPILE_OPTIONS "")
+if(APPLE)
+  set(MPG123_COMPILE_OPTIONS "--with-default-audio=coreaudio"
+                             ${MPG123_COMPILE_OPTIONS})
+endif()
+if(X86)
+  set(MPG123_COMPILE_OPTIONS "--with-cpu=x86-64" ${MPG123_COMPILE_OPTIONS})
+else()
+  set(MPG123_COMPILE_OPTIONS "--with-cpu=aarch64" ${MPG123_COMPILE_OPTIONS})
+endif()
+
 ExternalProject_Add(
   mpg123
   URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.3/mpg123-1.32.3.tar.bz2
   CONFIGURE_COMMAND
-    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --with-cpu=aarch64
-    --disable-shared --with-default-audio=coreaudio --disable-components
-    --enable-libmpg123
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    --disable-components --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -180,10 +194,31 @@ ExternalProject_Add(
   DOWNLOAD_EXTRACT_TIMESTAMP 0)
 
 ExternalProject_Add(
+  openssl
+  URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
+  CONFIGURE_COMMAND ./config no-shared no-idea no-mdc2 no-rc5
+                    --prefix=${CMAKE_BINARY_DIR}/deps
+  BUILD_COMMAND make depend && make
+  INSTALL_COMMAND make install_sw
+  BUILD_IN_SOURCE 1)
+
+ExternalProject_Add(
+  curl
+  URL https://curl.se/download/curl-8.5.0.tar.bz2
+  CONFIGURE_COMMAND
+    PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH}
+    PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig ./configure
+    --with-openssl --disable-shared
+  BUILD_COMMAND make
+  INSTALL_COMMAND make install
+  BUILD_IN_SOURCE 1)
+
+ExternalProject_Add(
   aws-s3
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
   GIT_TAG 1.11.231
   GIT_SHALLOW 1
+  DEPENDS openssl curl
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
              -DBUILD_SHARED_LIBS=OFF
@@ -218,12 +253,13 @@ ExternalProject_Add(
           pkg-config
   URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
   CONFIGURE_COMMAND
-    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-    --enable-libvorbis --enable-libopus
-    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-libvorbis
+    --enable-libopus --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --pkgconfigdir=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig
-    --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib --extra-libs=-lvorbis\ -logg
-  BUILD_COMMAND make
+    --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib
+    --extra-libs=-lvorbis\ -logg\ -lm
+  BUILD_COMMAND PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 0)
@@ -235,10 +271,18 @@ ExternalProject_Add(
 # respect)
 ExternalProject_Add(
   mlx-data
-  DOWNLOAD_COMMAND ${CMAKE_COMMAND} -E rm -r mlx-data && ${CMAKE_COMMAND} -E
-                   create_symlink ${CMAKE_SOURCE_DIR}/.. mlx-data
+  DOWNLOAD_COMMAND
+    ${CMAKE_COMMAND} -E remove_directory mlx-data && ${CMAKE_COMMAND} -E
+    create_symlink ${CMAKE_SOURCE_DIR}/.. mlx-data
   UPDATE_COMMAND ""
-  DEPENDS zlib bzip2 xz libsndfile libsamplerate libjpeg-turbo
+  DEPENDS zlib
+          bzip2
+          xz
+          libsndfile
+          libsamplerate
+          libjpeg-turbo
+          ffmpeg
+          aws-s3
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps;${CMAKE_PREFIX_PATH}
              -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
