@@ -264,8 +264,9 @@ ExternalProject_Add(
   URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
   CONFIGURE_COMMAND
     PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-libvorbis
-    --enable-libopus --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
+    --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
+    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --pkgconfigdir=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig
     --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib
     --extra-libs=-lvorbis\ -logg\ -lm
