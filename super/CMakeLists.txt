@@ -47,9 +47,11 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# patch bzip2 for -fPIC compilation
 ExternalProject_Add(
   bzip2
   URL https://sourceware.org/pub/bzip2/bzip2-1.0.8.tar.gz
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/bzip2-1.0.8.patch
   CONFIGURE_COMMAND ""
   BUILD_COMMAND ""
   INSTALL_COMMAND make install PREFIX=${CMAKE_BINARY_DIR}/deps
