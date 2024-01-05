@@ -75,15 +75,28 @@ if(NOT bxzstr_POPULATED)
 endif()
 target_include_directories(bxzstr INTERFACE ${bxzstr_SOURCE_DIR})
 
+# pybind11
+if(MLX_BUILD_PYTHON_BINDINGS)
+  # avoid warning regarding FindPythonInterp and FindPythonLibs modules which
+  # are deprecated from CMake 3.27
+  set(pybind11_patch git apply
+                     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/pybind11-v2.11.1.patch)
+  FetchContent_Declare(
+    pybind11
+    GIT_REPOSITORY https://github.com/pybind/pybind11
+    GIT_TAG v2.11.1
+    # patch is always applied, so we silently fail if already patched
+    PATCH_COMMAND ${pybind11_patch} || true)
+
+  FetchContent_GetProperties(pybind11)
+  if(NOT pybind11_POPULATED)
+    FetchContent_Populate(pybind11)
+    add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
+  endif()
+endif()
+
 # ----------------------------- lib -----------------------------
 
-if(MLX_BUILD_PYTHON_BINDINGS)
-  find_package(
-    Python
-    COMPONENTS Interpreter Development
-    REQUIRED)
-  find_package(pybind11 CONFIG REQUIRED)
-endif()
 find_package(SndFile)
 find_package(SampleRate)
 find_package(Threads REQUIRED)

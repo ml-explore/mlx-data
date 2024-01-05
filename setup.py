@@ -7,7 +7,6 @@ from pathlib import Path
 import platform
 import sys
 import sysconfig
-import pybind11
 
 from setuptools import Extension, find_namespace_packages, setup
 from setuptools.command.build_ext import build_ext
@@ -73,11 +72,7 @@ class CMakeBuild(build_ext):
             "-DMLX_BUILD_PYTHON_BINDINGS=ON",
             "-DMLX_DATA_VERSION={}".format(self.distribution.get_version()),
             "-DCMAKE_INSTALL_PREFIX={}".format(extdir),
-            "-DPython_EXECUTABLE={}".format(sys.executable),
-            "-DPython_LIBRARIES={}".format(cmake_python_library),
-            "-DPython_INCLUDE_DIRS={}".format(cmake_python_include_dir),
             "-DCMAKE_BUILD_TYPE={}".format("Debug" if self.debug else "Release"),
-            "-DCMAKE_PREFIX_PATH={}".format(pybind11.get_cmake_dir()),
         ]
         if "CMAKE_ARGS" in os.environ:
             cmake_args += [item for item in os.environ["CMAKE_ARGS"].split(" ") if item]

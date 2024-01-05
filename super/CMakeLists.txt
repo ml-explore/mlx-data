@@ -288,10 +288,7 @@ ExternalProject_Add(
           ffmpeg
           aws-s3
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
-             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps;${CMAKE_PREFIX_PATH}
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
              -DMLX_BUILD_PYTHON_BINDINGS=${MLX_BUILD_PYTHON_BINDINGS}
-             -DMLX_DATA_VERSION=${MLX_DATA_VERSION}
-             -DPython_EXECUTABLE=${Python_EXECUTABLE}
-             -DPython_INCLUDE_DIRS=${Python_INCLUDE_DIRS}
-             -DPython_LIBRARIES=${Python_LIBRARIES})
+             -DMLX_DATA_VERSION=${MLX_DATA_VERSION})

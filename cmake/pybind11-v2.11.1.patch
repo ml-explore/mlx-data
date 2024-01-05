@@ -1,0 +1,15 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 87ec1034..eaef1a4c 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -16,6 +16,10 @@ else()
+   cmake_policy(VERSION 3.26)
+ endif()
+ 
++if(POLICY CMP0148)
++  cmake_policy(SET CMP0148 NEW)
++endif()
++
+ # Avoid infinite recursion if tests include this as a subdirectory
+ if(DEFINED PYBIND11_MASTER_PROJECT)
+   return()
