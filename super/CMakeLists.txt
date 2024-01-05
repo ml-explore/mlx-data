@@ -200,7 +200,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   openssl
   URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
-  CONFIGURE_COMMAND ./config no-shared no-idea no-mdc2 no-rc5
+  CONFIGURE_COMMAND ./config no-shared no-idea no-mdc2 no-rc5 no-tests
                     --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make depend && make
   INSTALL_COMMAND make install_sw
@@ -209,10 +209,11 @@ ExternalProject_Add(
 ExternalProject_Add(
   curl
   URL https://curl.se/download/curl-8.5.0.tar.bz2
+  DEPENDS openssl
   CONFIGURE_COMMAND
     PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH}
     PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig ./configure
-    --with-openssl --disable-shared
+    --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1)
