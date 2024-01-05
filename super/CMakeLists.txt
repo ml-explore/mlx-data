@@ -204,7 +204,8 @@ ExternalProject_Add(
                     --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make depend && make
   INSTALL_COMMAND make install_sw
-  BUILD_IN_SOURCE 1)
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   curl
@@ -216,7 +217,8 @@ ExternalProject_Add(
     --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1)
+  BUILD_IN_SOURCE 1
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   aws-s3
