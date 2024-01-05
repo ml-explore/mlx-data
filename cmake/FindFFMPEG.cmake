@@ -162,6 +162,21 @@ endif()
 
 set(FFMPEG_INCLUDE_DIRS)
 set(FFMPEG_LIBRARIES)
+if(APPLE)
+  find_library(VIDEO_TOOLBOX VideoToolbox REQUIRED)
+  find_library(CORE_VIDEO CoreVideo REQUIRED)
+  find_library(CORE_MEDIA CoreMedia REQUIRED)
+  find_library(CORE_FOUNDATION CoreFoundation REQUIRED)
+  find_library(CORE_SERVICES CoreServices REQUIRED)
+  list(
+    APPEND
+    FFMPEG_LIBRARIES
+    ${VIDEO_TOOLBOX}
+    ${CORE_FOUNDATION}
+    ${CORE_MEDIA}
+    ${CORE_VIDEO}
+    ${CORE_SERVICES})
+endif()
 set(_ffmpeg_required_vars)
 foreach(_ffmpeg_component IN LISTS FFMPEG_FIND_COMPONENTS)
   if(TARGET "FFMPEG::${_ffmpeg_component}")
