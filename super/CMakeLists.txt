@@ -81,9 +81,11 @@ ExternalProject_Add(
   libjpeg-turbo
   DEPENDS nasm
   URL https://downloads.sourceforge.net/project/libjpeg-turbo/3.0.0/libjpeg-turbo-3.0.0.tar.gz
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DENABLE_SHARED=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DENABLE_SHARED=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
@@ -120,6 +122,7 @@ ExternalProject_Add(
              -DBUILD_EXAMPLES=OFF
              -DBUILD_DOCS=OFF
              -DBUILD_SHARED_LIBS=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
