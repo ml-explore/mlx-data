@@ -236,11 +236,13 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# patch aws-sdk-cpp to add necessary static libs at link time
 ExternalProject_Add(
   aws-s3
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
   GIT_TAG 1.11.231
   GIT_SHALLOW 1
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.231.patch
   DEPENDS openssl curl pkg-config
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
