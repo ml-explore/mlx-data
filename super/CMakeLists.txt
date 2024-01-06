@@ -268,7 +268,7 @@ ExternalProject_Add(
     PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && ./configure
     --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
     --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
-    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    --disable-iconv --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --pkgconfigdir=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig
     --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib
     --extra-libs=-lvorbis\ -logg\ -lm
@@ -300,4 +300,5 @@ ExternalProject_Add(
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
              -DMLX_BUILD_PYTHON_BINDINGS=${MLX_BUILD_PYTHON_BINDINGS}
-             -DMLX_DATA_VERSION=${MLX_DATA_VERSION})
+             -DMLX_DATA_VERSION=${MLX_DATA_VERSION}
+             -DCMAKE_MODULE_LINKER_FLAGS=-Wl,-Bsymbolic)
