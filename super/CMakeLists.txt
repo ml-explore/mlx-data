@@ -63,6 +63,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   xz
   URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
+      https://tukaani.org/xz/xz-5.4.5.tar.gz
   CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
                     --disable-shared
   BUILD_COMMAND make
