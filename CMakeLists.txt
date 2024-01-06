@@ -100,7 +100,8 @@ endif()
 find_package(SndFile)
 find_package(SampleRate)
 find_package(Threads REQUIRED)
-find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale swresample)
+find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale
+                               swresample)
 find_package(
   AWSSDK
   COMPONENTS s3
@@ -257,11 +258,8 @@ if(AWSSDK_FOUND)
 endif()
 
 if(FFMPEG_avformat_FOUND)
-  target_include_directories(
-    mlxdata
-    PRIVATE ${FFMPEG_INCLUDE_DIRS})
-  target_link_libraries(
-    mlxdata PRIVATE ${FFMPEG_LIBRARIES})
+  target_include_directories(mlxdata PRIVATE ${FFMPEG_INCLUDE_DIRS})
+  target_link_libraries(mlxdata PRIVATE ${FFMPEG_LIBRARIES})
   target_compile_definitions(mlxdata PUBLIC MLX_HAS_FFMPEG)
 endif()
 
