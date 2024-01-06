@@ -292,6 +292,23 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# check -Bsymbolic works (this is for ffmpeg static link)
+include(CheckCSourceCompiles)
+list(APPEND CMAKE_REQUIRED_LIBRARIES "-Wl,-Bsymbolic")
+check_c_source_compiles(
+  [=[
+ 	int main ()
+ 	{
+ 	  return 0;
+ 	}
+  ]=]
+  HAS_BSYMBOLIC)
+list(REMOVE_ITEM CMAKE_REQUIRED_LIBRARIES "-Wl,-Bsymbolic")
+set(MLX_DATA_MODULE_LINKER_FLAGS)
+if(HAS_BSYMBOLIC)
+  set(MLX_DATA_MODULE_LINKER_FLAGS -Wl,-Bsymbolic)
+endif()
+
 # CMake does not like when source dir depends on targets which are in a
 # subdirectory of the top source dir. We thus make a symlink in the build dir to
 # avoid any error message (CMake also create the directory mlx-data beforehand,
@@ -316,4 +333,4 @@ ExternalProject_Add(
              -DCMAKE_INSTALL_PREFIX=${CMAKE_INSTALL_PREFIX}
              -DMLX_BUILD_PYTHON_BINDINGS=${MLX_BUILD_PYTHON_BINDINGS}
              -DMLX_DATA_VERSION=${MLX_DATA_VERSION}
-             -DCMAKE_MODULE_LINKER_FLAGS=-Wl,-Bsymbolic)
+             -DCMAKE_MODULE_LINKER_FLAGS=${MLX_DATA_MODULE_LINKER_FLAGS})
