@@ -31,7 +31,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   libiconv
   URL https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
                     --disable-shared
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -41,7 +41,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   zlib
   URL https://www.zlib.net/zlib-1.3.tar.gz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+                    --static
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -62,7 +63,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   xz
   URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
                     --disable-shared
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -86,16 +87,19 @@ ExternalProject_Add(
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DENABLE_SHARED=OFF
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
-             -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   libsamplerate
   URL https://github.com/libsndfile/libsamplerate/archive/refs/tags/0.2.2.tar.gz
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
-             -DLIBSAMPLERATE_EXAMPLES=OFF -DBUILD_TESTING=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_SHARED_LIBS=OFF
+             -DLIBSAMPLERATE_EXAMPLES=OFF
+             -DBUILD_TESTING=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -104,7 +108,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   libogg
   URL https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.tar.gz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
                     --disable-shared
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -135,8 +139,10 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/xiph/vorbis.git
   GIT_TAG v1.3.7
   GIT_SHALLOW 1
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_SHARED_LIBS=OFF
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -146,8 +152,11 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/xiph/opus.git
   GIT_TAG v1.4
   GIT_SHALLOW 1
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
-             -DOPUS_BUILD_TESTING=OFF -DOPUS_BUILD_PROGRAMS=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DOPUS_BUILD_SHARED_LIBRARY=OFF
+             -DOPUS_BUILD_TESTING=OFF
+             -DOPUS_BUILD_PROGRAMS=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -156,7 +165,7 @@ ExternalProject_Add(
   lame
   URL https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
   CONFIGURE_COMMAND
-    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug
     --disable-frontend --disable-shared --disable-gtktest
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -178,7 +187,7 @@ ExternalProject_Add(
   mpg123
   URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.3/mpg123-1.32.3.tar.bz2
   CONFIGURE_COMMAND
-    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
     --disable-components --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -198,6 +207,7 @@ ExternalProject_Add(
   GIT_TAG 1.2.2
   GIT_SHALLOW 1
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -205,8 +215,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   openssl
   URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
-  CONFIGURE_COMMAND ./config no-shared no-idea no-mdc2 no-rc5 no-tests
-                    --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND CFLAGS=-fPIC ./config no-shared no-idea no-mdc2 no-rc5
+                    no-tests --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make depend && make
   INSTALL_COMMAND make install_sw
   BUILD_IN_SOURCE 1
@@ -215,9 +225,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   curl
   URL https://curl.se/download/curl-8.5.0.tar.bz2
-  DEPENDS openssl
+  DEPENDS openssl pkg-config
   CONFIGURE_COMMAND
-    PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH}
+    PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} CFLAGS=-fPIC
     PKG_CONFIG_PATH=${CMAKE_BINARY_DIR}/deps/lib/pkgconfig ./configure
     --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
@@ -230,23 +240,25 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
   GIT_TAG 1.11.231
   GIT_SHALLOW 1
-  DEPENDS openssl curl
+  DEPENDS openssl curl pkg-config
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
              -DBUILD_SHARED_LIBS=OFF
              -DBUILD_TESTING=OFF
              -DAUTORUN_UNIT_TESTS=OFF
              -DENABLE_TESTING=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# patch xvidcore to disable shared lib
 ExternalProject_Add(
   xvidcore
   DEPENDS nasm
   URL https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.bz2
   PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/xvidcore-1.3.7.patch
-  CONFIGURE_COMMAND cd build/generic && ./configure
+  CONFIGURE_COMMAND cd build/generic && CFLAGS=-fPIC ./configure
                     --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND cd build/generic && make
   INSTALL_COMMAND cd build/generic && make install
