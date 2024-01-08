@@ -59,6 +59,7 @@ void init_mlx_data_buffer(py::module& m) {
                 Sample sample;
                 {
                   py::gil_scoped_release release;
+                  idx = (idx < 0) ? idx + b.size() : idx;
                   sample = b.get(idx);
                 }
                 py::dict pysample;

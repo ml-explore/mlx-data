@@ -16,7 +16,7 @@ FromVector::FromVector(std::vector<Sample>&& data) : buffer_(std::move(data)) {
 
 Sample FromVector::get(int64_t idx) const {
   if (idx < 0 || idx >= buffer_.size()) {
-    throw std::runtime_error("FromVector: index out of range");
+    throw std::out_of_range("FromVector: index out of range");
   }
   return buffer_[idx];
 }
