@@ -76,7 +76,7 @@ jobs:
     parameters:
       python_version:
         type: string
-        default: "3.9"
+        default: "3.8"
       macos_version:
         type: string
         default: "14"
@@ -96,6 +96,7 @@ jobs:
             pip install --upgrade pybind11[global]
             pip install numpy
             pip install twine
+            pip install delocate
       - run:
           name: Build package
           command: |
@@ -106,17 +107,18 @@ jobs:
               CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
               << parameters.extra_env >> \
               python setup.py bdist_wheel
-      - when:
-          condition:
-            not:
-              equal: [ "", << parameters.extra_env >> ]
-          steps:
-            - run:
-                name: Upload to PyPI
-                command: |
-                  eval "$(conda shell.bash hook)"
-                  conda activate runner-env
-                  twine upload dist/* --repository mlx-data
+            delocate-wheel dist/*
+      #- when:
+      #    condition:
+      #      not:
+      #        equal: [ "", << parameters.extra_env >> ]
+      #    steps:
+      #      - run:
+      #          name: Upload to PyPI
+      #          command: |
+      #            eval "$(conda shell.bash hook)"
+      #            conda activate runner-env
+      #            twine upload dist/* --repository mlx-data
       - store_artifacts:
           path: dist/
 
