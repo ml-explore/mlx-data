@@ -2,11 +2,11 @@
 
 import datetime
 import os
-import subprocess
-from pathlib import Path
 import platform
+import subprocess
 import sys
 import sysconfig
+from pathlib import Path
 
 from setuptools import Extension, find_namespace_packages, setup
 from setuptools.command.build_ext import build_ext
@@ -113,4 +113,5 @@ if __name__ == "__main__":
         ext_modules=[CMakeExtension("mlx.data._c")],
         cmdclass={"build_ext": CMakeBuild},
         zip_safe=False,
+        install_requires=["numpy"],
     )
