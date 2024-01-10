@@ -2,8 +2,8 @@
 
 #include <sstream>
 
-#include "mlx/data/Stream.h"
 #include "mlx/data/Buffer.h"
+#include "mlx/data/Stream.h"
 #include "mlx/data/buffer/FromStream.h"
 #include "mlx/data/stream/Batch.h"
 #include "mlx/data/stream/Buffered.h"
