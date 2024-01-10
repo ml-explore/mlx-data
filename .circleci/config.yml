@@ -1,10 +1,7 @@
 version: 2.1
 
 parameters:
-  nightly_build:
-    type: boolean
-    default: false
-  weekly_build:
+  dev_release:
     type: boolean
     default: false
 
@@ -14,6 +11,80 @@ executors:
       - image: quay.io/pypa/manylinux2014_x86_64
 
 jobs:
+  linux_build_on_commit:
+    docker:
+      - image: cimg/python:3.9
+    steps:
+      - checkout
+      - run:
+          name: Run style checks
+          command: |
+            pip install pre-commit
+            pre-commit run --all
+            if [ $? != 0 ] ; then echo 'Style checks failed, please install pre-commit and run pre-commit run --all and push the change'; exit 1; fi
+      - run:
+          name: Install dependencies
+          command: |
+            pip install --upgrade cmake
+            pip install --upgrade pybind11[global]
+            pip install numpy
+            pip install twine
+            sudo apt-get update
+            sudo apt install libsndfile1-dev libsamplerate0-dev ffmpeg libjpeg-turbo8-dev \
+              zlib1g-dev libbz2-dev liblzma-dev
+      - run:
+         name: Install AWS SDK
+         command: |
+           sudo apt install libcurl4-openssl-dev libssl-dev
+           git clone --depth 1 --recurse-submodules https://github.com/aws/aws-sdk-cpp.git
+           cd aws-sdk-cpp
+           mkdir build
+           cd build
+           cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY="s3" -DBUILD_SHARED_LIBS=OFF
+           make
+           sudo make install
+      - run:
+          name: Build package
+          command: |
+            CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
+              python setup.py bdist_wheel
+
+  mac_build_on_commit:
+    machine: true
+    resource_class: ml-explore/m-builder
+    parameters:
+      python_version:
+        type: string
+        default: "3.9"
+      macos_version:
+        type: string
+        default: "14"
+      extra_env:
+        type: string
+        default: ""
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            eval "$(conda shell.bash hook)"
+            rm -r $CONDA_PREFIX/envs/runner-env
+            conda create -y -n runner-env python=3.9
+            conda activate runner-env
+            pip install --upgrade cmake
+            pip install --upgrade pybind11[global]
+            pip install numpy
+            pip install twine
+      - run:
+          name: Build package
+          command: |
+            eval "$(conda shell.bash hook)"
+            conda activate runner-env
+            DEVELOPER_DIR=$(developer_dir_macos_14) \
+              CMAKE_BUILD_PARALLEL_LEVEL="" \
+              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
+              python setup.py bdist_wheel
+
   linux_build_wheels:
     parameters:
       python_version:
@@ -79,63 +150,20 @@ jobs:
 workflows:
   build_on_commit:
     jobs:
-      - linux_build_wheels
-      - mac_build_wheels
+      - linux_build_on_commit
+      - mac_build_on_commit
 
-#  build_release:
-#    when:
-#      and:
-#        - not: << pipeline.parameters.nightly_build >>
-#        - not: << pipeline.parameters.weekly_build >>
-#    jobs:
-#      - linux_build:
-#          filters:
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
-#          matrix:
-#            parameters:
-#              python_version: ["py38", "py39", "py310", "py311"]
-#              extra_env: ["PYPI_RELEASE=1"]
-#      - mac_build:
-#          filters:
-#            tags:
-#              only: /^v.*/
-#            branches:
-#              ignore: /.*/
-#          matrix:
-#            parameters:
-#              python_version: ["3.8", "3.9", "3.10", "3.11"]
-#              macos_version: ["13", "14"]
-#              extra_env: ["PYPI_RELEASE=1"]
-#
-#  nightly_build:
-#    when: << pipeline.parameters.nightly_build >>
-#    jobs:
-#      - linux_build:
-#          matrix:
-#            parameters:
-#              python_version: ["py38", "py39", "py310", "py311"]
-#              extra_env: [""]
-#      - mac_build:
-#          matrix:
-#            parameters:
-#              python_version: ["3.8", "3.9", "3.10", "3.11"]
-#              macos_version: ["13", "14"]
-#              extra_env: [""]
-#
-#  weekly_build:
-#    when: << pipeline.parameters.weekly_build >>
-#    jobs:
-#      - linux_build:
-#          matrix:
-#            parameters:
-#              python_version: ["py38", "py39", "py310", "py311"]
-#              extra_env: ["DEV_RELEASE=1"]
-#      - mac_build:
-#          matrix:
-#            parameters:
-#              python_version: ["3.8", "3.9", "3.10", "3.11"]
-#              macos_version: ["13", "14"]
-#              extra_env: ["DEV_RELEASE=1"]
+  build_dev_release:
+    when: << pipeline.parameters.dev_release >>
+    jobs:
+      - linux_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["38", "39", "310", "311", "312"]
+              extra_env: ["DEV_RELEASE=1"]
+      - mac_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["3.8", "3.9", "3.10", "3.11"]
+              macos_version: ["13", "14"]
+              extra_env: ["DEV_RELEASE=1"]
