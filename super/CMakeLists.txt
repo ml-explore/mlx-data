@@ -56,8 +56,9 @@ ExternalProject_Add(
   CONFIGURE_COMMAND
     CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
     --with-included-glib --with-included-libcroco --with-included-libunistring
-    --with-included-libxml --disable-java --disable-csharp --without-git
-    --without-cvs --without-xz ${GETTEXT_EXTRA_FLAGS}
+    --with-included-libxml --disable-java --disable-csharp --disable-curses
+    --disable-openmp --without-git --without-cvs --without-xz --without-bzip2
+    ${GETTEXT_EXTRA_FLAGS}
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -89,8 +90,10 @@ ExternalProject_Add(
   xz
   URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
       https://tukaani.org/xz/xz-5.4.5.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-                    --disable-shared
+  CONFIGURE_COMMAND
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo
+    --disable-scripts --disable-doc
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -224,7 +227,10 @@ ExternalProject_Add(
           opus
           pkg-config
   URL https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_PROGRAMS=OFF
+             -DBUILD_EXAMPLES=OFF
+             -DENABLE_CPACK=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
@@ -298,7 +304,12 @@ ExternalProject_Add(
   CONFIGURE_COMMAND
     ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
     --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
-    --disable-iconv --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    --disable-iconv --disable-programs --disable-doc --disable-htmlpages
+    --disable-manpages --disable-podpages --disable-txtpages --disable-alsa
+    --disable-sdl2 --disable-xlib --disable-cuda-llvm --disable-cuvid
+    --disable-d3d11va --disable-dxva2 --disable-nvdec --disable-nvenc
+    --disable-v4l2-m2m --disable-vdpau
+    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib\ -L${CMAKE_BINARY_DIR}/deps/lib64
     --extra-libs=-lvorbis\ -logg\ -lm
   BUILD_COMMAND make
