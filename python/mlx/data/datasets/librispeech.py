@@ -7,9 +7,9 @@ from ... import data as dx
 from .common import (
     CACHE_DIR,
     ensure_exists,
-    urlretrieve_with_progress,
     file_digest,
     gzip_decompress,
+    urlretrieve_with_progress,
 )
 
 SPLITS = {

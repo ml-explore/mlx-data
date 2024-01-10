@@ -8,7 +8,6 @@ import zipfile
 from pathlib import Path
 from urllib import request
 
-
 CACHE_DIR = Path.home() / ".cache" / "mlx.data"
 
 

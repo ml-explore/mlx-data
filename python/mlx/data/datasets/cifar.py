@@ -9,8 +9,7 @@ from tempfile import NamedTemporaryFile
 import numpy as np
 
 from ... import data as dx
-from .common import CACHE_DIR, ensure_exists, urlretrieve_with_progress, file_digest
-
+from .common import CACHE_DIR, ensure_exists, file_digest, urlretrieve_with_progress
 
 URLS = {
     "CIFAR10": (

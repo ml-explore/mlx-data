@@ -4,10 +4,10 @@ import argparse
 from functools import partial
 from pathlib import Path
 
-import mlx.data as dx
 from mlx.data.tokenizer_helpers import read_trie_from_spm
-
 from utils import Benchmark
+
+import mlx.data as dx
 
 
 def document_iterator(text_file):
