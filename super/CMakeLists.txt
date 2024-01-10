@@ -43,27 +43,6 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-if(APPLE)
-  set(GETTEXT_EXTRA_FLAGS --with-included-gettext)
-else()
-  set(GETTEXT_EXTRA_FLAGS)
-endif()
-
-ExternalProject_Add(
-  gettext
-  DEPENDS libiconv
-  URL https://ftp.gnu.org/gnu/gettext/gettext-0.22.4.tar.gz
-  CONFIGURE_COMMAND
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-    --with-included-glib --with-included-libcroco --with-included-libunistring
-    --with-included-libxml --disable-java --disable-csharp --disable-curses
-    --disable-openmp --without-git --without-cvs --without-xz --without-bzip2
-    ${GETTEXT_EXTRA_FLAGS}
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
-
 ExternalProject_Add(
   zlib
   URL https://www.zlib.net/zlib-1.3.tar.gz
@@ -146,10 +125,12 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# patch flac to avoid depending on getopt/gettext
 ExternalProject_Add(
   flac
-  DEPENDS libogg pkg-config gettext
+  DEPENDS libogg pkg-config
   URL https://github.com/xiph/flac/releases/download/1.4.3/flac-1.4.3.tar.xz
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.4.3.patch
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DINSTALL_MANPAGES=OFF
              -DBUILD_TESTING=OFF

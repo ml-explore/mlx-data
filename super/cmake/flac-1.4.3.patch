@@ -1,0 +1,25 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index fb23b7d9..77463836 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -213,7 +213,7 @@ endif()
+ # The following folder layout is mostly for MSVC
+ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+ 
+-set_target_properties(FLAC grabbag getopt replaygain_analysis replaygain_synthesis utf8 PROPERTIES FOLDER Libraries)
++set_target_properties(FLAC grabbag replaygain_analysis replaygain_synthesis utf8 PROPERTIES FOLDER Libraries)
+ if(BUILD_CXXLIBS)
+     set_target_properties(FLAC++ PROPERTIES FOLDER Libraries)
+ endif()
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 262feead..4a4e4cb0 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -9,7 +9,6 @@ if(BUILD_CXXLIBS)
+ endif()
+ add_subdirectory("share/replaygain_analysis")
+ add_subdirectory("share/replaygain_synthesis")
+-add_subdirectory("share/getopt")
+ add_subdirectory("share/utf8")
+ add_subdirectory("share/grabbag")
+ 
