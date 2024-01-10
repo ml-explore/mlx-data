@@ -7,7 +7,6 @@ from pathlib import Path
 import tensorflow as tf
 import tensorflow_io as tf_io
 import tensorflow_text as tf_text
-
 from utils import Benchmark
 
 

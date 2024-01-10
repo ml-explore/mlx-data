@@ -3,9 +3,9 @@
 import argparse
 from pathlib import Path
 
-import mlx.data as dx
-
 from utils import Benchmark
+
+import mlx.data as dx
 
 
 def files_and_classes(root: Path):

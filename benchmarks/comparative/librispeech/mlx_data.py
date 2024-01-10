@@ -3,11 +3,11 @@
 import argparse
 from pathlib import Path
 
-import mlx.data as dx
 from mlx.data.features import mfsc
 from mlx.data.tokenizer_helpers import read_trie_from_spm
-
 from utils import Benchmark
+
+import mlx.data as dx
 
 
 def to_audio_and_transcript(sample):

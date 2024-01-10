@@ -7,7 +7,6 @@ from pathlib import Path
 
 import torch
 from sentencepiece import SentencePieceProcessor
-
 from utils import Benchmark
 
 

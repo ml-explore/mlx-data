@@ -5,7 +5,6 @@ import argparse
 import torch
 from torchvision.datasets import ImageFolder
 from torchvision.transforms import v2 as transforms
-
 from utils import Benchmark
 
 

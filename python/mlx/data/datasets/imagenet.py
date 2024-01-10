@@ -12,7 +12,6 @@ from pathlib import Path
 from ... import data as dx
 from .common import CACHE_DIR, file_digest, gzip_decompress
 
-
 META_FILE = "ILSVRC2012_devkit_t12/data/meta.mat"
 VAL_GT_FILE = "ILSVRC2012_devkit_t12/data/ILSVRC2012_validation_ground_truth.txt"
 ARCHIVES = {

@@ -7,11 +7,10 @@ from ... import data as dx
 from .common import (
     CACHE_DIR,
     ensure_exists,
-    urlretrieve_with_progress,
     file_digest,
     unzip,
+    urlretrieve_with_progress,
 )
-
 
 SUBSETS = {
     "wikitext-2": (

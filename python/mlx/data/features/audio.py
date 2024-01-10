@@ -1,8 +1,9 @@
 # Copyright © 2023 Apple Inc.
 
-import numpy as np
 import enum
 import math
+
+import numpy as np
 
 
 class WindowType(enum.Enum):
