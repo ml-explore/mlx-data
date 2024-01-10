@@ -4,8 +4,8 @@ project(mlx-data-deps)
 
 include(ExternalProject)
 
-set(ENV{PATH} ${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH})
-set(ENV{PKG_CONFIG_PATH}
+set(PATH ${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH})
+set(PKG_CONFIG_PATH
     ${CMAKE_BINARY_DIR}/deps/lib/pkgconfig:${CMAKE_BINARY_DIR}/deps/lib64/pkgconfig
 )
 
@@ -36,8 +36,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   libiconv
   URL https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-                    --disable-shared
+  CONFIGURE_COMMAND
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -46,8 +47,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   zlib
   URL https://www.zlib.net/zlib-1.3.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-                    --static
+  CONFIGURE_COMMAND PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC
+                    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -70,9 +71,10 @@ ExternalProject_Add(
   URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
       https://tukaani.org/xz/xz-5.4.5.tar.gz
   CONFIGURE_COMMAND
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-    --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo
-    --disable-scripts --disable-doc
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --disable-xz
+    --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-scripts
+    --disable-doc
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -82,7 +84,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   nasm
   URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} ./configure
+                    --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -118,8 +121,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   libogg
   URL https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-                    --disable-shared
+  CONFIGURE_COMMAND
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -173,8 +177,9 @@ ExternalProject_Add(
   lame
   URL https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
   CONFIGURE_COMMAND
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug
-    --disable-frontend --disable-shared --disable-gtktest
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug --disable-frontend
+    --disable-shared --disable-gtktest
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -195,8 +200,9 @@ ExternalProject_Add(
   mpg123
   URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.3/mpg123-1.32.3.tar.bz2
   CONFIGURE_COMMAND
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-    --disable-components --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --disable-components
+    --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -225,8 +231,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   openssl
   URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./config no-shared no-idea no-mdc2 no-rc5
-                    no-tests --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./config
+    no-shared no-idea no-mdc2 no-rc5 no-tests --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make depend && make
   INSTALL_COMMAND make install_sw
   BUILD_IN_SOURCE 1
@@ -236,8 +243,9 @@ ExternalProject_Add(
   curl
   URL https://curl.se/download/curl-8.5.0.tar.bz2
   DEPENDS openssl pkg-config
-  CONFIGURE_COMMAND CFLAGS=-fPIC ./configure --with-openssl --disable-shared
-                    --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -270,8 +278,9 @@ ExternalProject_Add(
   DEPENDS nasm
   URL https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.bz2
   PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/xvidcore-1.3.7.patch
-  CONFIGURE_COMMAND cd build/generic && CFLAGS=-fPIC ./configure
-                    --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND
+    cd build/generic && PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND cd build/generic && make -j1
   INSTALL_COMMAND cd build/generic && make install
   BUILD_IN_SOURCE 1
@@ -289,7 +298,8 @@ ExternalProject_Add(
           pkg-config
   URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
   CONFIGURE_COMMAND
-    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
+    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
     --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
     --disable-iconv --disable-programs --disable-doc --disable-htmlpages
     --disable-manpages --disable-podpages --disable-txtpages --disable-alsa
@@ -299,7 +309,7 @@ ExternalProject_Add(
     --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib\ -L${CMAKE_BINARY_DIR}/deps/lib64
     --extra-libs=-lvorbis\ -logg\ -lm
-  BUILD_COMMAND make
+  BUILD_COMMAND PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
