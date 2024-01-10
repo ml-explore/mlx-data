@@ -38,7 +38,7 @@ jobs:
             auditwheel show dist/*
             auditwheel repair dist/*
       - store_artifacts:
-          path: dist/wheelhouse/*
+          path: dist/wheelhouse/
 
   mac_build_wheels:
     machine: true
@@ -74,7 +74,7 @@ jobs:
             delocate-listdeps dist/*
             delocate-wheel dist/*
       - store_artifacts:
-          path: dist/*
+          path: dist/
 
 workflows:
   build_on_commit:
