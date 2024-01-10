@@ -4,6 +4,9 @@ parameters:
   dev_release:
     type: boolean
     default: false
+  pypi_release:
+    type: boolean
+    default: false
 
 executors:
   manylinux2014:
@@ -109,7 +112,7 @@ jobs:
             auditwheel show dist/*
             auditwheel repair dist/*
       - store_artifacts:
-          path: dist/wheelhouse/
+          path: wheelhouse/
 
   mac_build_wheels:
     machine: true
@@ -149,6 +152,10 @@ jobs:
 
 workflows:
   build_on_commit:
+    when:
+      and:
+        - not: << pipeline.parameters.dev_release >>
+        - not: << pipeline.parameters.pypi_release >>
     jobs:
       - linux_build_on_commit
       - mac_build_on_commit
@@ -164,6 +171,21 @@ workflows:
       - mac_build_wheels:
           matrix:
             parameters:
-              python_version: ["3.8", "3.9", "3.10", "3.11"]
+              python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
               macos_version: ["13", "14"]
               extra_env: ["DEV_RELEASE=1"]
+
+  build_pypi_release:
+    when: << pipeline.parameters.pypi_release >>
+    jobs:
+      - linux_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["38", "39", "310", "311", "312"]
+              extra_env: ["PYPI_RELEASE=1"]
+      - mac_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+              macos_version: ["13", "14"]
+              extra_env: ["PYPI_RELEASE=1"]
