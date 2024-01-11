@@ -102,7 +102,7 @@ if __name__ == "__main__":
 
     setup(
         name="mlx-data",
-        version=get_version("0.0.1"),
+        version=get_version("0.0.2"),
         author="Ronan Collobert",
         author_email="collobert@apple.com",
         url="https://github.com/ml-explore/mlx-data",
