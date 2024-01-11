@@ -117,16 +117,15 @@ ExternalProject_Add(
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-# note: cmake version fails to install
 ExternalProject_Add(
   libogg
   URL https://ftp.osuosl.org/pub/xiph/releases/ogg/libogg-1.3.5.tar.gz
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_SHARED_LIBS=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # patch flac to avoid depending on getopt/gettext
