@@ -45,12 +45,12 @@ def iterate(args, workers):
         .load_audio("audio", prefix=args.data_dir)
         .squeeze("audio")
         .key_transform("audio", mfsc(128, 16000))
-        .shape("audio", 0, "audio_length")
+        .shape("audio", "audio_length", 0)
         # Tokenize the transcript
         .tokenize("transcript", trie)
         .pad("transcript", 0, 1, 0, trie.search("<s>").id)
         .pad("transcript", 0, 0, 1, trie.search("</s>").id)
-        .shape("transcript", 0, "transcript_length")
+        .shape("transcript", "transcript_length", 0)
         # Batch and prefetch
         .batch(args.batch_size)
         .prefetch(workers, workers)
