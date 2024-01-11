@@ -44,27 +44,6 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-if(APPLE)
-  set(GETTEXT_EXTRA_FLAGS --with-included-gettext)
-else()
-  set(GETTEXT_EXTRA_FLAGS)
-endif()
-
-ExternalProject_Add(
-  gettext
-  DEPENDS libiconv
-  URL https://ftp.gnu.org/gnu/gettext/gettext-0.22.4.tar.gz
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --with-included-glib
-    --with-included-libcroco --with-included-libunistring --with-included-libxml
-    --disable-java --disable-csharp --without-git --without-cvs --without-xz
-    ${GETTEXT_EXTRA_FLAGS}
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
-
 ExternalProject_Add(
   zlib
   URL https://www.zlib.net/zlib-1.3.tar.gz
@@ -93,7 +72,9 @@ ExternalProject_Add(
       https://tukaani.org/xz/xz-5.4.5.tar.gz
   CONFIGURE_COMMAND
     PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --disable-xz
+    --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-scripts
+    --disable-doc
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -116,9 +97,10 @@ ExternalProject_Add(
   URL https://downloads.sourceforge.net/project/libjpeg-turbo/3.0.0/libjpeg-turbo-3.0.0.tar.gz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DENABLE_SHARED=OFF
-             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
@@ -130,6 +112,7 @@ ExternalProject_Add(
              -DLIBSAMPLERATE_EXAMPLES=OFF
              -DBUILD_TESTING=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -146,10 +129,12 @@ ExternalProject_Add(
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# patch flac to avoid depending on getopt/gettext
 ExternalProject_Add(
   flac
-  DEPENDS libogg pkg-config gettext
+  DEPENDS libogg pkg-config
   URL https://github.com/xiph/flac/releases/download/1.4.3/flac-1.4.3.tar.xz
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.4.3.patch
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DINSTALL_MANPAGES=OFF
              -DBUILD_TESTING=OFF
@@ -158,6 +143,7 @@ ExternalProject_Add(
              -DBUILD_DOCS=OFF
              -DBUILD_SHARED_LIBS=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -168,8 +154,8 @@ ExternalProject_Add(
   URL https://github.com/xiph/vorbis/releases/download/v1.3.7/libvorbis-1.3.7.tar.xz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_SHARED_LIBS=OFF
-             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -182,6 +168,7 @@ ExternalProject_Add(
              -DOPUS_BUILD_TESTING=OFF
              -DOPUS_BUILD_PROGRAMS=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -231,8 +218,12 @@ ExternalProject_Add(
           opus
           pkg-config
   URL https://github.com/libsndfile/libsndfile/releases/download/1.2.2/libsndfile-1.2.2.tar.xz
-  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release -DOPUS_BUILD_SHARED_LIBRARY=OFF
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_PROGRAMS=OFF
+             -DBUILD_EXAMPLES=OFF
+             -DENABLE_CPACK=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -254,7 +245,8 @@ ExternalProject_Add(
   DEPENDS openssl pkg-config
   CONFIGURE_COMMAND
     PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
+    --disable-shared --with-openssl --disable-ldap
+    --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -275,6 +267,7 @@ ExternalProject_Add(
              -DAUTORUN_UNIT_TESTS=OFF
              -DENABLE_TESTING=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -309,7 +302,12 @@ ExternalProject_Add(
     PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} ./configure
     --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
     --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
-    --disable-iconv --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
+    --disable-iconv --disable-programs --disable-doc --disable-htmlpages
+    --disable-manpages --disable-podpages --disable-txtpages --disable-alsa
+    --disable-sdl2 --disable-xlib --disable-cuda-llvm --disable-cuvid
+    --disable-d3d11va --disable-dxva2 --disable-nvdec --disable-nvenc
+    --disable-v4l2-m2m --disable-vdpau
+    --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
     --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib\ -L${CMAKE_BINARY_DIR}/deps/lib64
     --extra-libs=-lvorbis\ -logg\ -lm
   BUILD_COMMAND PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && make
