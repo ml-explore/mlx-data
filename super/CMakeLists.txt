@@ -245,7 +245,8 @@ ExternalProject_Add(
   DEPENDS openssl pkg-config
   CONFIGURE_COMMAND
     PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --with-openssl --disable-shared --prefix=${CMAKE_BINARY_DIR}/deps
+    --disable-shared --with-openssl --disable-ldap
+    --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
