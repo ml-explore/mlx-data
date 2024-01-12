@@ -75,17 +75,18 @@ more information on building from source, and running tests.
 
 We are grateful for all [our
 contributors](ACKNOWLEDGMENTS.md#Individual-Contributors). Special thanks
-to [David Koski](https://github.com/davidkoski) who contributed to several
-features in MLX Data, before open-source. If you contribute to MLX Data and
-wish to be acknowledged, please add your name to the list in your pull
-request.
+to [David Koski](https://github.com/davidkoski) and [Tatiana
+Likhomanenko](https://github.com/tlikhomanenko/tlikhomanenko) for their
+[contributions](ACKNOWLEDGMENTS.md#Individual-Contributors) to MLX Data
+before open-source. If you contribute to MLX Data and wish to be
+acknowledged, please add your name to the list in your pull request.
 
-## Citing MLX Data
+## Citing MLX
 
 The MLX software suite was initially developed with equal contribution by
 Awni Hannun, Jagrit Digani, Angelos Katharopoulos, and Ronan Collobert. If
-you find MLX Data useful in your research and wish to cite it, please use
-the following BibTex entry:
+you find MLX useful in your research and wish to cite it, please use the
+following BibTex entry:
 
 ```
 @software{mlx2023,

@@ -2,9 +2,15 @@
 
 MLX Data was developed with contributions from the following individuals:
 
+- [Tatiana Likhomanenko](https://github.com/tlikhomanenko/tlikhomanenko):
+  Fruitful discussions around API design, early adoption and testing of the
+  library, and initial implementation of the buffer dynamic batching
+  (before open-source).
+
 - [David Koski](https://github.com/davidkoski): Added
   `stream_csv_reader_from_string`, `load_file`, `save_image`, `load_video`,
-  `load_numpy`, video transformations, image `RGB->L` transform.
+  `load_numpy`, video transformations, image `RGB->L` transform (before
+  open-source).
 
 # Third-Party Software
 
