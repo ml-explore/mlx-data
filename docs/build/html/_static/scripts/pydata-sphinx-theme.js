@@ -1,22 +1,22 @@
 (() => {
   "use strict";
-  var e, t, n, o, r = {
+  var e, t, n, r, o = {
     803 : (e, t, n) => {
-      n.d(t, {Gu : () => o, qu : () => r});
+      n.d(t, {Gu : () => r, qu : () => o});
       const
-          o = e => "string" == typeof e && /^[v\d]/.test(e) && a.test(e),
-          r =
+          r = e => "string" == typeof e && /^[v\d]/.test(e) && a.test(e),
+          o =
               (e, t, n) => {
                 h(n);
-                const o = ((e, t) => {
-                  const n = c(e), o = c(t), r = n.pop(), a = o.pop(),
-                        i = l(n, o);
+                const r = ((e, t) => {
+                  const n = c(e), r = c(t), o = n.pop(), a = r.pop(),
+                        i = l(n, r);
                   return 0 !== i ? i
-                      : r && a   ? l(r.split("."), a.split("."))
-                      : r || a   ? r ? -1 : 1
+                      : o && a   ? l(o.split("."), a.split("."))
+                      : o || a   ? o ? -1 : 1
                                  : 0
                 })(e, t);
-                return u[n].includes(o)
+                return u[n].includes(r)
               },
           a = /^[v^~<>=]*?(\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+)(?:\.([x*]|\d+))?(?:-([\da-z\-]+(?:\.[\da-z\-]+)*))?(?:\+[\da-z\-]+(?:\.[\da-z\-]+)*)?)?)?$/i,
           c =
@@ -39,17 +39,17 @@
               (e, t) => {
                 if (i(e) || i(t))
                   return 0;
-                const [n, o] =
+                const [n, r] =
                     ((e, t) => typeof e != typeof t ? [ String(e), String(t) ]
                                                     : [ e, t ])(d(e), d(t));
-                return n > o ? 1 : n < o ? -1 : 0
+                return n > r ? 1 : n < r ? -1 : 0
               },
           l =
               (e, t) => {
                 for (let n = 0; n < Math.max(e.length, t.length); n++) {
-                  const o = s(e[n] || "0", t[n] || "0");
-                  if (0 !== o)
-                    return o
+                  const r = s(e[n] || "0", t[n] || "0");
+                  if (0 !== r)
+                    return r
                 }
                 return 0
               },
@@ -70,17 +70,17 @@
           }
     },
     375 : (e, t, n) => {
-      function o(e) {
+      function r(e) {
         "loading" != document.readyState
             ? e()
             : document.addEventListener("DOMContentLoaded", e)
-      } n.d(t, {A : () => o})
+      } n.d(t, {A : () => r})
     },
     937 : (e, t, n) => {
       n.a(e,
           (async (e, t) => {
             try {
-              var o = n(375), r = n(803),
+              var r = n(375), o = n(803),
                   a = window.matchMedia("(prefers-color-scheme: dark)");
               function l(e) {
                 document.documentElement.dataset.theme =
@@ -111,13 +111,13 @@
                 const e = document.documentElement.dataset.defaultMode ||
                     "auto",
                       t = localStorage.getItem("mode") || e;
-                var n, o;
-                u(((o = (n = a.matches ? [ "auto", "light", "dark" ]
+                var n, r;
+                u(((r = (n = a.matches ? [ "auto", "light", "dark" ]
                                        : [ "auto", "dark", "light" ])
                             .indexOf(t) +
                         1) === n.length &&
-                       (o = 0),
-                   n[o]))
+                       (r = 0),
+                   n[r]))
               }
               function h() {
                 u(document.documentElement.dataset.mode),
@@ -147,12 +147,12 @@
                   var n = document.querySelector(".bd-docs-nav")
                               .querySelectorAll(".active");
                   if (n.length > 0) {
-                    var o = n[n.length - 1],
-                        r = o.getBoundingClientRect().y -
+                    var r = n[n.length - 1],
+                        o = r.getBoundingClientRect().y -
                         e.getBoundingClientRect().y;
-                    if (o.getBoundingClientRect().y > .5 * window.innerHeight) {
+                    if (r.getBoundingClientRect().y > .5 * window.innerHeight) {
                       let t = .25;
-                      e.scrollTop = r - e.clientHeight * t,
+                      e.scrollTop = o - e.clientHeight * t,
                       console.log(
                           "[PST]: Scrolled sidebar using last active link...")
                     }
@@ -196,12 +196,12 @@
                 e.preventDefault();
                 let t = `${DOCUMENTATION_OPTIONS.pagename}.html`,
                     n = e.currentTarget.getAttribute("href"),
-                    o = n.replace(t, "");
+                    r = n.replace(t, "");
                 try {
                   (await fetch(n, {method : "HEAD"})).ok ? location.href = n
-                                                         : location.href = o
+                                                         : location.href = r
                 } catch (e) {
-                  location.href = o
+                  location.href = r
                 }
               }
               async function g(e) {
@@ -225,7 +225,7 @@
                   e.dataset.activeVersionName = "",
                   e.dataset.activeVersion = ""
                 }));
-                const o = (e = e.map(
+                const r = (e = e.map(
                                (e =>
                                     (e.match = e.version ==
                                          DOCUMENTATION_OPTIONS
@@ -235,7 +235,7 @@
                                      e))))
                               .map((e => e.preferred && e.match))
                               .some(Boolean);
-                var r = !1;
+                var o = !1;
                 e.forEach((e => {
                   const a = document.createElement("a");
                   a.setAttribute(
@@ -246,7 +246,7 @@
                   const c = document.createElement("span");
                   c.textContent = `${e.name}`, a.appendChild(c),
                   a.dataset.versionName = e.name, a.dataset.version = e.version;
-                  let i = o && e.preferred, d = !o && !r && e.match;
+                  let i = r && e.preferred, d = !r && !o && e.match;
                   (i || d) &&
                       (a.classList.add("active"),
                        t.forEach((t => {
@@ -254,7 +254,7 @@
                          t.dataset.activeVersionName = e.name,
                          t.dataset.activeVersion = e.version
                        })),
-                       r = !0),
+                       o = !0),
                       document.querySelectorAll(".version-switcher__menu")
                           .forEach((e => {
                             let t = a.cloneNode(!0);
@@ -270,11 +270,12 @@
                   return void console.log(`[PST] ${
                       e} versions marked "preferred" found in versions JSON, ignoring.`)
                 }
-                const o = n[0].version, a = n[0].url,
-                      c = (0, r.Gu)(t) && (0, r.Gu)(o);
-                if (c && (0, r.qu)(t, o, "="))
+                const r = n[0].version, a = n[0].url,
+                      c = (0, o.Gu)(t) && (0, o.Gu)(r);
+                if (c && (0, o.qu)(t, r, "="))
                   return;
-                var i = document.createElement("div");
+                var i = document.createElement("aside");
+                i.setAttribute("aria-label", "Version warning");
                 const d = document.createElement("div"),
                       s = document.createElement("div"),
                       l = document.createElement("strong"),
@@ -289,14 +290,15 @@
                 s.innerText = "This is documentation for ";
                 const m = t.includes("dev") || t.includes("rc") ||
                     t.includes("pre"),
-                      h = c && (0, r.qu)(t, o, ">");
+                      h = c && (0, o.qu)(t, r, ">");
                 m || h ? l.innerText = "an unstable development version"
-                    : c && (0, r.qu)(t, o, "<")
+                    : c && (0, o.qu)(t, r, "<")
                     ? l.innerText = `an old version (${t})`
                     : l.innerText = t ? `version ${t}` : "an unknown version",
                          i.appendChild(d), d.appendChild(s), s.appendChild(l),
                          s.appendChild(document.createTextNode(".")),
-                         s.appendChild(u), document.body.prepend(i)
+                         s.appendChild(u),
+                         document.getElementById("pst-skip-link").after(i)
               }
               function w() {
                 new MutationObserver(
@@ -320,11 +322,17 @@
                         "theme_switcher_json_url"),
                     S = DOCUMENTATION_OPTIONS.show_version_warning_banner;
               if (_ && (E || S)) {
-                const T =
+                const O =
                     await g(DOCUMENTATION_OPTIONS.theme_switcher_json_url);
-                y(T, s), S && b(T)
+                y(O, s), S && b(O)
               }
-              (0, o.A)(h), (0, o.A)(f), (0, o.A)(p), (0, o.A)((() => {
+              function T() {
+                document
+                    .querySelector(
+                        ".bd-sidebar-primary [id^=pst-nav-more-links]")
+                    .classList.add("show")
+              }
+              (0, r.A)(h), (0, r.A)(f), (0, r.A)(p), (0, r.A)((() => {
                 (() => {
                   let e =
                       document.querySelectorAll(".search-button__kbd-shortcut");
@@ -351,9 +359,9 @@
                 let e = document.querySelector(".search-button__overlay");
                 e && (e.onclick = i)
               })),
-                  (0, o.A)(w), t()
-            } catch (O) {
-              t(O)
+                  (0, r.A)(w), (0, r.A)(T), t()
+            } catch (N) {
+              t(N)
             }
           }),
           1)
@@ -365,7 +373,7 @@
     if (void 0 !== t)
       return t.exports;
     var n = a[e] = {exports : {}};
-    return r[e](n, n.exports, c), n.exports
+    return o[e](n, n.exports, c), n.exports
   }
   e = "function" == typeof Symbol ? Symbol("webpack queues")
                                   : "__webpack_queues__",
@@ -373,34 +381,34 @@
                                   : "__webpack_exports__",
   n = "function" == typeof Symbol ? Symbol("webpack error")
                                   : "__webpack_error__",
-  o = e => {
+  r = e => {
     e && e.d < 1 &&
         (e.d = 1,
          e.forEach((e => e.r--)),
          e.forEach((e => e.r-- ? e.r++ : e())))
-  }, c.a = (r, a, c) => {
+  }, c.a = (o, a, c) => {
     var i;
     c && ((i = []).d = -1);
-    var d, s, l, u = new Set, m = r.exports,
+    var d, s, l, u = new Set, m = o.exports,
                  h = new Promise(((e, t) => {l = t, s = e}));
     h[t] = m, h[e] = e => (i && e(i), u.forEach(e), h.catch((e => {}))),
-    r.exports = h,
-    a((r => {
+    o.exports = h,
+    a((o => {
         var a;
-        d = (r => r.map((r => {
-          if (null !== r && "object" == typeof r) {
-            if (r[e])
-              return r;
-            if (r.then) {
+        d = (o => o.map((o => {
+          if (null !== o && "object" == typeof o) {
+            if (o[e])
+              return o;
+            if (o.then) {
               var a = [];
-              a.d = 0, r.then((e => {c[t] = e, o(a)}), (e => {c[n] = e, o(a)}));
+              a.d = 0, o.then((e => {c[t] = e, r(a)}), (e => {c[n] = e, r(a)}));
               var c = {};
               return c[e] = e => e(a), c
             }
           }
           var i = {};
-          return i[e] = e => {}, i[t] = r, i
-        })))(r);
+          return i[e] = e => {}, i[t] = o, i
+        })))(o);
         var c = () => d.map((e => {
           if (e[n])
             throw e[n];
@@ -414,7 +422,7 @@
             }));
         return a.r ? s : c()
       }),
-      (e => (e ? l(h[n] = e) : s(m), o(i)))),
+      (e => (e ? l(h[n] = e) : s(m), r(i)))),
     i && i.d < 0 && (i.d = 0)
   }, c.d = (e, t) => {
     for (var n in t)

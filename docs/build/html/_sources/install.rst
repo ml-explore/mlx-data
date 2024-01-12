@@ -1,6 +1,22 @@
 Build and Install
 =================
 
+Install from PyPI
+-----------------
+
+MLX Data can be installed from PyPI. For most Linuxes and Apple silicon Macs
+one can simply,
+
+.. code-block::
+
+    pip install mlx-data
+
+This should install the package together with the necessary dependencies to
+read audio, images, video and remote content from S3.
+
+Building from source
+--------------------
+
 MLX Data consists of a C++ library with shallow python bindings and some Python
 helpers. You can choose to build and use only the C++ library or simply pip
 install the Python library which transparently builds the required C++ backend.
@@ -8,7 +24,7 @@ install the Python library which transparently builds the required C++ backend.
 We plan to provide prebuilt binaries for easy install in the future.
 
 Dependencies
-------------
+^^^^^^^^^^^^
 
 Handling data requires reading various filetypes over various protocols. This
 means that MLX Data has a couple of dependencies e.g. for loading images, audio
@@ -61,7 +77,7 @@ both be installed with ``pip``,
     pip install pybind11[global] cmake
 
 Build Python bindings from source
----------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 After installing the dependencies you care about as described above, you can
 directly install MLX data using pip.
@@ -79,7 +95,7 @@ building MLX data as follows:
     CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" pip install .
 
 Building the standalone C++ library
------------------------------------
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 MLX data can also be installed as a standalone C++ static library that you can
 link your projects against.

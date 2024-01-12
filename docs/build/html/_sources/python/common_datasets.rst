@@ -64,6 +64,7 @@ the wikitext-103 datasets.
     load_cifar10
     load_cifar100
     load_imagenet
+    load_images_from_folder
     load_librispeech
     load_wikitext_lines
     load_speechcommands
