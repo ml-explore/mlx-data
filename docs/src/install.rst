@@ -19,9 +19,8 @@ Building from source
 
 MLX Data consists of a C++ library with shallow python bindings and some Python
 helpers. You can choose to build and use only the C++ library or simply pip
-install the Python library which transparently builds the required C++ backend.
-
-We plan to provide prebuilt binaries for easy install in the future.
+install locally the Python library which transparently builds the required C++
+backend.
 
 Dependencies
 ^^^^^^^^^^^^
@@ -56,7 +55,7 @@ For an Ubuntu machine, on the other hand:
         zlib1g-dev libbz2-dev liblzma-dev
 
     # We have to build the AWS SDK from source :-(
-    # This is *not needed* if installing MLX Data from a prebuilt binary or if
+    # None of this is needed if installing MLX Data from a prebuilt binary or if
     # you don't care about fetching from S3
 
     sudo apt install libcurl4-openssl-dev libssl-dev
@@ -86,13 +85,6 @@ directly install MLX data using pip.
 
     cd /path/to/mlx/data
     pip install .  # or pip install -e . for an editable install
-
-To enable S3 support you also have to use the corresponding CMAKE option when
-building MLX data as follows:
-
-.. code-block:: bash
-
-    CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" pip install .
 
 Building the standalone C++ library
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
