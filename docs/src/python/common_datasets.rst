@@ -61,6 +61,7 @@ the wikitext-103 datasets.
    :toctree: _autosummary
 
     load_mnist
+    load_fashion_mnist
     load_cifar10
     load_cifar100
     load_imagenet
