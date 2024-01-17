@@ -11,25 +11,21 @@ from ... import data as dx
 from .common import CACHE_DIR, ensure_exists, urlretrieve_with_progress
 
 
-def load_mnist(root=None, train=True):
-    """Load a buffer with the MNIST dataset.
+def _load_mnist_wrapper(root=None, train=True, dataset="mnist"):
+    url_dict = {
+        "mnist": "http://yann.lecun.com/exdb/mnist/",
+        "fashion-mnist": "http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/",
+    }
+    base_url = url_dict[dataset]
 
-    If the data doesn't exist download it and save it for the next time.
-
-    Args:
-        root (Path or str, optional): The directory to load/save the data. If
-            none is given the ``~/.cache/mlx.data/mnist`` is used.
-        train (bool): Load the training or test set.
-    """
     if root is None:
-        root = CACHE_DIR / "mnist"
+        root = CACHE_DIR / dataset
     else:
         root = Path(root)
 
     ensure_exists(root)
 
     def download():
-        base_url = "http://yann.lecun.com/exdb/mnist/"
         filename = [
             [NamedTemporaryFile(), "training_images", "train-images-idx3-ubyte.gz"],
             [NamedTemporaryFile(), "test_images", "t10k-images-idx3-ubyte.gz"],
@@ -69,3 +65,31 @@ def load_mnist(root=None, train=True):
     pkl_file = (root / "train.pkl") if train else (root / "test.pkl")
     with pkl_file.open("rb") as f:
         return dx.buffer_from_vector(pickle.load(f))
+
+
+def load_mnist(root=None, train=True):
+    """Load a buffer with the MNIST dataset.
+
+    If the data doesn't exist download it and save it for the next time.
+
+    Args:
+        root (Path or str, optional): The directory to load/save the data. If
+            none is given the ``~/.cache/mlx.data/mnist`` is used.
+        train (bool): Load the training or test set.
+    """
+
+    return _load_mnist_wrapper(root, train, "mnist")
+
+
+def load_fashion_mnist(root=None, train=True):
+    """Load a buffer with the Fashion-MNIST dataset.
+
+    If the data doesn't exist download it and save it for the next time.
+
+    Args:
+        root (Path or str, optional): The directory to load/save the data. If
+            none is given the ``~/.cache/mlx.data/fashion-mnist`` is used.
+        train (bool): Load the training or test set.
+    """
+
+    return _load_mnist_wrapper(root, train, "fashion-mnist")
