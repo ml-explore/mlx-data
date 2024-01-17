@@ -23,11 +23,11 @@ def load_images_from_folder(image_folder):
     this function will return a :class:`~mlx.data.Buffer` that contains samples
     with the following keys
 
-    - folder: the name of the category of this sample (e.g. class_1, class_2 etc)
-    - label: an integer that corresponds to the sorted position of the folder
+    - **folder**: the name of the category of this sample (e.g. class_1, class_2 etc)
+    - **label**: an integer that corresponds to the sorted position of the folder
       names (e.g. class_1 gets 0 and class_2 gets 1)
-    - file: the path to the image relative to the provided root folder
-    - image: the loaded image array
+    - **file**: the path to the image relative to the provided root folder
+    - **image**: the loaded image array
 
     Args:
         image_folder: (Path or str): The directory to load the images from.
