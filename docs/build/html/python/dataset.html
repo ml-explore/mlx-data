@@ -1,12 +1,13 @@
 
+
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="../" >
+<html lang="en" data-content_root="" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
     <title>Common operations &#8212; MLX Data 0.0.2 documentation</title>
   
@@ -18,28 +19,30 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../_static/styles/bootstrap.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
 
   
-  <link href="../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=bd9e20870c6007c4c509" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
-    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=384b581d" />
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css" />
+    <link rel="stylesheet" href="../_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509" />
-  <script src="../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=bd9e20870c6007c4c509"></script>
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
+  <script src="../_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
 
-    <script src="../_static/documentation_options.js?v=f131489c"></script>
-    <script src="../_static/doctools.js?v=888ff710"></script>
-    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
-    <script src="../_static/scripts/sphinx-book-theme.js?v=efea14e4"></script>
+    <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'python/dataset';</script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -54,7 +57,7 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <a class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
 
@@ -97,18 +100,12 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
-
-  <header>
   
-    <div class="bd-header navbar navbar-expand-lg bd-navbar">
-    </div>
+    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
+    </nav>
   
-  </header>
-
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
-      
-      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -142,18 +139,7 @@
   
   
 </a></div>
-        <div class="sidebar-primary-item">
-
- <script>
- document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
-        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Install</span></p>
 <ul class="nav bd-sidenav">
@@ -447,17 +433,17 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article">
+                <article class="bd-article" role="main">
                   
   <section id="common-operations">
-<h1>Common operations<a class="headerlink" href="#common-operations" title="Link to this heading">#</a></h1>
+<h1>Common operations<a class="headerlink" href="#common-operations" title="Permalink to this heading">#</a></h1>
 <p>Both <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> and <code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> allow to apply transformations to
 samples when they are accessed. These transformations share the same API which
 is described below in terms of the <code class="docutils literal notranslate"><span class="pre">Buffer</span></code> class (but <code class="docutils literal notranslate"><span class="pre">Stream</span></code> is
 identical). For the methods specific to <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Stream</span></code> see
 the corresponding pages.</p>
 <section id="general-sample-operations">
-<h2>General sample operations<a class="headerlink" href="#general-sample-operations" title="Link to this heading">#</a></h2>
+<h2>General sample operations<a class="headerlink" href="#general-sample-operations" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.batch.html#mlx.data.Buffer.batch" title="mlx.data.Buffer.batch"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.batch</span></code></a>(self, batch_size[, pad, dim])</p></td>
@@ -485,7 +471,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="image-operations">
-<h2>Image operations<a class="headerlink" href="#image-operations" title="Link to this heading">#</a></h2>
+<h2>Image operations<a class="headerlink" href="#image-operations" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.image_center_crop.html#mlx.data.Buffer.image_center_crop" title="mlx.data.Buffer.image_center_crop"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.image_center_crop</span></code></a>(self, key, w, h[, ...])</p></td>
@@ -516,7 +502,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="i-o-operations">
-<h2>I/O operations<a class="headerlink" href="#i-o-operations" title="Link to this heading">#</a></h2>
+<h2>I/O operations<a class="headerlink" href="#i-o-operations" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.load_audio.html#mlx.data.Buffer.load_audio" title="mlx.data.Buffer.load_audio"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.load_audio</span></code></a>(self, key, prefix, info, ...)</p></td>
@@ -541,7 +527,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="padding-operations">
-<h2>Padding operations<a class="headerlink" href="#padding-operations" title="Link to this heading">#</a></h2>
+<h2>Padding operations<a class="headerlink" href="#padding-operations" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.pad.html#mlx.data.Buffer.pad" title="mlx.data.Buffer.pad"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.pad</span></code></a>(self, key, dim, lpad, rpad, pad_value)</p></td>
@@ -557,7 +543,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="shape-operations">
-<h2>Shape operations<a class="headerlink" href="#shape-operations" title="Link to this heading">#</a></h2>
+<h2>Shape operations<a class="headerlink" href="#shape-operations" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.shape.html#mlx.data.Buffer.shape" title="mlx.data.Buffer.shape"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.shape</span></code></a>(self, key, output_key[, dim])</p></td>
@@ -573,7 +559,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="tokenization">
-<h2>Tokenization<a class="headerlink" href="#tokenization" title="Link to this heading">#</a></h2>
+<h2>Tokenization<a class="headerlink" href="#tokenization" title="Permalink to this heading">#</a></h2>
 <table class="autosummary longtable table autosummary">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="_autosummary/mlx.data.Buffer.tokenize.html#mlx.data.Buffer.tokenize" title="mlx.data.Buffer.tokenize"><code class="xref py py-obj docutils literal notranslate"><span class="pre">Buffer.tokenize</span></code></a>(self, key, trie, mode, ...)</p></td>
@@ -583,7 +569,7 @@ the corresponding pages.</p>
 </table>
 </section>
 <section id="conditional-operations">
-<h2>Conditional operations<a class="headerlink" href="#conditional-operations" title="Link to this heading">#</a></h2>
+<h2>Conditional operations<a class="headerlink" href="#conditional-operations" title="Permalink to this heading">#</a></h2>
 <p>A common issue when writing pipelines is configuring them according to the
 command line or configuration arguments. This usually results in code with a
 lot of redirections that is hard to read and reason about what operations are
@@ -643,7 +629,6 @@ in python.</p>
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
-
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -706,8 +691,8 @@ By MLX Contributors
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../_static/scripts/bootstrap.js?digest=bd9e20870c6007c4c509"></script>
-<script src="../_static/scripts/pydata-sphinx-theme.js?digest=bd9e20870c6007c4c509"></script>
+  <script src="../_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
 
   <footer class="bd-footer">
   </footer>
