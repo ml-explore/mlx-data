@@ -1,6 +1,10 @@
 // Copyright © 2023 Apple Inc.
 
+#include <algorithm>
 #include <deque>
+#include <limits>
+#include <set>
+#include <sstream>
 #include <stdexcept>
 #include <string>
 #include <tuple>
@@ -118,8 +122,14 @@ std::shared_ptr<Graph<int64_t>> tokenize(
 Tokenizer::Tokenizer(
     std::shared_ptr<const Trie<char>> trie,
     bool ignore_unk,
-    const std::vector<double>& trie_key_scores)
-    : trie_(trie), ignoreUnk_(ignore_unk), trieKeyScores_(trie_key_scores) {
+    const std::vector<double>& trie_key_scores,
+    const std::map<std::pair<int64_t, int64_t>, int64_t>& bigram_merges,
+    const std::map<std::pair<int64_t, int64_t>, int64_t>& bigram_ranks)
+    : trie_(trie),
+      ignoreUnk_(ignore_unk),
+      trieKeyScores_(trie_key_scores),
+      bigram_merges_(bigram_merges),
+      bigram_ranks_(bigram_ranks) {
   if (!trie_key_scores.empty() &&
       (trie_key_scores.size() != trie->num_keys())) {
     throw std::runtime_error(
@@ -181,6 +191,81 @@ std::vector<int64_t> Tokenizer::tokenize_rand(const std::string& input) const {
     }
   };
   tok_g->visit_nodes(tok_g->start_nodes(), select_edge, is_selected_edge);
+  return tokens;
+}
+
+std::vector<int64_t> Tokenizer::tokenize_bpe_single(
+    const std::string& input) const {
+  auto unigrams = tokenize_shortest(input);
+  std::set<std::pair<int64_t, int64_t>> bigrams;
+  auto inf = std::numeric_limits<int64_t>::max();
+
+  for (auto i = 0; i < unigrams.size() - 1; i++)
+    bigrams.insert({unigrams[i], unigrams[i + 1]});
+
+  if (bigrams.empty())
+    return unigrams;
+
+  auto tokenized = bigrams.empty();
+  while (!tokenized) {
+    // Find the bigram with the smallest rank (i.e. highest merge priority)
+    auto bigram_to_merge = *std::min_element(
+        bigrams.begin(),
+        bigrams.end(),
+        [&](const auto& left, const auto& right) {
+          auto left_rank = bigram_ranks_.find(left) != bigram_ranks_.end()
+              ? bigram_ranks_.at(left)
+              : inf;
+          auto right_rank = bigram_ranks_.find(right) != bigram_ranks_.end()
+              ? bigram_ranks_.at(right)
+              : inf;
+          return left_rank < right_rank;
+        });
+    // If there is no such a bigram, we are done.
+    if (bigram_ranks_.find(bigram_to_merge) == bigram_ranks_.end()) {
+      tokenized = true;
+    } else {
+      // Merge the bigram and obtain the resulting token
+      auto merged_bigram = bigram_merges_.at(bigram_to_merge);
+      // Update unigrams for the next iteration
+      std::vector<int64_t> next_unigrams;
+      auto skip_next = false;
+      for (auto i = 0; i < unigrams.size() - 1; i++) {
+        auto left = unigrams[i];
+        auto right = unigrams[i + 1];
+        if (skip_next) {
+          skip_next = false;
+        } else {
+          if (bigram_to_merge == std::make_pair(left, right)) {
+            next_unigrams.push_back(merged_bigram);
+            skip_next = true;
+          } else {
+            next_unigrams.push_back(left);
+          }
+        }
+      }
+      if (!skip_next)
+        next_unigrams.push_back(unigrams[unigrams.size() - 1]);
+      unigrams = next_unigrams;
+      // Update bigrams for the next iteration
+      bigrams.clear();
+      for (auto i = 0; i < unigrams.size() - 1; i++)
+        bigrams.insert({unigrams[i], unigrams[i + 1]});
+      tokenized = bigrams.empty();
+    }
+  }
+  return unigrams;
+}
+
+std::vector<int64_t> Tokenizer::tokenize_bpe(const std::string& input) const {
+  std::vector<int64_t> tokens;
+  std::stringstream input_sstream(input);
+  std::string lexeme;
+  // Split by whitespace and tokenize each lexeme.
+  // This can yield significant performance improvement for naive BPE.
+  while (getline(input_sstream, lexeme, ' '))
+    for (auto token : tokenize_bpe_single(lexeme))
+      tokens.push_back(token);
   return tokens;
 }
 
