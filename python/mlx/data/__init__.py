@@ -5,9 +5,9 @@ from ._c import *
 from ._c import __version__
 
 # fmt: off
-# Passing strings from python to be casted by pybind11 crashes on some builds
-# if we don't import numpy.
-#
-# TODO: Evaluate if it is due to improper linking and fix correctly.
+# pybind11 will import numpy, and may do it in a thread.
+# in that event, openblas initialization may lead to invalid address read errors.
+# importing numpy in the main thread alleviate the issue.
+# alternatively, one can set OPENBLAS_NUM_THREADS=1.
 import numpy  # isort: skip
 del numpy

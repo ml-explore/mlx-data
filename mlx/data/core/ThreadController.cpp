@@ -96,6 +96,8 @@ ThreadController::ThreadController() {
               std::make_shared<ThreadControllerSym>(lib, get_sym, set_sym));
           break;
         }
+      } else {
+        dlclose(lib);
       }
     }
   }
