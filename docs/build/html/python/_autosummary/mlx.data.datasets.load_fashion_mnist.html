@@ -9,7 +9,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
-    <title>mlx.data.datasets.load_images_from_folder &#8212; MLX Data 0.0.2 documentation</title>
+    <title>mlx.data.datasets.load_fashion_mnist &#8212; MLX Data 0.0.2 documentation</title>
   
   
   
@@ -43,11 +43,9 @@
     <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
-    <script>DOCUMENTATION_OPTIONS.pagename = 'python/_autosummary/mlx.data.datasets.load_images_from_folder';</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'python/_autosummary/mlx.data.datasets.load_fashion_mnist';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="mlx.data.datasets.load_librispeech" href="mlx.data.datasets.load_librispeech.html" />
-    <link rel="prev" title="mlx.data.datasets.load_imagenet" href="mlx.data.datasets.load_imagenet.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -151,7 +149,7 @@
 <li class="toctree-l1"><a class="reference internal" href="../../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
-<ul class="current nav bd-sidenav">
+<ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../dataset.html">Common operations</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.batch.html">mlx.data.Buffer.batch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.filter_by_shape.html">mlx.data.Buffer.filter_by_shape</a></li>
@@ -208,12 +206,12 @@
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Stream.prefetch.html">mlx.data.Stream.prefetch</a></li>
 </ul>
 </li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../common_datasets.html">Common Datasets</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../common_datasets.html">Common Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_mnist.html">mlx.data.datasets.load_mnist</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_cifar10.html">mlx.data.datasets.load_cifar10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_cifar100.html">mlx.data.datasets.load_cifar100</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_imagenet.html">mlx.data.datasets.load_imagenet</a></li>
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">mlx.data.datasets.load_images_from_folder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_images_from_folder.html">mlx.data.datasets.load_images_from_folder</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_librispeech.html">mlx.data.datasets.load_librispeech</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_wikitext_lines.html">mlx.data.datasets.load_wikitext_lines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_speechcommands.html">mlx.data.datasets.load_speechcommands</a></li>
@@ -323,7 +321,7 @@
       
       
       
-      <li><a href="../../_sources/python/_autosummary/mlx.data.datasets.load_images_from_folder.rst" target="_blank"
+      <li><a href="../../_sources/python/_autosummary/mlx.data.datasets.load_fashion_mnist.rst" target="_blank"
    class="btn btn-sm btn-download-source-button dropdown-item"
    title="Download source file"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -405,7 +403,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>mlx.data.datasets.load_images_from_folder</h1>
+    <h1>mlx.data.datasets.load_fashion_mnist</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -419,34 +417,20 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article" role="main">
                   
-  <section id="mlx-data-datasets-load-images-from-folder">
-<h1>mlx.data.datasets.load_images_from_folder<a class="headerlink" href="#mlx-data-datasets-load-images-from-folder" title="Permalink to this heading">#</a></h1>
+  <section id="mlx-data-datasets-load-fashion-mnist">
+<h1>mlx.data.datasets.load_fashion_mnist<a class="headerlink" href="#mlx-data-datasets-load-fashion-mnist" title="Permalink to this heading">#</a></h1>
 <dl class="py function">
-<dt class="sig sig-object py" id="mlx.data.datasets.load_images_from_folder">
-<span class="sig-prename descclassname"><span class="pre">mlx.data.datasets.</span></span><span class="sig-name descname"><span class="pre">load_images_from_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_folder</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlx.data.datasets.load_images_from_folder" title="Permalink to this definition">#</a></dt>
-<dd><p>Load images from a folder.</p>
-<p>For a directory structure like the following</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">image_folder</span><span class="o">/</span>
-<span class="o">...</span><span class="n">class_1</span><span class="o">/</span>
-<span class="o">......</span><span class="n">foo</span><span class="o">.</span><span class="n">jpg</span>
-<span class="o">......</span><span class="n">bar</span><span class="o">.</span><span class="n">png</span>
-<span class="o">...</span><span class="n">class_2</span><span class="o">/</span>
-<span class="o">......</span><span class="n">baz</span><span class="o">.</span><span class="n">jpg</span>
-<span class="o">......</span><span class="n">foo_again</span><span class="o">.</span><span class="n">png</span>
-</pre></div>
-</div>
-<p>this function will return a <code class="xref py py-class docutils literal notranslate"><span class="pre">Buffer</span></code> that contains samples
-with the following keys</p>
-<ul class="simple">
-<li><p><strong>folder</strong>: the name of the category of this sample (e.g. class_1, class_2 etc)</p></li>
-<li><p><strong>label</strong>: an integer that corresponds to the sorted position of the folder
-names (e.g. class_1 gets 0 and class_2 gets 1)</p></li>
-<li><p><strong>file</strong>: the path to the image relative to the provided root folder</p></li>
-<li><p><strong>image</strong>: the loaded image array</p></li>
-</ul>
+<dt class="sig sig-object py" id="mlx.data.datasets.load_fashion_mnist">
+<span class="sig-prename descclassname"><span class="pre">mlx.data.datasets.</span></span><span class="sig-name descname"><span class="pre">load_fashion_mnist</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">root</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">train</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#mlx.data.datasets.load_fashion_mnist" title="Permalink to this definition">#</a></dt>
+<dd><p>Load a buffer with the Fashion-MNIST dataset.</p>
+<p>If the data doesn’t exist download it and save it for the next time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>image_folder</strong> – (Path or str): The directory to load the images from.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>root</strong> (<em>Path</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>, </em><em>optional</em>) – The directory to load/save the data. If
+none is given the <code class="docutils literal notranslate"><span class="pre">~/.cache/mlx.data/fashion-mnist</span></code> is used.</p></li>
+<li><p><strong>train</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.12)"><em>bool</em></a>) – Load the training or test set.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -464,24 +448,6 @@ names (e.g. class_1 gets 0 and class_2 gets 1)</p></li>
                 <footer class="prev-next-footer">
                   
 <div class="prev-next-area">
-    <a class="left-prev"
-       href="mlx.data.datasets.load_imagenet.html"
-       title="previous page">
-      <i class="fa-solid fa-angle-left"></i>
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">mlx.data.datasets.load_imagenet</p>
-      </div>
-    </a>
-    <a class="right-next"
-       href="mlx.data.datasets.load_librispeech.html"
-       title="next page">
-      <div class="prev-next-info">
-        <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">mlx.data.datasets.load_librispeech</p>
-      </div>
-      <i class="fa-solid fa-angle-right"></i>
-    </a>
 </div>
                 </footer>
               
