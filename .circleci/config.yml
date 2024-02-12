@@ -154,14 +154,29 @@ workflows:
   build_on_commit:
     when:
       and:
+        - equal: [ main, << pipeline.git.branch >> ]
         - not: << pipeline.parameters.dev_release >>
         - not: << pipeline.parameters.pypi_release >>
     jobs:
       - linux_build_on_commit
       - mac_build_on_commit
-
+  prb:
+    when:
+      matches:
+        pattern: "^pull/\\d+(/head)?$"
+        value: << pipeline.git.branch >>
+    jobs:
+      - hold:
+          type: approval
+      - linux_build_on_commit:
+          requires: [ hold ]
+      - mac_build_on_commit:
+          requires: [ hold ]
   build_dev_release:
-    when: << pipeline.parameters.dev_release >>
+    when:
+      and:
+        - equal: [ main, << pipeline.git.branch >> ]
+        - << pipeline.parameters.dev_release >>
     jobs:
       - linux_build_wheels:
           matrix:
@@ -176,7 +191,10 @@ workflows:
               extra_env: ["DEV_RELEASE=1"]
 
   build_pypi_release:
-    when: << pipeline.parameters.pypi_release >>
+    when:
+      and:
+        - equal: [ main, << pipeline.git.branch >> ]
+        - << pipeline.parameters.pypi_release >>
     jobs:
       - linux_build_wheels:
           matrix:
