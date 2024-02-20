@@ -19,30 +19,30 @@
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=5b4479735964841361fd" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=5b4479735964841361fd" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
 
   
-  <link href="_static/vendor/fontawesome/6.1.2/css/all.min.css?digest=5b4479735964841361fd" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.1.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
-    <link rel="stylesheet" href="_static/styles/sphinx-book-theme.css?digest=14f4ca6b54d191a8c7657f6c759bf11a5fb86285" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=5b4479735964841361fd" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd" />
-  <script src="_static/vendor/fontawesome/6.1.2/js/all.min.js?digest=5b4479735964841361fd"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
+  <script src="_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
 
     <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
     <script src="_static/jquery.js"></script>
     <script src="_static/underscore.js"></script>
     <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
     <script src="_static/doctools.js"></script>
-    <script src="_static/scripts/sphinx-book-theme.js?digest=5a5c038af52cf7bc1a1ec88eea08e6366ee68824"></script>
+    <script src="_static/scripts/sphinx-book-theme.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'install';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -57,10 +57,9 @@
 
   
   
-  <a class="skip-link" href="#main-content">Skip to main content</a>
+  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
   
   <div id="pst-scroll-pixel-helper"></div>
-
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>
@@ -101,11 +100,14 @@
 </form></div>
   </div>
   
-    <nav class="bd-header navbar navbar-expand-lg bd-navbar">
-    </nav>
+    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    </header>
   
+
   <div class="bd-container">
     <div class="bd-container__inner bd-page-width">
+      
+      
       
       <div class="bd-sidebar-primary bd-sidebar">
         
@@ -135,11 +137,22 @@
     
     
     <img src="_static/mlx_logo.png" class="logo__image only-light" alt="MLX Data 0.0.2 documentation - Home"/>
-    <script>document.write(`<img src="_static/mlx_logo.png" class="logo__image only-dark" alt="MLX Data 0.0.2 documentation - Home"/>`);</script>
+    <script>document.write(`<img src="_static/mlx_logo_dark.png" class="logo__image only-dark" alt="MLX Data 0.0.2 documentation - Home"/>`);</script>
   
   
 </a></div>
-        <div class="sidebar-primary-item"><nav class="bd-links" id="bd-docs-nav" aria-label="Main">
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         <p aria-level="2" class="caption" role="heading"><span class="caption-text">Install</span></p>
 <ul class="current nav bd-sidenav">
@@ -210,7 +223,6 @@
 </li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="python/common_datasets.html">Common Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
 <li class="toctree-l2"><a class="reference internal" href="python/_autosummary/mlx.data.datasets.load_mnist.html">mlx.data.datasets.load_mnist</a></li>
-<li class="toctree-l2"><a class="reference internal" href="python/_autosummary/mlx.data.datasets.load_fashion_mnist.html">mlx.data.datasets.load_fashion_mnist</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python/_autosummary/mlx.data.datasets.load_cifar10.html">mlx.data.datasets.load_cifar10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python/_autosummary/mlx.data.datasets.load_cifar100.html">mlx.data.datasets.load_cifar100</a></li>
 <li class="toctree-l2"><a class="reference internal" href="python/_autosummary/mlx.data.datasets.load_imagenet.html">mlx.data.datasets.load_imagenet</a></li>
@@ -434,7 +446,7 @@ document.write(`
               
                 
 <div id="searchbox"></div>
-                <article class="bd-article" role="main">
+                <article class="bd-article">
                   
   <section id="build-and-install">
 <h1>Build and Install<a class="headerlink" href="#build-and-install" title="Permalink to this heading">#</a></h1>
@@ -472,31 +484,31 @@ subsequently we provide example shell commands to install them using
 <li><p><code class="docutils literal notranslate"><span class="pre">aws-sdk</span></code> for accessing S3 buckets.</p></li>
 </ul>
 <p>To install the above on a Mac using homebrew one needs simply to run:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install libsndfile libsamplerate ffmpeg jpeg-turbo zlib bzip2 xz aws-sdk-cpp
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew<span class="w"> </span>install<span class="w"> </span>libsndfile<span class="w"> </span>libsamplerate<span class="w"> </span>ffmpeg<span class="w"> </span>jpeg-turbo<span class="w"> </span>zlib<span class="w"> </span>bzip2<span class="w"> </span>xz<span class="w"> </span>aws-sdk-cpp
 </pre></div>
 </div>
 <p>For an Ubuntu machine, on the other hand:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install libsndfile1-dev libsamplerate0-dev ffmpeg libjpeg-turbo8-dev <span class="se">\</span>
-    zlib1g-dev libbz2-dev liblzma-dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libsndfile1-dev<span class="w"> </span>libsamplerate0-dev<span class="w"> </span>ffmpeg<span class="w"> </span>libjpeg-turbo8-dev<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>zlib1g-dev<span class="w"> </span>libbz2-dev<span class="w"> </span>liblzma-dev
 
 <span class="c1"># We have to build the AWS SDK from source :-(</span>
 <span class="c1"># None of this is needed if installing MLX Data from a prebuilt binary or if</span>
 <span class="c1"># you don&#39;t care about fetching from S3</span>
 
-sudo apt install libcurl4-openssl-dev libssl-dev
-git clone --depth <span class="m">1</span> --recurse-submodules https://github.com/aws/aws-sdk-cpp.git
-<span class="nb">cd</span> aws-sdk-cpp
-mkdir build
-<span class="nb">cd</span> build
-cmake .. -DCMAKE_BUILD_TYPE<span class="o">=</span>Release -DBUILD_ONLY<span class="o">=</span><span class="s2">&quot;s3&quot;</span> -DBUILD_SHARED_LIBS<span class="o">=</span>OFF
-make -j
-sudo make install
+sudo<span class="w"> </span>apt<span class="w"> </span>install<span class="w"> </span>libcurl4-openssl-dev<span class="w"> </span>libssl-dev
+git<span class="w"> </span>clone<span class="w"> </span>--depth<span class="w"> </span><span class="m">1</span><span class="w"> </span>--recurse-submodules<span class="w"> </span>https://github.com/aws/aws-sdk-cpp.git
+<span class="nb">cd</span><span class="w"> </span>aws-sdk-cpp
+mkdir<span class="w"> </span>build
+<span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..<span class="w"> </span>-DCMAKE_BUILD_TYPE<span class="o">=</span>Release<span class="w"> </span>-DBUILD_ONLY<span class="o">=</span><span class="s2">&quot;s3&quot;</span><span class="w"> </span>-DBUILD_SHARED_LIBS<span class="o">=</span>OFF
+make<span class="w"> </span>-j
+sudo<span class="w"> </span>make<span class="w"> </span>install
 </pre></div>
 </div>
 <p>Finally before building the python bindings you need to make sure that you
 have <code class="docutils literal notranslate"><span class="pre">pybind11</span></code> installed and a relatively modern version of <code class="docutils literal notranslate"><span class="pre">CMake</span></code>. For example,
 both be installed with <code class="docutils literal notranslate"><span class="pre">pip</span></code>,</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install pybind11<span class="o">[</span>global<span class="o">]</span> cmake
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>pybind11<span class="o">[</span>global<span class="o">]</span><span class="w"> </span>cmake
 </pre></div>
 </div>
 </section>
@@ -504,8 +516,8 @@ both be installed with <code class="docutils literal notranslate"><span class="p
 <h3>Build Python bindings from source<a class="headerlink" href="#build-python-bindings-from-source" title="Permalink to this heading">#</a></h3>
 <p>After installing the dependencies you care about as described above, you can
 directly install MLX data using pip.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> /path/to/mlx/data
-pip install .  <span class="c1"># or pip install -e . for an editable install</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>/path/to/mlx/data
+pip<span class="w"> </span>install<span class="w"> </span>.<span class="w">  </span><span class="c1"># or pip install -e . for an editable install</span>
 </pre></div>
 </div>
 </section>
@@ -513,10 +525,10 @@ pip install .  <span class="c1"># or pip install -e . for an editable install</s
 <h3>Building the standalone C++ library<a class="headerlink" href="#building-the-standalone-c-library" title="Permalink to this heading">#</a></h3>
 <p>MLX data can also be installed as a standalone C++ static library that you can
 link your projects against.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> build
-cmake ..
-make -j
-sudo make install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir<span class="w"> </span>build<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>build
+cmake<span class="w"> </span>..
+make<span class="w"> </span>-j
+sudo<span class="w"> </span>make<span class="w"> </span>install
 </pre></div>
 </div>
 <p>Subsequently, you can use CMake’s <code class="docutils literal notranslate"><span class="pre">find_package(MLXData)</span></code> which defines
@@ -564,6 +576,7 @@ simply link with <code class="docutils literal notranslate"><span class="pre">-l
             
               
                 <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
 
   <div class="sidebar-secondary-item">
   <div class="page-toc tocsection onthispage">
@@ -626,8 +639,8 @@ By MLX Contributors
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=5b4479735964841361fd"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=5b4479735964841361fd"></script>
+  <script src="_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
+<script src="_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
 
   <footer class="bd-footer">
   </footer>
