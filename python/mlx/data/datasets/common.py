@@ -32,7 +32,10 @@ class FileProgressBar:
             print("\r" + self.message(), end="", flush=True, file=self.outfile)
 
     def message(self, width=40):
-        speed = self.current_size / (self.current_time - self.start_time)
+        try:
+            speed = self.current_size / (self.current_time - self.start_time)
+        except ZeroDivisionError:
+            speed = float("+inf")
         if self.total_size >= self.current_size:
             fill = "█"
             portion = self.current_size / self.total_size
