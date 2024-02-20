@@ -30,6 +30,7 @@ intersphinx_mapping = {
 }
 
 templates_path = ["_templates"]
+html_static_path = ["_static"]
 source_suffix = ".rst"
 master_doc = "index"
 highlight_language = "python"
@@ -41,12 +42,14 @@ html_theme = "sphinx_book_theme"
 
 html_theme_options = {
     "show_toc_level": 2,
-    "repository_url": "https://github.com/ml-explore/mlx",
+    "repository_url": "https://github.com/ml-explore/mlx-data",
     "use_repository_button": True,
     "navigation_with_keys": False,
+    "logo": {
+        "image_light": "_static/mlx_logo.png",
+        "image_dark": "_static/mlx_logo_dark.png",
+    },
 }
-
-html_logo = "_static/mlx_logo.png"
 
 # -- Options for HTMLHelp output ---------------------------------------------
 
