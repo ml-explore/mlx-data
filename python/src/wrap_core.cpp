@@ -202,7 +202,6 @@ void init_mlx_data_core(py::module& m) {
       "Tokenizer",
       R"pbcopy(
         A Tokenizer that can be used to tokenize arbitrary strings.
-
         Args:
             trie (mlx.data.core.CharTrie): The trie containing the possible tokens.
             ignore_unk (bool): Whether unknown tokens should be ignored or
@@ -211,15 +210,24 @@ void init_mlx_data_core(py::module& m) {
                 trie node. If left empty each score is assumed equal to 1.
                 Tokenize shortest minimizes the sum of these scores over
                 the sequence of tokens.
+            bigram_merges (dict[tuple[int, int], int]): A dict.
+            bigram_ranks (dict[tuple[int, int], int]): A dict.
+            vocab (dict[str, int]): A dict.
       )pbcopy")
       .def(
           py::init<
               std::shared_ptr<const Trie<char>>,
               bool,
-              const std::vector<double>&>(),
+              const std::vector<double>,
+              const std::map<std::pair<int64_t, int64_t>, int64_t>,
+              const std::map<std::pair<int64_t, int64_t>, int64_t>&>(),
           py::arg("trie"),
           py::arg("ignore_unk") = false,
           py::arg("trie_key_scores") = std::vector<double>({}),
+          py::arg("bigram_merges") =
+              std::map<std::pair<int64_t, int64_t>, int64_t>({}),
+          py::arg("bigram_ranks") =
+              std::map<std::pair<int64_t, int64_t>, int64_t>({}),
           R"pbcopy(
             Make a tokenizer object that can be used to tokenize arbitrary strings.
 
@@ -231,6 +239,8 @@ void init_mlx_data_core(py::module& m) {
                     trie node. If left empty each score is assumed equal to 1.
                     Tokenize shortest minimizes the sum of these scores over
                     the sequence of tokens.
+                 bigram_merges (dict[tuple[int, int], int]): A dict.
+                 bigram_ranks (dict[tuple[int, int], int]): A dict.
           )pbcopy")
       .def(
           "tokenize_shortest",
@@ -270,6 +280,15 @@ void init_mlx_data_core(py::module& m) {
           R"pbcopy(
             Return the full graph of possible tokenizations.
 
+            Args:
+                input (str): The input string to be tokenized.
+           )pbcopy")
+      .def(
+          "tokenize_bpe",
+          &Tokenizer::tokenize_bpe,
+          py::arg("input"),
+          R"pbcopy(
+            Return the input tokenized using byte pair encoding.
             Args:
                 input (str): The input string to be tokenized.
            )pbcopy");

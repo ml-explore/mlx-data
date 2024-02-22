@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include <map>
 #include <memory>
 #include <string>
 
@@ -22,16 +23,22 @@ class Tokenizer {
   Tokenizer(
       std::shared_ptr<const Trie<char>> trie,
       bool ignore_unk = false,
-      const std::vector<double>& trie_key_scores = {});
+      const std::vector<double>& trie_key_scores = {},
+      const std::map<std::pair<int64_t, int64_t>, int64_t>& bigram_merges = {},
+      const std::map<std::pair<int64_t, int64_t>, int64_t>& bigram_ranks = {});
   std::shared_ptr<Graph<int64_t>> tokenize(const std::string& input) const;
   std::vector<int64_t> tokenize_shortest(const std::string& input) const;
   std::vector<int64_t> tokenize_rand(const std::string& input) const;
+  std::vector<int64_t> tokenize_bpe(const std::string& input) const;
+  std::vector<int64_t> tokenize_bpe_single(const std::string& input) const;
 
  private:
   std::shared_ptr<const Trie<char>> trie_;
   bool ignoreUnk_;
   std::vector<double> trieKeyScores_;
   bool trieKeyScoresPositive_;
+  std::map<std::pair<int64_t, int64_t>, int64_t> bigram_merges_;
+  std::map<std::pair<int64_t, int64_t>, int64_t> bigram_ranks_;
 };
 
 class TokenizerIterator {
