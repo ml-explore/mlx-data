@@ -32,7 +32,7 @@ class SlidingWindow : public Stream {
   int64_t size_;
   int64_t stride_;
   int dim_;
-  const std::string& indexKey_;
+  std::string& indexKey_;
 };
 
 } // namespace stream
