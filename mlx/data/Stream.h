@@ -69,7 +69,8 @@ class Stream : public Dataset<Stream, stream::Stream> {
       const std::string& key,
       int64_t size,
       int64_t stride,
-      int dim = -1) const;
+      int dim = -1,
+      const std::string& indexKey = "") const;
 
   Buffer to_buffer();
 };

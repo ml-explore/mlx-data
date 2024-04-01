@@ -385,6 +385,7 @@ void init_mlx_data_stream(py::module& m) {
               py::arg("size"),
               py::arg("stride"),
               py::arg("dim") = -1,
+              py::arg("index_key") = "",
               R"pbcopy(
                 Creates sample by sliding a window over the array at ``key``.
 
@@ -409,9 +410,10 @@ void init_mlx_data_stream(py::module& m) {
 
                 Args:
                   key (str): The sample key that contains the array we are operating on.
-                  size (int): The size of the sliding window
-                  stride (int): The stride of the sliding window
+                  size (int): The size of the sliding window.
+                  stride (int): The stride of the sliding window.
                   dim (int): Which dimension are we sliding the window over. (default: -1)
+                  index_key (str): The sample key where sliding window index will be stored. If string is empty key will not be added. (default: "")
               )pbcopy")
           .def(
               "to_buffer",
