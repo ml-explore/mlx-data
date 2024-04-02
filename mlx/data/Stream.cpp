@@ -138,9 +138,9 @@ Stream Stream::sliding_window(
     int64_t size,
     int64_t stride,
     int dim,
-    const std::string& indexKey) const {
+    const std::string& index_key) const {
   return Stream(std::make_shared<stream::SlidingWindow>(
-      self_, key, size, stride, dim, indexKey));
+      self_, key, size, stride, dim, index_key));
 }
 
 Buffer Stream::to_buffer() {

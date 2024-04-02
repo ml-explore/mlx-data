@@ -19,7 +19,7 @@ class SlidingWindow : public Stream {
       int64_t size,
       int64_t stride,
       int dim = -1,
-      const std::string& indexKey = "");
+      const std::string& index_key = "");
 
   virtual Sample next() const override;
   virtual void reset() override;
@@ -32,7 +32,7 @@ class SlidingWindow : public Stream {
   int64_t size_;
   int64_t stride_;
   int dim_;
-  std::string& indexKey_;
+  std::string index_key_;
 };
 
 } // namespace stream

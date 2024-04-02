@@ -413,7 +413,8 @@ void init_mlx_data_stream(py::module& m) {
                   size (int): The size of the sliding window.
                   stride (int): The stride of the sliding window.
                   dim (int): Which dimension are we sliding the window over. (default: -1)
-                  index_key (str): The sample key where sliding window index will be stored. If string is empty key will not be added. (default: "")
+                  index_key (str): If provided, store the index of the sliding window in
+                    that key. (default: "")
               )pbcopy")
           .def(
               "to_buffer",
