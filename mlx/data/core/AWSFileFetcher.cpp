@@ -128,8 +128,9 @@ int64_t AWSFileFetcher::get_size(const std::string& filename) const {
   } else {
     const Aws::S3::S3Error& err = outcome.GetError();
     throw std::runtime_error(
-        "AWSFileFetcher: unable to fetch <" + remote_file_path.string() +
-        "> header: " + err.GetExceptionName() + " : " + err.GetMessage());
+        "AWSFileFetcher: unable to fetch <s3://" + bucket_ + "/" +
+        remote_file_path.string() + "> header: " + err.GetExceptionName() +
+        " : " + err.GetMessage());
   }
 }
 
@@ -143,8 +144,8 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   auto localFilePath = (local_prefix_ / filename);
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
-              << ") : fetching " << remoteFilePath << " (" << size
-              << " bytes) into " << localFilePath << std::endl;
+              << ") : fetching s3://" << bucket_ << "/" << remoteFilePath
+              << " (" << size << " bytes) into " << localFilePath << std::endl;
   }
 
   // Note: the threads might fetch data faster than what
@@ -213,8 +214,9 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
     if (!outcome.IsSuccess()) {
       const Aws::S3::S3Error& err = outcome.GetError();
       throw std::runtime_error(
-          "AWSFileFetcher: unable to fetch <" + remoteFilePath.string() +
-          "> : " + err.GetExceptionName() + " : " + err.GetMessage());
+          "AWSFileFetcher: unable to fetch <s3://" + bucket_ + "/" +
+          remoteFilePath.string() + "> : " + err.GetExceptionName() + " : " +
+          err.GetMessage());
     } else {
       auto& buf = outcome.GetResult().GetBody();
       f << buf.rdbuf();
@@ -236,8 +238,9 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
               << ") : " << (dtor_called_.load() ? "aborted" : "done")
-              << " fetching " << remoteFilePath << " (" << totalWrittenSize
-              << "/" << size << " bytes) into " << localFilePath << std::endl;
+              << " fetching s3://" << bucket_ << "/" << remoteFilePath << " ("
+              << totalWrittenSize << "/" << size << " bytes) into "
+              << localFilePath << std::endl;
   }
 }
 
