@@ -58,6 +58,12 @@ class AWSFileFetcher : public FileFetcher {
   virtual void backend_fetch(const std::string& filename) const override;
   virtual void backend_erase(const std::string& filename) const override;
 
+  void update_credentials(
+      const std::string& access_key_id = "",
+      const std::string secret_access_key = "",
+      const std::string session_token = "",
+      const std::string expiration = "") const;
+
   bool are_credentials_expired() const;
 
   virtual ~AWSFileFetcher();
@@ -67,11 +73,13 @@ class AWSFileFetcher : public FileFetcher {
   std::filesystem::path prefix_;
   std::filesystem::path local_prefix_;
   std::unique_ptr<Aws::Client::ClientConfiguration> config_;
-  std::unique_ptr<Aws::Auth::AWSCredentials> credentials_;
-  std::unique_ptr<Aws::S3::S3Client> client_;
+  bool config_virtual_host_;
   int64_t buffer_size_;
   int num_threads_;
+  mutable std::unique_ptr<Aws::Auth::AWSCredentials> credentials_;
+  mutable std::unique_ptr<Aws::S3::S3Client> client_;
   mutable std::atomic<bool> dtor_called_;
+  mutable std::shared_mutex client_mutex_;
 };
 
 } // namespace core

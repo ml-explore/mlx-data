@@ -323,7 +323,7 @@ void init_mlx_data_core(py::module& m) {
           Erase the filename from the local cache (if present).
 
           Args:
-            filename (str): A file to fetch from the remote.
+            filename (str): A file to erase locally.
         )pbcopy");
 
 #if MLX_HAS_AWS
@@ -435,6 +435,26 @@ void init_mlx_data_core(py::module& m) {
               verbose (bool): Defines whether the file fetcher should write
                 information messages to the standard output. (default: false)
           )pbcopy")
+      .def(
+          "update_credentials",
+          &AWSFileFetcher::update_credentials,
+          py::arg("access_key_id") = "",
+          py::arg("secret_access_key") = "",
+          py::arg("session_token") = "",
+          py::arg("expiration") = "",
+          R"pbcopy(
+          Update the AWSFileFetcher credentials.
+
+          Args:
+              access_key_id (str): Set the AWS access key id to authenticate to
+                the remote service. (default: '')
+              secret_access_key (str): Set the AWS secret access key id to
+                authenticate to the remote service. (default: '')
+              session_token (str): Set the AWS session token to authenticate to
+                the remote service. (default: '')
+              expiration (str): A date string defining the expiration of the
+                authentication credentials (default: '')
+        )pbcopy")
       .def("are_credentials_expired", &AWSFileFetcher::are_credentials_expired);
 
   AWSHandler::init();

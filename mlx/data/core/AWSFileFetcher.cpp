@@ -73,10 +73,31 @@ AWSFileFetcher::AWSFileFetcher(
   } else {
     config_->caFile = opt.ca_bundle;
   }
+  config_virtual_host_ = opt.virtual_host;
 
-  if (opt.access_key_id.empty() && opt.secret_access_key.empty() &&
-      opt.session_token.empty() && opt.expiration.empty()) {
-    if (opt.virtual_host) {
+  update_credentials(
+      opt.access_key_id,
+      opt.secret_access_key,
+      opt.session_token,
+      opt.expiration);
+}
+
+void AWSFileFetcher::update_credentials(
+    const std::string& access_key_id,
+    const std::string secret_access_key,
+    const std::string session_token,
+    const std::string expiration) const {
+  std::unique_lock ulock(client_mutex_);
+  if (verbose_ && client_) {
+    std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+              << ") : updating credentials" << std::endl;
+  }
+
+  credentials_ = nullptr;
+
+  if (access_key_id.empty() && secret_access_key.empty() &&
+      session_token.empty() && expiration.empty()) {
+    if (config_virtual_host_) {
       client_ = std::make_unique<Aws::S3::S3Client>(*config_);
     } else {
       client_ = std::make_unique<Aws::S3::S3Client>(
@@ -86,13 +107,10 @@ AWSFileFetcher::AWSFileFetcher(
     }
   } else {
     Aws::Utils::DateTime aws_expiration(
-        opt.expiration, Aws::Utils::DateFormat::AutoDetect);
+        expiration, Aws::Utils::DateFormat::AutoDetect);
     credentials_ = std::make_unique<Aws::Auth::AWSCredentials>(
-        opt.access_key_id,
-        opt.secret_access_key,
-        opt.session_token,
-        aws_expiration);
-    if (opt.virtual_host) {
+        access_key_id, secret_access_key, session_token, aws_expiration);
+    if (config_virtual_host_) {
       client_ = std::make_unique<Aws::S3::S3Client>(
           *credentials_,
           Aws::MakeShared<Aws::S3::S3EndpointProvider>("MLX"),
@@ -116,6 +134,8 @@ bool AWSFileFetcher::are_credentials_expired() const {
 }
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
+  std::shared_lock slock(client_mutex_);
+
   Aws::S3::Model::HeadObjectRequest request;
   auto remote_file_path = (prefix_ / filename);
   request.SetBucket(bucket_);
@@ -162,27 +182,31 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   // the disk can write, in which case memory might blow up
   // for large files. Could have gone with another approach,
   // but here one can control number of threads.
-  ThreadPool threadPool(num_threads_);
   std::deque<std::future<Aws::S3::Model::GetObjectOutcome>> parts;
-  for (int64_t part = 0; part < numPart; part++) {
-    parts.emplace_back(threadPool.enqueue([part, size, this, remoteFilePath]() {
-      if (dtor_called_.load()) {
-        return Aws::S3::Model::GetObjectOutcome();
-      }
-      auto beg = part * buffer_size_;
-      auto end = (part + 1) * buffer_size_;
-      if (end > size) {
-        end = size;
-      }
-      end--; // inclusive;
-      std::stringstream range;
-      range << "bytes=" << beg << '-' << end;
-      Aws::S3::Model::GetObjectRequest request;
-      request.SetBucket(bucket_);
-      request.SetKey(remoteFilePath.string());
-      request.SetRange(range.str());
-      return client_->GetObject(request);
-    }));
+  ThreadPool threadPool(num_threads_);
+  {
+    std::shared_lock slock(client_mutex_);
+    for (int64_t part = 0; part < numPart; part++) {
+      parts.emplace_back(
+          threadPool.enqueue([part, size, this, remoteFilePath]() {
+            if (dtor_called_.load()) {
+              return Aws::S3::Model::GetObjectOutcome();
+            }
+            auto beg = part * buffer_size_;
+            auto end = (part + 1) * buffer_size_;
+            if (end > size) {
+              end = size;
+            }
+            end--; // inclusive;
+            std::stringstream range;
+            range << "bytes=" << beg << '-' << end;
+            Aws::S3::Model::GetObjectRequest request;
+            request.SetBucket(bucket_);
+            request.SetKey(remoteFilePath.string());
+            request.SetRange(range.str());
+            return client_->GetObject(request);
+          }));
+    }
   }
 
   auto localDir = localFilePath.parent_path();
