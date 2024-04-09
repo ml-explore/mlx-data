@@ -135,21 +135,22 @@ int64_t AWSFileFetcher::get_size(const std::string& filename) const {
 }
 
 void AWSFileFetcher::backend_fetch(const std::string& filename) const {
-  auto size = get_size(filename);
-  auto numPart = size / buffer_size_;
-  if (size % buffer_size_) {
-    numPart++;
-  }
+  // Do not fetch a file already present on disk
   auto remoteFilePath = (prefix_ / filename);
   auto localFilePath = (local_prefix_ / filename);
   if (std::filesystem::exists(localFilePath)) {
     if (verbose_) {
       std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
-                << ") : file s3://" << bucket_ << "/" << remoteFilePath << " ("
-                << size << " bytes) already exists in " << localFilePath
-                << std::endl;
+                << ") : file s3://" << bucket_ << "/" << remoteFilePath
+                << " already exists in " << localFilePath << std::endl;
     }
     return;
+  }
+
+  auto size = get_size(filename);
+  auto numPart = size / buffer_size_;
+  if (size % buffer_size_) {
+    numPart++;
   }
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
