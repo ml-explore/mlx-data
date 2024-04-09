@@ -142,6 +142,15 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   }
   auto remoteFilePath = (prefix_ / filename);
   auto localFilePath = (local_prefix_ / filename);
+  if (std::filesystem::exists(localFilePath)) {
+    if (verbose_) {
+      std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+                << ") : file s3://" << bucket_ << "/" << remoteFilePath << " ("
+                << size << " bytes) already exists in " << localFilePath
+                << std::endl;
+    }
+    return;
+  }
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
               << ") : fetching s3://" << bucket_ << "/" << remoteFilePath
@@ -183,12 +192,14 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
     }
     std::filesystem::create_directories(localDir);
   }
+  auto localFilePathTmp = localFilePath;
+  localFilePathTmp += ".download";
   std::ofstream f(
-      localFilePath,
+      localFilePathTmp,
       std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
   if (!f.good()) {
     throw std::runtime_error(
-        "AWSFileFetcher: could not open <" + localFilePath.string() +
+        "AWSFileFetcher: could not open <" + localFilePathTmp.string() +
         "> for writing");
   }
   int64_t part = 0;
@@ -223,17 +234,21 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
       totalWrittenSize += partSize;
       if (!f.good()) {
         throw std::runtime_error(
-            "AWSFileFetcher: could not write in <" + localFilePath.string() +
+            "AWSFileFetcher: could not write in <" + localFilePathTmp.string() +
             ">");
       }
       if (f.tellp() != totalWrittenSize) {
         throw std::runtime_error(
             "AWSFileFetcher: unexpected write size in <" +
-            localFilePath.string() + ">");
+            localFilePathTmp.string() + ">");
       }
     }
     part++;
   }
+
+  // rename file when done
+  f.close();
+  std::filesystem::rename(localFilePathTmp, localFilePath);
 
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
