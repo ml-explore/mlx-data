@@ -48,6 +48,9 @@ class FileFetcher {
 
   std::shared_ptr<FileFetcherHandle> fetch(const std::string& filename) const;
 
+  // Erase a file from cache, and call backend erase
+  void erase(const std::string& filename) const;
+
   virtual void backend_fetch(const std::string& filename) const;
 
   virtual void backend_erase(const std::string& filename) const;

@@ -314,6 +314,16 @@ void init_mlx_data_core(py::module& m) {
 
           Args:
             filename (str): A file to fetch from the remote.
+        )pbcopy")
+      .def(
+          "erase",
+          &FileFetcher::erase,
+          py::arg("filename"),
+          R"pbcopy(
+          Erase the filename from the local cache (if present).
+
+          Args:
+            filename (str): A file to fetch from the remote.
         )pbcopy");
 
 #if MLX_HAS_AWS

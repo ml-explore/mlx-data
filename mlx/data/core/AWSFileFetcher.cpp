@@ -261,7 +261,12 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
 
 void AWSFileFetcher::backend_erase(const std::string& filename) const {
   auto localFilePath = (local_prefix_ / filename);
-  std::filesystem::remove(localFilePath);
+  auto status = std::filesystem::remove(localFilePath);
+  if (verbose_) {
+    std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+              << ") : erasing " << localFilePath
+              << (status ? " (done)" : " (file does not exist)") << std::endl;
+  }
 }
 
 AWSFileFetcher::~AWSFileFetcher() {

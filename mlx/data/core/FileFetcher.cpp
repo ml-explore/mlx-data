@@ -131,6 +131,12 @@ std::shared_ptr<FileFetcherHandle> FileFetcher::fetch(
   }
 }
 
+void FileFetcher::erase(const std::string& filename) const {
+  std::unique_lock ulock(mutex_);
+  cachedFiles_.erase(filename);
+  backend_erase(filename);
+}
+
 void FileFetcher::backend_fetch(const std::string& filename) const {}
 void FileFetcher::backend_erase(const std::string& filename) const {}
 
