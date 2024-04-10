@@ -12,8 +12,14 @@ SlidingWindow::SlidingWindow(
     const std::string& key,
     int64_t size,
     int64_t stride,
-    int dim)
-    : stream_(stream), key_(key), size_(size), stride_(stride), dim_(dim) {
+    int dim,
+    const std::string& index_key)
+    : stream_(stream),
+      key_(key),
+      size_(size),
+      stride_(stride),
+      dim_(dim),
+      index_key_(index_key) {
   if (size <= 0) {
     throw std::runtime_error("SlidingWindow: size must be strictly positive");
   }
@@ -49,6 +55,7 @@ Sample SlidingWindow::next() const {
     auto newshape = array->shape();
     std::vector<int64_t> newoffset(array->ndim(), 0);
     int64_t offset = 0;
+    int64_t slice_index = 0;
     while (offset < length) {
       auto newsample = sample;
       int64_t newlength =
@@ -56,8 +63,12 @@ Sample SlidingWindow::next() const {
       newshape[dim] = newlength;
       newoffset[dim] = offset;
       newsample[key_] = array::sub(array, newoffset, newshape);
+      if (!index_key_.empty()) {
+        newsample[index_key_] = std::make_shared<Array>(slice_index);
+      }
       buffer.emplace(newsample);
       offset += stride_;
+      slice_index++;
     }
   }
 
