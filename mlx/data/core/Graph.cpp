@@ -47,8 +47,7 @@ std::string GraphBase::dot_graph(
       f << "S" << nodeid;
       f << " [";
       if (!label.empty()) {
-        f << " label=\""
-          << "S" << nodeid << " " << label << "\"";
+        f << " label=\"" << "S" << nodeid << " " << label << "\"";
       }
       if (!style.empty()) {
         f << style;
@@ -56,8 +55,7 @@ std::string GraphBase::dot_graph(
       f << "];" << std::endl;
     }
     for (auto& edgeid : node.iedges) {
-      f << "S" << edges_[edgeid].inode << " -> "
-        << "S" << edges_[edgeid].onode;
+      f << "S" << edges_[edgeid].inode << " -> " << "S" << edges_[edgeid].onode;
       auto label = edgelabel(edgeid);
       if (!label.empty()) {
         f << " [label=\"" << label << "\"];" << std::endl;
