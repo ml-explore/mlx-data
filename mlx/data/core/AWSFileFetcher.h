@@ -60,15 +60,28 @@ class AWSFileFetcher : public FileFetcher {
 
   void update_credentials(
       const std::string& access_key_id = "",
-      const std::string secret_access_key = "",
-      const std::string session_token = "",
-      const std::string expiration = "") const;
+      const std::string& secret_access_key = "",
+      const std::string& session_token = "",
+      const std::string& expiration = "") const;
+
+  void update_credentials_with_callback(
+      std::function<
+          std::tuple<std::string, std::string, std::string, std::string>()>
+          callback,
+      int64_t period = 0);
 
   bool are_credentials_expired() const;
 
   virtual ~AWSFileFetcher();
 
  protected:
+  void check_credentials_() const;
+  void update_credentials_(
+      const std::string& access_key_id,
+      const std::string& secret_access_key,
+      const std::string& session_token,
+      const std::string& expiration) const; // no lock;
+
   std::string bucket_;
   std::filesystem::path prefix_;
   std::filesystem::path local_prefix_;
@@ -80,6 +93,13 @@ class AWSFileFetcher : public FileFetcher {
   mutable std::unique_ptr<Aws::S3::S3Client> client_;
   mutable std::atomic<bool> dtor_called_;
   mutable std::shared_mutex client_mutex_;
+
+  // credentials periodic update
+  std::function<
+      std::tuple<std::string, std::string, std::string, std::string>()>
+      credentials_callback_;
+  int64_t credentials_period_;
+  std::chrono::time_point<std::chrono::system_clock> credentials_timestamp_;
 };
 
 } // namespace core

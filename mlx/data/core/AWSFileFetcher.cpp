@@ -82,12 +82,11 @@ AWSFileFetcher::AWSFileFetcher(
       opt.expiration);
 }
 
-void AWSFileFetcher::update_credentials(
+void AWSFileFetcher::update_credentials_(
     const std::string& access_key_id,
-    const std::string secret_access_key,
-    const std::string session_token,
-    const std::string expiration) const {
-  std::unique_lock ulock(client_mutex_);
+    const std::string& secret_access_key,
+    const std::string& session_token,
+    const std::string& expiration) const {
   if (verbose_ && client_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
               << ") : updating credentials" << std::endl;
@@ -125,6 +124,52 @@ void AWSFileFetcher::update_credentials(
   }
 }
 
+void AWSFileFetcher::update_credentials(
+    const std::string& access_key_id,
+    const std::string& secret_access_key,
+    const std::string& session_token,
+    const std::string& expiration) const {
+  std::unique_lock ulock(client_mutex_);
+  update_credentials_(
+      access_key_id, secret_access_key, session_token, expiration);
+}
+
+void AWSFileFetcher::update_credentials_with_callback(
+    std::function<
+        std::tuple<std::string, std::string, std::string, std::string>()>
+        callback,
+    int64_t period) {
+  credentials_callback_ = callback;
+  credentials_period_ = period;
+}
+
+void AWSFileFetcher::check_credentials_() const {
+  bool renew_credentials = false;
+  {
+    std::shared_lock slock(client_mutex_);
+    if (credentials_ && credentials_->IsExpired()) {
+      renew_credentials = true;
+    } else if (credentials_callback_ && credentials_period_ >= 0) {
+      auto now = std::chrono::system_clock::now();
+      auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+          now - credentials_timestamp_);
+      if (elapsed.count() >= credentials_period_) {
+        renew_credentials = true;
+      }
+    }
+  }
+  if (renew_credentials) {
+    if (!credentials_callback_) {
+      throw std::runtime_error("AWSFileFetcher: credentials are expired");
+    }
+    std::unique_lock ulock(client_mutex_);
+    auto [access_key_id, secret_access_key, session_token, expiration] =
+        credentials_callback_();
+    update_credentials_(
+        access_key_id, secret_access_key, session_token, expiration);
+  }
+}
+
 bool AWSFileFetcher::are_credentials_expired() const {
   if (credentials_) {
     return credentials_->IsExpired();
@@ -134,6 +179,8 @@ bool AWSFileFetcher::are_credentials_expired() const {
 }
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
+  check_credentials_();
+
   std::shared_lock slock(client_mutex_);
 
   Aws::S3::Model::HeadObjectRequest request;
@@ -185,13 +232,15 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   std::deque<std::future<Aws::S3::Model::GetObjectOutcome>> parts;
   ThreadPool threadPool(num_threads_);
   {
-    std::shared_lock slock(client_mutex_);
     for (int64_t part = 0; part < numPart; part++) {
       parts.emplace_back(
           threadPool.enqueue([part, size, this, remoteFilePath]() {
             if (dtor_called_.load()) {
               return Aws::S3::Model::GetObjectOutcome();
             }
+            check_credentials_();
+
+            std::shared_lock slock(client_mutex_);
             auto beg = part * buffer_size_;
             auto end = (part + 1) * buffer_size_;
             if (end > size) {
