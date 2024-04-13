@@ -99,7 +99,8 @@ class AWSFileFetcher : public FileFetcher {
       std::tuple<std::string, std::string, std::string, std::string>()>
       credentials_callback_;
   int64_t credentials_period_;
-  std::chrono::time_point<std::chrono::system_clock> credentials_timestamp_;
+  mutable std::chrono::time_point<std::chrono::system_clock>
+      credentials_timestamp_;
 };
 
 } // namespace core

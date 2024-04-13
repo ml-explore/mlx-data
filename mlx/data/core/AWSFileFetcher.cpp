@@ -122,6 +122,7 @@ void AWSFileFetcher::update_credentials_(
           /* use virtual host */ false);
     }
   }
+  credentials_timestamp_ = std::chrono::system_clock::now();
 }
 
 void AWSFileFetcher::update_credentials(
@@ -144,29 +145,47 @@ void AWSFileFetcher::update_credentials_with_callback(
 }
 
 void AWSFileFetcher::check_credentials_() const {
-  bool renew_credentials = false;
-  {
-    std::shared_lock slock(client_mutex_);
-    if (credentials_ && credentials_->IsExpired()) {
-      renew_credentials = true;
+  auto is_credentials_outdated = [this]() {
+    if (credentials_callback_ && !credentials_) {
+      return true;
     } else if (credentials_callback_ && credentials_period_ >= 0) {
       auto now = std::chrono::system_clock::now();
       auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
           now - credentials_timestamp_);
+      std::cout << "ELAPSED TIME: " << elapsed.count() << std::endl;
       if (elapsed.count() >= credentials_period_) {
-        renew_credentials = true;
+        return true;
       }
+    }
+    return false;
+  };
+
+  bool renew_credentials = false;
+  {
+    std::shared_lock slock(client_mutex_);
+    if ((credentials_ && credentials_->IsExpired()) ||
+        is_credentials_outdated()) {
+      renew_credentials = true;
     }
   }
   if (renew_credentials) {
     if (!credentials_callback_) {
       throw std::runtime_error("AWSFileFetcher: credentials are expired");
     }
+    std::cout << "lock and call callback" << std::endl;
     std::unique_lock ulock(client_mutex_);
-    auto [access_key_id, secret_access_key, session_token, expiration] =
-        credentials_callback_();
-    update_credentials_(
-        access_key_id, secret_access_key, session_token, expiration);
+    // check if someone updated credentials in the meantime
+    if (is_credentials_outdated()) {
+      auto [access_key_id, secret_access_key, session_token, expiration] =
+          credentials_callback_();
+      std::cout << "credentials: " << access_key_id << " | "
+                << secret_access_key << " | " << session_token << " | "
+                << expiration << std::endl;
+      update_credentials_(
+          access_key_id, secret_access_key, session_token, expiration);
+    } else {
+      std::cout << "SOMEONE UPDATED THE CREDENTIALS IN MY BACK!" << std::endl;
+    }
   }
 }
 
@@ -179,6 +198,7 @@ bool AWSFileFetcher::are_credentials_expired() const {
 }
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
+  std::cout << "GET_SIZE" << std::endl;
   check_credentials_();
 
   std::shared_lock slock(client_mutex_);
@@ -229,6 +249,7 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   // the disk can write, in which case memory might blow up
   // for large files. Could have gone with another approach,
   // but here one can control number of threads.
+  std::cout << "FETCH" << std::endl;
   std::deque<std::future<Aws::S3::Model::GetObjectOutcome>> parts;
   ThreadPool threadPool(num_threads_);
   {
@@ -238,22 +259,28 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
             if (dtor_called_.load()) {
               return Aws::S3::Model::GetObjectOutcome();
             }
+            std::cout << "thread with part " << part << " check credentials "
+                      << std::endl;
             check_credentials_();
+            std::cout << "thread with part " << part
+                      << " check credentials done" << std::endl;
 
-            std::shared_lock slock(client_mutex_);
-            auto beg = part * buffer_size_;
-            auto end = (part + 1) * buffer_size_;
-            if (end > size) {
-              end = size;
+            {
+              std::shared_lock slock(client_mutex_);
+              auto beg = part * buffer_size_;
+              auto end = (part + 1) * buffer_size_;
+              if (end > size) {
+                end = size;
+              }
+              end--; // inclusive;
+              std::stringstream range;
+              range << "bytes=" << beg << '-' << end;
+              Aws::S3::Model::GetObjectRequest request;
+              request.SetBucket(bucket_);
+              request.SetKey(remoteFilePath.string());
+              request.SetRange(range.str());
+              return client_->GetObject(request);
             }
-            end--; // inclusive;
-            std::stringstream range;
-            range << "bytes=" << beg << '-' << end;
-            Aws::S3::Model::GetObjectRequest request;
-            request.SetBucket(bucket_);
-            request.SetKey(remoteFilePath.string());
-            request.SetRange(range.str());
-            return client_->GetObject(request);
           }));
     }
   }
