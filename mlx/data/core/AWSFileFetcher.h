@@ -3,6 +3,7 @@
 #pragma once
 
 #include <atomic>
+#include <chrono>
 #include <filesystem>
 
 #include <aws/core/Aws.h>
@@ -75,12 +76,7 @@ class AWSFileFetcher : public FileFetcher {
   virtual ~AWSFileFetcher();
 
  protected:
-  void check_credentials_() const;
-  void update_credentials_(
-      const std::string& access_key_id,
-      const std::string& secret_access_key,
-      const std::string& session_token,
-      const std::string& expiration) const; // no lock;
+  void check_credentials() const;
 
   std::string bucket_;
   std::filesystem::path prefix_;
@@ -101,6 +97,7 @@ class AWSFileFetcher : public FileFetcher {
   int64_t credentials_period_;
   mutable std::chrono::time_point<std::chrono::system_clock>
       credentials_timestamp_;
+  mutable std::shared_mutex credentials_mutex_;
 };
 
 } // namespace core

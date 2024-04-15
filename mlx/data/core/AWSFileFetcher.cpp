@@ -82,11 +82,12 @@ AWSFileFetcher::AWSFileFetcher(
       opt.expiration);
 }
 
-void AWSFileFetcher::update_credentials_(
+void AWSFileFetcher::update_credentials(
     const std::string& access_key_id,
     const std::string& secret_access_key,
     const std::string& session_token,
     const std::string& expiration) const {
+  std::unique_lock ulock(client_mutex_);
   if (verbose_ && client_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
               << ") : updating credentials" << std::endl;
@@ -125,16 +126,6 @@ void AWSFileFetcher::update_credentials_(
   credentials_timestamp_ = std::chrono::system_clock::now();
 }
 
-void AWSFileFetcher::update_credentials(
-    const std::string& access_key_id,
-    const std::string& secret_access_key,
-    const std::string& session_token,
-    const std::string& expiration) const {
-  std::unique_lock ulock(client_mutex_);
-  update_credentials_(
-      access_key_id, secret_access_key, session_token, expiration);
-}
-
 void AWSFileFetcher::update_credentials_with_callback(
     std::function<
         std::tuple<std::string, std::string, std::string, std::string>()>
@@ -144,7 +135,7 @@ void AWSFileFetcher::update_credentials_with_callback(
   credentials_period_ = period;
 }
 
-void AWSFileFetcher::check_credentials_() const {
+void AWSFileFetcher::check_credentials() const {
   auto is_credentials_outdated = [this]() {
     if (credentials_callback_ && !credentials_) {
       return true;
@@ -162,7 +153,7 @@ void AWSFileFetcher::check_credentials_() const {
 
   bool renew_credentials = false;
   {
-    std::shared_lock slock(client_mutex_);
+    std::shared_lock slock(credentials_mutex_);
     if ((credentials_ && credentials_->IsExpired()) ||
         is_credentials_outdated()) {
       renew_credentials = true;
@@ -173,7 +164,7 @@ void AWSFileFetcher::check_credentials_() const {
       throw std::runtime_error("AWSFileFetcher: credentials are expired");
     }
     std::cout << "lock and call callback" << std::endl;
-    std::unique_lock ulock(client_mutex_);
+    std::unique_lock ulock(credentials_mutex_);
     // check if someone updated credentials in the meantime
     if (is_credentials_outdated()) {
       auto [access_key_id, secret_access_key, session_token, expiration] =
@@ -181,7 +172,7 @@ void AWSFileFetcher::check_credentials_() const {
       std::cout << "credentials: " << access_key_id << " | "
                 << secret_access_key << " | " << session_token << " | "
                 << expiration << std::endl;
-      update_credentials_(
+      update_credentials(
           access_key_id, secret_access_key, session_token, expiration);
     } else {
       std::cout << "SOMEONE UPDATED THE CREDENTIALS IN MY BACK!" << std::endl;
@@ -199,7 +190,7 @@ bool AWSFileFetcher::are_credentials_expired() const {
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
   std::cout << "GET_SIZE" << std::endl;
-  check_credentials_();
+  check_credentials();
 
   std::shared_lock slock(client_mutex_);
 
@@ -261,7 +252,7 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
             }
             std::cout << "thread with part " << part << " check credentials "
                       << std::endl;
-            check_credentials_();
+            check_credentials();
             std::cout << "thread with part " << part
                       << " check credentials done" << std::endl;
 
