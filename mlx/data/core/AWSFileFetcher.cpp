@@ -143,7 +143,6 @@ void AWSFileFetcher::check_credentials() const {
       auto now = std::chrono::system_clock::now();
       auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
           now - credentials_timestamp_);
-      std::cout << "ELAPSED TIME: " << elapsed.count() << std::endl;
       if (elapsed.count() >= credentials_period_) {
         return true;
       }
@@ -163,19 +162,13 @@ void AWSFileFetcher::check_credentials() const {
     if (!credentials_callback_) {
       throw std::runtime_error("AWSFileFetcher: credentials are expired");
     }
-    std::cout << "lock and call callback" << std::endl;
     std::unique_lock ulock(credentials_mutex_);
     // check if someone updated credentials in the meantime
     if (is_credentials_outdated()) {
       auto [access_key_id, secret_access_key, session_token, expiration] =
           credentials_callback_();
-      std::cout << "credentials: " << access_key_id << " | "
-                << secret_access_key << " | " << session_token << " | "
-                << expiration << std::endl;
       update_credentials(
           access_key_id, secret_access_key, session_token, expiration);
-    } else {
-      std::cout << "SOMEONE UPDATED THE CREDENTIALS IN MY BACK!" << std::endl;
     }
   }
 }
@@ -189,7 +182,6 @@ bool AWSFileFetcher::are_credentials_expired() const {
 }
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
-  std::cout << "GET_SIZE" << std::endl;
   check_credentials();
 
   std::shared_lock slock(client_mutex_);
@@ -240,7 +232,6 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
   // the disk can write, in which case memory might blow up
   // for large files. Could have gone with another approach,
   // but here one can control number of threads.
-  std::cout << "FETCH" << std::endl;
   std::deque<std::future<Aws::S3::Model::GetObjectOutcome>> parts;
   ThreadPool threadPool(num_threads_);
   {
@@ -250,12 +241,7 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
             if (dtor_called_.load()) {
               return Aws::S3::Model::GetObjectOutcome();
             }
-            std::cout << "thread with part " << part << " check credentials "
-                      << std::endl;
             check_credentials();
-            std::cout << "thread with part " << part
-                      << " check credentials done" << std::endl;
-
             {
               std::shared_lock slock(client_mutex_);
               auto beg = part * buffer_size_;
