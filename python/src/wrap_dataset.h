@@ -1004,6 +1004,42 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.remove_value`.");
 
   base.def(
+      "replace",
+      &T::replace,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("key"),
+      py::arg("old"),
+      py::arg("replacement"),
+      py::arg("count") = -1,
+      R"pbdoc(
+        Replace ``old`` with ``replacement`` in the array at  ``key``.
+
+        Example:
+
+        .. code-block:: python
+
+          # Replace ' ' with '▁' to prepare for SPM tokenization.
+          dset = dset.replace("text", " ", "\u2581")
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          old (str): The character sequence that we are replacing.
+          replacement (str): The character sequence that we are replacing with.
+          count (int): Perform at most ``count`` replacements. Ignore if negative.
+              Default: ``-1``.
+      )pbdoc");
+  base.def(
+      "replace_if",
+      &T::replace_if,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("key"),
+      py::arg("old"),
+      py::arg("replacement"),
+      py::arg("count") = -1,
+      "Conditional :meth:`Buffer.replace`.");
+
+  base.def(
       "rename_key",
       &T::rename_key,
       py::call_guard<py::gil_scoped_release>(),
