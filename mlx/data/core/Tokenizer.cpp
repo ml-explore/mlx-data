@@ -80,7 +80,12 @@ std::shared_ptr<Graph<int64_t>> tokenize(
 
   // note: only one hyp should have trie->root()
   if (std::get<0>(hyps.front()) != trie->root()) {
-    throw std::runtime_error("could not tokenize: <" + input + ">");
+    if (ignore_unk) {
+      // Use the last word hypothesis as the final node
+      hyps = {last_word_hyp};
+    } else {
+      throw std::runtime_error("could not tokenize: <" + input + ">");
+    }
   }
   tokens.final_node(std::get<1>(hyps.front()));
 
