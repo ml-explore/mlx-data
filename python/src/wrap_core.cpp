@@ -3,6 +3,7 @@
 #include "wrap.h"
 
 #if MLX_HAS_AWS
+#include <pybind11/functional.h>
 #include <pybind11/stl/filesystem.h>
 #include "mlx/data/core/AWSFileFetcher.h"
 #endif
@@ -280,6 +281,7 @@ void init_mlx_data_core(py::module& m) {
   py::class_<FileFetcher, std::shared_ptr<FileFetcher>>(m, "FileFetcher")
       .def(
           py::init<int, int, int, bool>(),
+          py::call_guard<py::gil_scoped_release>(),
           py::arg("num_prefetch_max") = 1,
           py::arg("num_prefetch_threads") = 1,
           py::arg("num_kept_files") = 0,
@@ -287,6 +289,7 @@ void init_mlx_data_core(py::module& m) {
       .def(
           "prefetch",
           &FileFetcher::prefetch,
+          py::call_guard<py::gil_scoped_release>(),
           py::arg("filenames"),
           R"pbcopy(
           Start prefetching these files.
@@ -301,10 +304,14 @@ void init_mlx_data_core(py::module& m) {
           Args:
             filenames (list[str]): A list of filenames to be prefetched in order.
         )pbcopy")
-      .def("cancel_prefetch", &FileFetcher::cancel_prefetch)
+      .def(
+          "cancel_prefetch",
+          &FileFetcher::cancel_prefetch,
+          py::call_guard<py::gil_scoped_release>())
       .def(
           "fetch",
           &FileFetcher::fetch,
+          py::call_guard<py::gil_scoped_release>(),
           py::arg("filename"),
           R"pbcopy(
           Ensures the filename is in the local cache.
@@ -314,6 +321,17 @@ void init_mlx_data_core(py::module& m) {
 
           Args:
             filename (str): A file to fetch from the remote.
+        )pbcopy")
+      .def(
+          "erase",
+          &FileFetcher::erase,
+          py::arg("filename"),
+          py::call_guard<py::gil_scoped_release>(),
+          R"pbcopy(
+          Erase the filename from the local cache (if present).
+
+          Args:
+            filename (str): A file to erase locally.
         )pbcopy");
 
 #if MLX_HAS_AWS
@@ -425,7 +443,46 @@ void init_mlx_data_core(py::module& m) {
               verbose (bool): Defines whether the file fetcher should write
                 information messages to the standard output. (default: false)
           )pbcopy")
-      .def("are_credentials_expired", &AWSFileFetcher::are_credentials_expired);
+      .def(
+          "update_credentials",
+          &AWSFileFetcher::update_credentials,
+          py::call_guard<py::gil_scoped_release>(),
+          py::arg("access_key_id") = "",
+          py::arg("secret_access_key") = "",
+          py::arg("session_token") = "",
+          py::arg("expiration") = "",
+          R"pbcopy(
+          Update the AWSFileFetcher credentials.
+
+          Args:
+              access_key_id (str): Set the AWS access key id to authenticate to
+                the remote service. (default: '')
+              secret_access_key (str): Set the AWS secret access key id to
+                authenticate to the remote service. (default: '')
+              session_token (str): Set the AWS session token to authenticate to
+                the remote service. (default: '')
+              expiration (str): A date string defining the expiration of the
+                authentication credentials (default: '')
+        )pbcopy")
+      .def(
+          "update_credentials_with_callback",
+          &AWSFileFetcher::update_credentials_with_callback,
+          py::arg("callback"),
+          py::arg("period") = 0,
+          py::call_guard<py::gil_scoped_release>(),
+          R"pbcopy(
+          Update the AWSFileFetcher credentials with a given callback.
+
+          Args:
+              callback (function): a callback which returns 4 strings
+                (access_key_id, secret_access_key, session_token, expiration)
+              period (int): time (in s) after which credentials will be renewed.
+                 If 0, then renew credentials at each client request (default: 0)
+        )pbcopy")
+      .def(
+          "are_credentials_expired",
+          &AWSFileFetcher::are_credentials_expired,
+          py::call_guard<py::gil_scoped_release>());
 
   AWSHandler::init();
   py::cpp_function aws_shutdown([](py::handle weakref) {

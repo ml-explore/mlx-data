@@ -73,10 +73,31 @@ AWSFileFetcher::AWSFileFetcher(
   } else {
     config_->caFile = opt.ca_bundle;
   }
+  config_virtual_host_ = opt.virtual_host;
 
-  if (opt.access_key_id.empty() && opt.secret_access_key.empty() &&
-      opt.session_token.empty() && opt.expiration.empty()) {
-    if (opt.virtual_host) {
+  update_credentials(
+      opt.access_key_id,
+      opt.secret_access_key,
+      opt.session_token,
+      opt.expiration);
+}
+
+void AWSFileFetcher::update_credentials(
+    const std::string& access_key_id,
+    const std::string& secret_access_key,
+    const std::string& session_token,
+    const std::string& expiration) const {
+  std::unique_lock ulock(client_mutex_);
+  if (verbose_ && client_) {
+    std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+              << ") : updating credentials" << std::endl;
+  }
+
+  credentials_ = nullptr;
+
+  if (access_key_id.empty() && secret_access_key.empty() &&
+      session_token.empty() && expiration.empty()) {
+    if (config_virtual_host_) {
       client_ = std::make_unique<Aws::S3::S3Client>(*config_);
     } else {
       client_ = std::make_unique<Aws::S3::S3Client>(
@@ -86,13 +107,10 @@ AWSFileFetcher::AWSFileFetcher(
     }
   } else {
     Aws::Utils::DateTime aws_expiration(
-        opt.expiration, Aws::Utils::DateFormat::AutoDetect);
+        expiration, Aws::Utils::DateFormat::AutoDetect);
     credentials_ = std::make_unique<Aws::Auth::AWSCredentials>(
-        opt.access_key_id,
-        opt.secret_access_key,
-        opt.session_token,
-        aws_expiration);
-    if (opt.virtual_host) {
+        access_key_id, secret_access_key, session_token, aws_expiration);
+    if (config_virtual_host_) {
       client_ = std::make_unique<Aws::S3::S3Client>(
           *credentials_,
           Aws::MakeShared<Aws::S3::S3EndpointProvider>("MLX"),
@@ -103,6 +121,54 @@ AWSFileFetcher::AWSFileFetcher(
           *config_,
           Aws::Client::AWSAuthV4Signer::PayloadSigningPolicy::Never,
           /* use virtual host */ false);
+    }
+  }
+  credentials_timestamp_ = std::chrono::system_clock::now();
+}
+
+void AWSFileFetcher::update_credentials_with_callback(
+    std::function<
+        std::tuple<std::string, std::string, std::string, std::string>()>
+        callback,
+    int64_t period) {
+  credentials_callback_ = callback;
+  credentials_period_ = period;
+}
+
+void AWSFileFetcher::check_credentials() const {
+  auto is_credentials_outdated = [this]() {
+    if (credentials_callback_ && !credentials_) {
+      return true;
+    } else if (credentials_callback_ && credentials_period_ >= 0) {
+      auto now = std::chrono::system_clock::now();
+      auto elapsed = std::chrono::duration_cast<std::chrono::seconds>(
+          now - credentials_timestamp_);
+      if (elapsed.count() >= credentials_period_) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  bool renew_credentials = false;
+  {
+    std::shared_lock slock(credentials_mutex_);
+    if ((credentials_ && credentials_->IsExpired()) ||
+        is_credentials_outdated()) {
+      renew_credentials = true;
+    }
+  }
+  if (renew_credentials) {
+    if (!credentials_callback_) {
+      throw std::runtime_error("AWSFileFetcher: credentials are expired");
+    }
+    std::unique_lock ulock(credentials_mutex_);
+    // check if someone updated credentials in the meantime
+    if (is_credentials_outdated()) {
+      auto [access_key_id, secret_access_key, session_token, expiration] =
+          credentials_callback_();
+      update_credentials(
+          access_key_id, secret_access_key, session_token, expiration);
     }
   }
 }
@@ -116,6 +182,10 @@ bool AWSFileFetcher::are_credentials_expired() const {
 }
 
 int64_t AWSFileFetcher::get_size(const std::string& filename) const {
+  check_credentials();
+
+  std::shared_lock slock(client_mutex_);
+
   Aws::S3::Model::HeadObjectRequest request;
   auto remote_file_path = (prefix_ / filename);
   request.SetBucket(bucket_);
@@ -128,50 +198,68 @@ int64_t AWSFileFetcher::get_size(const std::string& filename) const {
   } else {
     const Aws::S3::S3Error& err = outcome.GetError();
     throw std::runtime_error(
-        "AWSFileFetcher: unable to fetch <" + remote_file_path.string() +
-        "> header: " + err.GetExceptionName() + " : " + err.GetMessage());
+        "AWSFileFetcher: unable to fetch <s3://" + bucket_ + "/" +
+        remote_file_path.string() + "> header: " + err.GetExceptionName() +
+        " : " + err.GetMessage());
   }
 }
 
 void AWSFileFetcher::backend_fetch(const std::string& filename) const {
+  // Do not fetch a file already present on disk
+  auto remoteFilePath = (prefix_ / filename);
+  auto localFilePath = (local_prefix_ / filename);
+  if (std::filesystem::exists(localFilePath)) {
+    if (verbose_) {
+      std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+                << ") : file s3://" << bucket_ << "/" << remoteFilePath
+                << " already exists in " << localFilePath << std::endl;
+    }
+    return;
+  }
+
   auto size = get_size(filename);
   auto numPart = size / buffer_size_;
   if (size % buffer_size_) {
     numPart++;
   }
-  auto remoteFilePath = (prefix_ / filename);
-  auto localFilePath = (local_prefix_ / filename);
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
-              << ") : fetching " << remoteFilePath << " (" << size
-              << " bytes) into " << localFilePath << std::endl;
+              << ") : fetching s3://" << bucket_ << "/" << remoteFilePath
+              << " (" << size << " bytes) into " << localFilePath << std::endl;
   }
 
   // Note: the threads might fetch data faster than what
   // the disk can write, in which case memory might blow up
   // for large files. Could have gone with another approach,
   // but here one can control number of threads.
-  ThreadPool threadPool(num_threads_);
   std::deque<std::future<Aws::S3::Model::GetObjectOutcome>> parts;
-  for (int64_t part = 0; part < numPart; part++) {
-    parts.emplace_back(threadPool.enqueue([part, size, this, remoteFilePath]() {
-      if (dtor_called_.load()) {
-        return Aws::S3::Model::GetObjectOutcome();
-      }
-      auto beg = part * buffer_size_;
-      auto end = (part + 1) * buffer_size_;
-      if (end > size) {
-        end = size;
-      }
-      end--; // inclusive;
-      std::stringstream range;
-      range << "bytes=" << beg << '-' << end;
-      Aws::S3::Model::GetObjectRequest request;
-      request.SetBucket(bucket_);
-      request.SetKey(remoteFilePath.string());
-      request.SetRange(range.str());
-      return client_->GetObject(request);
-    }));
+  ThreadPool threadPool(num_threads_);
+  {
+    for (int64_t part = 0; part < numPart; part++) {
+      parts.emplace_back(
+          threadPool.enqueue([part, size, this, remoteFilePath]() {
+            if (dtor_called_.load()) {
+              return Aws::S3::Model::GetObjectOutcome();
+            }
+            check_credentials();
+            {
+              std::shared_lock slock(client_mutex_);
+              auto beg = part * buffer_size_;
+              auto end = (part + 1) * buffer_size_;
+              if (end > size) {
+                end = size;
+              }
+              end--; // inclusive;
+              std::stringstream range;
+              range << "bytes=" << beg << '-' << end;
+              Aws::S3::Model::GetObjectRequest request;
+              request.SetBucket(bucket_);
+              request.SetKey(remoteFilePath.string());
+              request.SetRange(range.str());
+              return client_->GetObject(request);
+            }
+          }));
+    }
   }
 
   auto localDir = localFilePath.parent_path();
@@ -182,12 +270,14 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
     }
     std::filesystem::create_directories(localDir);
   }
+  auto localFilePathTmp = localFilePath;
+  localFilePathTmp += ".download";
   std::ofstream f(
-      localFilePath,
+      localFilePathTmp,
       std::ios_base::out | std::ios_base::binary | std::ios_base::trunc);
   if (!f.good()) {
     throw std::runtime_error(
-        "AWSFileFetcher: could not open <" + localFilePath.string() +
+        "AWSFileFetcher: could not open <" + localFilePathTmp.string() +
         "> for writing");
   }
   int64_t part = 0;
@@ -213,37 +303,48 @@ void AWSFileFetcher::backend_fetch(const std::string& filename) const {
     if (!outcome.IsSuccess()) {
       const Aws::S3::S3Error& err = outcome.GetError();
       throw std::runtime_error(
-          "AWSFileFetcher: unable to fetch <" + remoteFilePath.string() +
-          "> : " + err.GetExceptionName() + " : " + err.GetMessage());
+          "AWSFileFetcher: unable to fetch <s3://" + bucket_ + "/" +
+          remoteFilePath.string() + "> : " + err.GetExceptionName() + " : " +
+          err.GetMessage());
     } else {
       auto& buf = outcome.GetResult().GetBody();
       f << buf.rdbuf();
       totalWrittenSize += partSize;
       if (!f.good()) {
         throw std::runtime_error(
-            "AWSFileFetcher: could not write in <" + localFilePath.string() +
+            "AWSFileFetcher: could not write in <" + localFilePathTmp.string() +
             ">");
       }
       if (f.tellp() != totalWrittenSize) {
         throw std::runtime_error(
             "AWSFileFetcher: unexpected write size in <" +
-            localFilePath.string() + ">");
+            localFilePathTmp.string() + ">");
       }
     }
     part++;
   }
 
+  // rename file when done
+  f.close();
+  std::filesystem::rename(localFilePathTmp, localFilePath);
+
   if (verbose_) {
     std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
               << ") : " << (dtor_called_.load() ? "aborted" : "done")
-              << " fetching " << remoteFilePath << " (" << totalWrittenSize
-              << "/" << size << " bytes) into " << localFilePath << std::endl;
+              << " fetching s3://" << bucket_ << "/" << remoteFilePath << " ("
+              << totalWrittenSize << "/" << size << " bytes) into "
+              << localFilePath << std::endl;
   }
 }
 
 void AWSFileFetcher::backend_erase(const std::string& filename) const {
   auto localFilePath = (local_prefix_ / filename);
-  std::filesystem::remove(localFilePath);
+  auto status = std::filesystem::remove(localFilePath);
+  if (verbose_) {
+    std::cout << "AWSFileFetcher (" << std::hex << this << std::dec
+              << ") : erasing " << localFilePath
+              << (status ? " (done)" : " (file does not exist)") << std::endl;
+  }
 }
 
 AWSFileFetcher::~AWSFileFetcher() {
