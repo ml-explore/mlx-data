@@ -1,5 +1,6 @@
-# Copyright © 2023 Apple Inc.
+# Copyright © 2024 Apple Inc.
 
+import math
 import re
 from pathlib import Path
 
@@ -53,64 +54,53 @@ def read_trie_from_spm(spm_file):
     def to_special_token(token):
         return b"<0x" + token.hex().encode() + b">"
 
-    sep = "\u2581".encode("utf-8")
-
     # We parse the model in two passes. First we save the tokens in tmp_tokens
-    # and tmp_scores and go back and replace special tokens that already exist
-    # to a special token representation. This happens so we can keep the same
-    # ids as the original sentencepiece model.
+    # and go back and replace special tokens that already exist or tokens that
+    # have a better score to a special token representation. This happens so we
+    # can keep the same ids as the original sentencepiece model.
     tokenmap = {}
     tmp_tokens = []
-    tmp_scores = []
-    max_scores = set()
+    trie_key_scores = []
     for token, score in iterate_tokens(spm_file):
-        score = -score
-
         if re.match(b"^<.*>$", token):
-            # Make sure to set the max score for all special tokens
-            max_scores.add(len(tmp_scores))
-
             hex_byte = re.match(b"^<0x(..)>$", token)
             if hex_byte:
                 (token,) = hex_byte.groups()
                 token = bytes.fromhex(token.decode())
 
-        token = token.replace(sep, b" ")
-
         # Token already exists so we should choose either the previous one or
         # this one.
         if token in tokenmap:
             existing_token_id = tokenmap[token]
-            existing_token_score = tmp_scores[existing_token_id]
+            existing_token_score = trie_key_scores[existing_token_id]
 
             # We should replace that token with our token
             if score < existing_token_score:
                 tmp_tokens[existing_token_id] = to_special_token(token)
-                max_scores.add(existing_token_id)
                 tmp_tokens.append(token)
-                tmp_scores.append(score)
+                trie_key_scores.append(score)
                 tokenmap[token] = len(tmp_tokens) - 1
 
             # We should ignore this token
             else:
                 tmp_tokens.append(to_special_token(token))
-                tmp_scores.append(score)
-                max_scores.add(len(tmp_tokens) - 1)
+                trie_key_scores.append(score)
 
         # Token doesn't exist so add it
         else:
             tmp_tokens.append(token)
-            tmp_scores.append(score)
+            trie_key_scores.append(score)
             tokenmap[token] = len(tmp_tokens) - 1
 
-    # Set the max score to duplicates
-    max_score = max(tmp_scores) + 1
-    for token_id in max_scores:
-        tmp_scores[token_id] = max_score
+    # SPM is a BPE tokenizer so it doesn't exactly work like the MLX tokenizer.
+    # Favoring the shortest sequence and taking into account the scores at the
+    # same time yields the closest tokenization.
+    min_score = min(trie_key_scores)
+    for i in range(len(trie_key_scores)):
+        trie_key_scores[i] = -min_score - trie_key_scores[i]
 
-    # Build the trie and the scores
+    # Build the trie
     trie = CharTrie()
-    trie_key_scores = tmp_scores
     for token in tmp_tokens:
         if trie.search(token):
             raise RuntimeError(f"Token {token} found twice")
