@@ -456,6 +456,17 @@ class Dataset {
       bool ignore_unk = false,
       const std::vector<double>& trie_key_scores = {},
       const std::string& okey = "") const;
+  T tokenize_spm(
+      const std::string& ikey,
+      std::shared_ptr<core::Trie<char>> trie,
+      bool insert_space = true,
+      const std::string& okey = "") const;
+  T tokenize_spm_if(
+      bool cond,
+      const std::string& ikey,
+      std::shared_ptr<core::Trie<char>> trie,
+      bool insert_space = true,
+      const std::string& okey = "") const;
 
  protected:
   std::shared_ptr<B> self_;

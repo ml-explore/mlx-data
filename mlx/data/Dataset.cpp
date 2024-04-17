@@ -973,6 +973,43 @@ T Dataset<T, B>::tokenize_if(
   }
 }
 
+template <class T, class B>
+T Dataset<T, B>::tokenize_spm(
+    const std::string& ikey,
+    std::shared_ptr<core::Trie<char>> trie,
+    bool insert_space,
+    const std::string& okey) const {
+  static const std::string space = " ";
+  static const std::string new_space = "▁";
+
+  std::string okey_ = (okey.empty()) ? ikey : okey;
+
+  return (sample_transform_if(
+              !okey.empty(),
+              [ikey, okey](const Sample& s) {
+                auto new_sample = s;
+                new_sample[okey] = new_sample[ikey];
+                return new_sample;
+              })
+              .pad_if(insert_space, okey_, 0, 1, 0, 32)
+              .replace(okey_, space, new_space)
+              .tokenize(okey_, trie, TokenizeMode::shortest));
+}
+
+template <class T, class B>
+T Dataset<T, B>::tokenize_spm_if(
+    bool cond,
+    const std::string& ikey,
+    std::shared_ptr<core::Trie<char>> trie,
+    bool insert_space,
+    const std::string& okey) const {
+  if (cond) {
+    return tokenize_spm(ikey, trie, insert_space, okey);
+  } else {
+    return T(self_);
+  }
+}
+
 // Implement Stream
 template <>
 Stream Dataset<Stream, stream::Stream>::transform_(
