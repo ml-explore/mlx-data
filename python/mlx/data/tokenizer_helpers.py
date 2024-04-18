@@ -9,7 +9,31 @@ try:
 except ImportError:
     SentencePieceProcessor = None
 
-from .core import CharTrie
+from .core import BPEMerges, CharTrie
+
+
+def _iterate_spm_tokens(spm_file):
+    if spm_file.endswith(".model"):
+        if SentencePieceProcessor is None:
+            raise RuntimeError(
+                "sentencepiece must be installed to read directly from a binary model"
+            )
+
+        spm_tok = SentencePieceProcessor(spm_file)
+        for i in range(spm_tok.vocab_size()):
+            yield spm_tok.id_to_piece(i).encode("utf-8"), spm_tok.get_score(i)
+
+    elif spm_file.endswith(".vocab"):
+        f = open(spm_file, "rb")
+        for line in f:
+            line = line.rstrip()
+            token, score = line.split(b"\t")
+            yield token, float(score)
+
+    else:
+        raise ValueError(
+            f"Sentencepiece file extenstion must be in [.vocab, .model] but it was {spm_file}"
+        )
 
 
 def read_trie_from_spm(spm_file):
@@ -19,6 +43,17 @@ def read_trie_from_spm(spm_file):
     however if the vocabulary and the scores are exported the file can be read
     without installing sentencepiece.
 
+    .. note::
+
+        Sentencepiece models are almost always BPE models with scores being the
+        associated log likelihood of from a unigram language model. Using the
+        :class:`mlx.data.core.CharTrie` and the loaded scores will provide the
+        shortest possible tokenization with the highest possible log likelihood
+        but it can be slightly different than the BPE one.
+
+        Use :func:`read_bpe_from_spm` to load the model to be used with a
+        :class:`mlx.data.core.BPETokenizer`.
+
     Args:
         spm_file (str): Either a sentencepiece model file or a vocab file
             extracted from a sentencepiece model.
@@ -27,29 +62,6 @@ def read_trie_from_spm(spm_file):
         tuple[:class:`mlx.data.core.CharTrie`, list[float]]: The trie and the
         corresponding weights from the SPM mdoel.
     """
-
-    def iterate_tokens(spm_file):
-        if spm_file.endswith(".model"):
-            if SentencePieceProcessor is None:
-                raise RuntimeError(
-                    "sentencepiece must be installed to read directly from a binary model"
-                )
-
-            spm_tok = SentencePieceProcessor(spm_file)
-            for i in range(spm_tok.vocab_size()):
-                yield spm_tok.id_to_piece(i).encode("utf-8"), spm_tok.get_score(i)
-
-        elif spm_file.endswith(".vocab"):
-            f = open(spm_file, "rb")
-            for line in f:
-                line = line.rstrip()
-                token, score = line.split(b"\t")
-                yield token, float(score)
-
-        else:
-            raise ValueError(
-                f"Sentencepiece file extenstion must be in [.vocab, .model] but it was {spm_file}"
-            )
 
     def to_special_token(token):
         return b"<0x" + token.hex().encode() + b">"
@@ -61,7 +73,7 @@ def read_trie_from_spm(spm_file):
     tokenmap = {}
     tmp_tokens = []
     trie_key_scores = []
-    for token, score in iterate_tokens(spm_file):
+    for token, score in _iterate_spm_tokens(spm_file):
         if re.match(b"^<.*>$", token):
             hex_byte = re.match(b"^<0x(..)>$", token)
             if hex_byte:
@@ -107,6 +119,57 @@ def read_trie_from_spm(spm_file):
         trie.insert(token)
 
     return trie, trie_key_scores
+
+
+def read_bpe_from_spm(spm_file):
+    symbols = []
+    merged = []
+    tokenmap = {}
+    for token_id, (token, score) in enumerate(_iterate_spm_tokens(spm_file)):
+        if re.match(b"^<.*>$", token):
+            hex_byte = re.match(b"^<0x(..)>$", token)
+            if hex_byte:
+                (token,) = hex_byte.groups()
+                token = bytes.fromhex(token.decode())
+
+        if len(token) == 1 or score == 0 or len(token.decode(errors="ignore")) == 1:
+            symbols.append(token)
+        else:
+            merged.append(token)
+
+        tokenmap[token] = token_id
+
+    trie = CharTrie()
+    for s in symbols:
+        trie.insert(s, tokenmap[s])
+
+    merges = BPEMerges()
+
+    def bpe(tokenmap, token, max_rank):
+        parts = list(token)
+        while True:
+            min_idx = None
+            min_rank = None
+            for i, pair in enumerate(zip(parts[:-1], parts[1:])):
+                rank = tokenmap.get((pair[0] + pair[1]).encode())
+                if rank is not None and (min_rank is None or rank < min_rank):
+                    min_idx = i
+                    min_rank = rank
+            if min_rank is None or (max_rank is not None and min_rank >= max_rank):
+                break
+            assert min_idx is not None
+            parts = (
+                parts[:min_idx]
+                + [parts[min_idx] + parts[min_idx + 1]]
+                + parts[min_idx + 2 :]
+            )
+        return parts
+
+    for t in merged:
+        left, right = bpe(tokenmap, t.decode(), tokenmap[t])
+        merges.add(left.encode(), right.encode(), tokenmap[t])
+
+    return trie, merges
 
 
 def read_trie_from_vocab(vocab_file):

@@ -61,14 +61,14 @@ std::vector<int64_t> BPETokenizer::tokenize(const std::string& input) const {
   };
 
   struct Pair {
-    std::list<Symbol>::iterator left;
-    std::list<Symbol>::iterator right;
+    std::vector<Symbol>::iterator left;
+    std::vector<Symbol>::iterator right;
     int64_t token;
     std::string_view value;
 
     Pair(
-        std::list<Symbol>::iterator left,
-        std::list<Symbol>::iterator right,
+        std::vector<Symbol>::iterator left,
+        std::vector<Symbol>::iterator right,
         int64_t token)
         : left(left),
           right(right),
@@ -82,7 +82,8 @@ std::vector<int64_t> BPETokenizer::tokenize(const std::string& input) const {
 
   // Transform the input to a sequence of basic symbols that will subsequently
   // be merged.
-  std::list<Symbol> symbols;
+  std::vector<Symbol> symbols;
+  symbols.reserve(input.size());
   for (auto it = input.begin(); it != input.end(); it++) {
     auto [node, length] = symbols_->search_longest_prefix(it, input.end());
     if (length == 0) {
@@ -112,33 +113,51 @@ std::vector<int64_t> BPETokenizer::tokenize(const std::string& input) const {
     Pair pair = std::move(merge_queue.top());
     merge_queue.pop();
 
-    // If both left and right are valid and the value matches the pair value it
-    // means we can merge freely.
-    if (pair.left->token >= 0 && pair.right->token >= 0 &&
-        pair.value.size() ==
-            pair.left->value.size() + pair.right->value.size() &&
-        pair.value.data() == pair.left->value.data()) {
-      pair.left->token = pair.token;
-      pair.left->value = pair.value;
-      pair.right->token = -1;
+    // Skip invalidated pairs
+    if (pair.left->token < 0 || pair.right->token < 0) {
+      continue;
+    }
+    if (pair.value.size() !=
+        pair.left->value.size() + pair.right->value.size()) {
+      continue;
+    }
+    if (pair.value.data() != pair.left->value.data()) {
       continue;
     }
 
-    // This means that the pair is invalid for some reason, so we "eat" left
-    // and right until they both have valid symbols. Subsequently we push the
-    // new pair in the merge queue.
-    while (pair.left->token == -1) {
-      pair.left = symbols.erase(pair.left);
-      pair.left--;
-    }
-    while (pair.right != symbols.end() && pair.right->token == -1) {
-      pair.right = symbols.erase(pair.right);
+    // Yay! Valid pair, let's merge into the left one.
+    pair.left->token = pair.token;
+    pair.left->value = pair.value;
+
+    // Invalidate our neighbor which we just merged into ourselves.
+    pair.right->token = -1;
+
+    // Find the first valid symbol to our left to check for a possible merge.
+    if (pair.left != symbols.begin()) {
+      auto neighbor_left = std::prev(pair.left);
+      while (neighbor_left != symbols.begin() && neighbor_left->token == -1) {
+        neighbor_left--;
+      }
+      if (neighbor_left->token != -1) {
+        auto [can_merge, token] =
+            merges_->can_merge(neighbor_left->value, pair.left->value);
+        if (can_merge) {
+          merge_queue.emplace(neighbor_left, pair.left, token);
+        }
+      }
     }
 
-    auto [can_merge, token] =
-        merges_->can_merge(pair.left->value, pair.right->value);
-    if (can_merge) {
-      merge_queue.emplace(pair.left, pair.right, token);
+    // Do the same to our right.
+    auto neighbor_right = std::next(pair.right);
+    while (neighbor_right != symbols.end() && neighbor_right->token == -1) {
+      neighbor_right++;
+    }
+    if (neighbor_right->token != -1) {
+      auto [can_merge, token] =
+          merges_->can_merge(pair.left->value, neighbor_right->value);
+      if (can_merge) {
+        merge_queue.emplace(pair.left, neighbor_right, token);
+      }
     }
   }
 
