@@ -122,6 +122,25 @@ def read_trie_from_spm(spm_file):
 
 
 def read_bpe_from_spm(spm_file):
+    """Read a sentencepiece file and decompose it to a symbol trie and BPE
+    merges for use with :class:`mlx.data.core.BPETokenizer`.
+
+    Because it isn't straightforward to extract the merges from the SPM file,
+    we create a trie of basic symbols by considering all single unicode
+    character tokens as basic symbols as well as any special tokens provided.
+
+    To extract the merges we run the BPE algorithm on the tokens in order of
+    probability as suggested in https://github.com/openai/tiktoken/issues/60
+    for exporting an SPM model to huggingface tokenizers.
+
+    Args:
+        spm_file (str): Either a sentencepiece model file or a vocab file
+            extracted from a sentencepiece model.
+
+    Returns:
+        tuple[:class:`mlx.data.core.CharTrie`, :class:`mlx.data.core.BPEMerges`]: The
+        trie and the corresponding BPE merges from the SPM mdoel.
+    """
     symbols = []
     merged = []
     tokenmap = {}
