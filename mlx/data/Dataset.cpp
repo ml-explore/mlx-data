@@ -974,37 +974,25 @@ T Dataset<T, B>::tokenize_if(
 }
 
 template <class T, class B>
-T Dataset<T, B>::tokenize_spm(
+T Dataset<T, B>::tokenize_bpe(
     const std::string& ikey,
-    std::shared_ptr<core::Trie<char>> trie,
-    bool insert_space,
+    std::shared_ptr<const core::Trie<char>> symbols,
+    std::shared_ptr<const core::BPEMerges> merges,
     const std::string& okey) const {
-  static const std::string space = " ";
-  static const std::string new_space = "▁";
-
-  std::string okey_ = (okey.empty()) ? ikey : okey;
-
-  return (sample_transform_if(
-              !okey.empty(),
-              [ikey, okey](const Sample& s) {
-                auto new_sample = s;
-                new_sample[okey] = new_sample[ikey];
-                return new_sample;
-              })
-              .pad_if(insert_space, okey_, 0, 1, 0, 32)
-              .replace(okey_, space, new_space)
-              .tokenize(okey_, trie, TokenizeMode::shortest));
+  return transform_(
+      std::make_shared<op::BPETokenize>(ikey, symbols, merges, okey));
 }
 
 template <class T, class B>
-T Dataset<T, B>::tokenize_spm_if(
+T Dataset<T, B>::tokenize_bpe_if(
     bool cond,
     const std::string& ikey,
-    std::shared_ptr<core::Trie<char>> trie,
-    bool insert_space,
+    std::shared_ptr<const core::Trie<char>> symbols,
+    std::shared_ptr<const core::BPEMerges> merges,
     const std::string& okey) const {
   if (cond) {
-    return tokenize_spm(ikey, trie, insert_space, okey);
+    return transform_(
+        std::make_shared<op::BPETokenize>(ikey, symbols, merges, okey));
   } else {
     return T(self_);
   }

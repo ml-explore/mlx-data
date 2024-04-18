@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "mlx/data/core/BPETokenizer.h"
 #include "mlx/data/core/Tokenizer.h"
 #include "mlx/data/core/Trie.h"
 #include "mlx/data/op/KeyTransform.h"
@@ -28,6 +29,21 @@ class Tokenize : public KeyTransformOp {
  private:
   core::Tokenizer tokenizer_;
   TokenizeMode mode_;
+};
+
+class BPETokenize : public KeyTransformOp {
+ public:
+  BPETokenize(
+      const std::string& ikey,
+      std::shared_ptr<const core::Trie<char>> symbols,
+      std::shared_ptr<const core::BPEMerges> merges,
+      const std::string& okey = "");
+
+  virtual std::shared_ptr<Array> apply_key(
+      const std::shared_ptr<const Array>& src) const override;
+
+ private:
+  core::BPETokenizer tokenizer_;
 };
 
 } // namespace op

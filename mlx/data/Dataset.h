@@ -456,16 +456,16 @@ class Dataset {
       bool ignore_unk = false,
       const std::vector<double>& trie_key_scores = {},
       const std::string& okey = "") const;
-  T tokenize_spm(
+  T tokenize_bpe(
       const std::string& ikey,
-      std::shared_ptr<core::Trie<char>> trie,
-      bool insert_space = true,
+      std::shared_ptr<const core::Trie<char>> symbols,
+      std::shared_ptr<const core::BPEMerges> merges,
       const std::string& okey = "") const;
-  T tokenize_spm_if(
+  T tokenize_bpe_if(
       bool cond,
       const std::string& ikey,
-      std::shared_ptr<core::Trie<char>> trie,
-      bool insert_space = true,
+      std::shared_ptr<const core::Trie<char>> symbols,
+      std::shared_ptr<const core::BPEMerges> merges,
       const std::string& okey = "") const;
 
  protected:
