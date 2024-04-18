@@ -150,6 +150,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadController.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadPool.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Tokenizer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/BPETokenizer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Levenshtein.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/Audio.cpp
