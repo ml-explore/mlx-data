@@ -41,7 +41,7 @@ class BPETokenizer {
       std::shared_ptr<const Trie<char>> symbols,
       std::shared_ptr<const BPEMerges> merges);
 
-  std::vector<int64_t> tokenize(const std::string& input) const;
+  std::vector<int64_t> tokenize(std::string_view input) const;
 
  private:
   std::shared_ptr<const Trie<char>> symbols_;
