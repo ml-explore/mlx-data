@@ -134,21 +134,26 @@ void init_mlx_data_core(py::module& m) {
       .def(
           "insert",
           [](std::shared_ptr<Trie<char>> trie,
-             std::variant<std::string, std::vector<char>> token) {
+             std::variant<std::string, std::vector<char>> token,
+             int64_t id) {
             if (std::holds_alternative<std::string>(token)) {
-              return trie->insert(std::get<std::string>(token));
+              return trie->insert(std::get<std::string>(token), id);
             } else {
-              return trie->insert(std::get<std::vector<char>>(token));
+              return trie->insert(std::get<std::vector<char>>(token), id);
             }
           },
           py::return_value_policy::reference_internal,
           py::arg("token"),
+          py::arg("id") = -1,
           R"pbcopy(
             Insert a token in the trie making a new token if it doesn't already exist.
 
             Args:
                 token (str or list[char]): The new token to be inserted given
                   either as a string or a list of characters.
+                id (int, optional): The id to assign to the new token to be
+                  inserted. If negative then use ``num_keys()`` as default.
+                  Default: ``-1``.
           )pbcopy")
       .def(
           "search",
