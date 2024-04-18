@@ -1,7 +1,5 @@
 // Copyright © 2024 Apple Inc.
 
-#include <iostream>
-#include <list>
 #include <queue>
 #include <sstream>
 
@@ -57,6 +55,8 @@ BPETokenizer::BPETokenizer(
 std::vector<int64_t> BPETokenizer::tokenize(std::string_view input) const {
   struct Symbol {
     std::string_view value;
+    int left;
+    int right;
     int64_t token;
   };
 
@@ -91,7 +91,11 @@ std::vector<int64_t> BPETokenizer::tokenize(std::string_view input) const {
       msg << "BPETokenizer: Unknown symbol '" << *it << "'";
       throw std::runtime_error(msg.str());
     }
-    symbols.push_back(Symbol{std::string_view(&*it, length), node->id});
+    symbols.push_back(Symbol{
+        std::string_view(&*it, length),
+        static_cast<int>(symbols.size() - 1),
+        static_cast<int>(symbols.size() + 1),
+        node->id});
     it += length - 1;
   }
 
@@ -110,53 +114,50 @@ std::vector<int64_t> BPETokenizer::tokenize(std::string_view input) const {
   }
 
   while (!merge_queue.empty()) {
-    Pair pair = std::move(merge_queue.top());
+    Pair top = std::move(merge_queue.top());
     merge_queue.pop();
 
     // Skip invalidated pairs
-    if (pair.left->token < 0 || pair.right->token < 0) {
+    if (top.left->token < 0 || top.right->token < 0) {
       continue;
     }
-    if (pair.value.size() !=
-        pair.left->value.size() + pair.right->value.size()) {
+    if (top.value.size() != top.left->value.size() + top.right->value.size()) {
       continue;
     }
-    if (pair.value.data() != pair.left->value.data()) {
+    if (top.value.data() != top.left->value.data()) {
       continue;
     }
 
     // Yay! Valid pair, let's merge into the left one.
-    pair.left->token = pair.token;
-    pair.left->value = pair.value;
+    top.left->token = top.token;
+    top.left->value = top.value;
 
     // Invalidate our neighbor which we just merged into ourselves.
-    pair.right->token = -1;
+    top.right->token = -1;
 
-    // Find the first valid symbol to our left to check for a possible merge.
-    if (pair.left != symbols.begin()) {
-      auto neighbor_left = std::prev(pair.left);
-      while (neighbor_left != symbols.begin() && neighbor_left->token == -1) {
-        neighbor_left--;
-      }
-      if (neighbor_left->token != -1) {
-        auto [can_merge, token] =
-            merges_->can_merge(neighbor_left->value, pair.left->value);
-        if (can_merge) {
-          merge_queue.emplace(neighbor_left, pair.left, token);
-        }
+    // Adjust the pointers to neighboring symbols
+    top.left->right = top.right->right;
+    if (top.right->right < symbols.size()) {
+      symbols[top.right->right].left = top.right->left;
+    }
+
+    // Check for a possible merge to the left.
+    if (top.left != symbols.begin()) {
+      auto neighbor = symbols.begin() + top.left->left;
+      auto [can_merge, token] =
+          merges_->can_merge(neighbor->value, top.left->value);
+      if (can_merge) {
+        merge_queue.emplace(neighbor, top.left, token);
       }
     }
 
     // Do the same to our right.
-    auto neighbor_right = std::next(pair.right);
-    while (neighbor_right != symbols.end() && neighbor_right->token == -1) {
-      neighbor_right++;
-    }
-    if (neighbor_right->token != -1) {
+    if (top.left->right < symbols.size()) {
+      auto neighbor = symbols.begin() + top.left->right;
       auto [can_merge, token] =
-          merges_->can_merge(pair.left->value, neighbor_right->value);
+          merges_->can_merge(top.left->value, neighbor->value);
       if (can_merge) {
-        merge_queue.emplace(pair.left, neighbor_right, token);
+        merge_queue.emplace(top.left, neighbor, token);
       }
     }
   }
