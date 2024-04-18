@@ -60,7 +60,9 @@ class Trie {
   }
 
   template <typename iterator_type>
-  const TrieNode<T>* insert(iterator_type begin, iterator_type end) {
+  const TrieNode<T>*
+  insert(iterator_type begin, iterator_type end, int64_t id = -1) {
+    id = (id < 0) ? keys_.size() : id;
     auto it = begin;
     auto [node, i] = partial_search(it, end);
     std::advance(it, i); // it += i but also supports sequential iterators
@@ -74,8 +76,8 @@ class Trie {
       it++;
     }
     if (!node->accepts()) {
-      node->id = keys_.size();
-      keys_.emplace_back(begin, end);
+      node->id = id;
+      keys_.emplace(id, std::vector<T>(begin, end));
     }
     return node;
   }
@@ -89,8 +91,8 @@ class Trie {
     return node;
   }
 
-  const TrieNode<T>* insert(const std::vector<T>& key) {
-    return insert(key.begin(), key.end());
+  const TrieNode<T>* insert(const std::vector<T>& key, int64_t id = -1) {
+    return insert(key.begin(), key.end(), id);
   }
 
   const TrieNode<T>* search(const std::vector<T>& key) {
@@ -113,14 +115,14 @@ class Trie {
   template <
       typename U = T,
       std::enable_if_t<std::is_same<char, U>::value, char> = false>
-  const TrieNode<T>* insert(const std::string& key) {
-    return insert(std::vector<T>(key.begin(), key.end()));
+  const TrieNode<T>* insert(const std::string& key, int64_t id = -1) {
+    return insert(key.begin(), key.end(), id);
   };
   template <
       typename U = T,
       std::enable_if_t<std::is_same<char, U>::value, char> = false>
   const TrieNode<T>* search(const std::string& key) {
-    return search(std::vector<T>(key.begin(), key.end()));
+    return search(key.begin(), key.end());
   };
   template <
       typename U = T,
@@ -159,7 +161,7 @@ class Trie {
   }
 
   std::deque<TrieNode<T>> nodes_;
-  std::vector<std::vector<T>> keys_;
+  std::unordered_map<int64_t, std::vector<T>> keys_;
 };
 
 } // namespace core
