@@ -54,7 +54,7 @@ BPETokenizer::BPETokenizer(
     std::shared_ptr<const BPEMerges> merges)
     : symbols_(symbols), merges_(merges) {}
 
-std::vector<int64_t> BPETokenizer::tokenize(const std::string& input) const {
+std::vector<int64_t> BPETokenizer::tokenize(std::string_view input) const {
   struct Symbol {
     std::string_view value;
     int64_t token;

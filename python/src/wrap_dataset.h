@@ -1374,46 +1374,38 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.tokenize`.");
 
   base.def(
-      "tokenize_spm",
-      &T::tokenize_spm,
+      "tokenize_bpe",
+      &T::tokenize_bpe,
       py::call_guard<py::gil_scoped_release>(),
       py::arg("key"),
-      py::arg("trie"),
-      py::arg("insert_space") = true,
+      py::arg("symbols"),
+      py::arg("merges"),
       py::arg("output_key") = "",
       R"pbcopy(
-        Preprocess the contents of the array at ``key`` and tokenize them
-        according to the SentencePiece tokenizer.
+        Tokenize the the contents of the array at ``key`` using the BPE merging
+        algorithm.
 
-        This call is simply a convenience over calling pad, replace and
-        tokenize as follows:
-
-        .. code-block:: python
-
-          dset = (
-            dset
-            .pad("text", 0, 1, 0, ord(" "), output_key="tokens")
-            .replace("tokens", " ", "\u2581")
-            .tokenize("tokens", trie)
-          )
+        For instance this can be used to match the tokenization of the
+        Sentencepiece tokenizers.
 
         Args:
           key (str): The sample key that contains the array we are operating on.
-          trie (mlx.data.core.CharTrie): The trie to use for the tokenization.
-          insert_space (bool): Whether to prepend a space before the text.
-            (default: ``True``).
+          symbols (mlx.data.core.CharTrie): A trie containing the basic symbols
+            to use for the tokenization.
+          merges (mlx.data.core.BPEMerges): A datastructure containing the
+            merges of the basic symbols in order of priority.
           output_key (str): If it is not empty then write the result to this
             key instead of overwriting ``key``. (default: '')
       )pbcopy");
   base.def(
-      "tokenize_spm_if",
-      &T::tokenize_spm_if,
+      "tokenize_bpe_if",
+      &T::tokenize_bpe_if,
       py::call_guard<py::gil_scoped_release>(),
       py::arg("cond"),
       py::arg("key"),
-      py::arg("trie"),
-      py::arg("insert_space") = true,
+      py::arg("symbols"),
+      py::arg("merges"),
       py::arg("output_key") = "",
-      "Conditional :meth:`Buffer.tokenize_spm`.");
+      "Conditional :meth:`Buffer.tokenize_bpe`.");
 }
 } // namespace
