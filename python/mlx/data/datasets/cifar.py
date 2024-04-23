@@ -4,18 +4,13 @@ import hashlib
 import pickle
 import shutil
 import tarfile
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import numpy as np
 
 from ... import data as dx
-from .common import (
-    CACHE_DIR,
-    Path,
-    ensure_exists,
-    file_digest,
-    urlretrieve_with_progress,
-)
+from .common import CACHE_DIR, ensure_exists, file_digest, urlretrieve_with_progress
 
 URLS = {
     "CIFAR10": (
