@@ -4,6 +4,7 @@ import hashlib
 import pickle
 import shutil
 import tarfile
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 
 import numpy as np
