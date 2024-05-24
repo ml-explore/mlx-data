@@ -13,7 +13,7 @@ from .common import CACHE_DIR, ensure_exists, urlretrieve_with_progress
 
 def _load_mnist_wrapper(root=None, train=True, dataset="mnist"):
     url_dict = {
-        "mnist": "http://yann.lecun.com/exdb/mnist/",
+        "mnist": "https://raw.githubusercontent.com/fgnt/mnist/master/",
         "fashion-mnist": "http://fashion-mnist.s3-website.eu-central-1.amazonaws.com/",
     }
     base_url = url_dict[dataset]
