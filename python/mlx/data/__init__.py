@@ -11,3 +11,5 @@ from ._c import __version__
 # alternatively, one can set OPENBLAS_NUM_THREADS=1.
 import numpy  # isort: skip
 del numpy
+
+from . import tokenizer_helpers
