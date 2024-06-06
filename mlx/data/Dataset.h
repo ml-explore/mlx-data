@@ -314,6 +314,18 @@ class Dataset {
       double value,
       double pad) const;
 
+  T replace(
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+  T replace_if(
+      bool cond,
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+
   T rename_key(const std::string& ikey, const std::string& okey) const;
   T rename_key_if(bool cond, const std::string& ikey, const std::string& okey)
       const;
@@ -383,6 +395,17 @@ class Dataset {
       TokenizeMode mode,
       bool ignore_unk = false,
       const std::vector<double>& trie_key_scores = {},
+      const std::string& okey = "") const;
+  T tokenize_bpe(
+      const std::string& ikey,
+      std::shared_ptr<const core::Trie<char>> symbols,
+      std::shared_ptr<const core::BPEMerges> merges,
+      const std::string& okey = "") const;
+  T tokenize_bpe_if(
+      bool cond,
+      const std::string& ikey,
+      std::shared_ptr<const core::Trie<char>> symbols,
+      std::shared_ptr<const core::BPEMerges> merges,
       const std::string& okey = "") const;
 
  protected:

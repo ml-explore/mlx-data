@@ -946,6 +946,42 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.remove_value`.");
 
   base.def(
+      "replace",
+      &T::replace,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("key"),
+      py::arg("old"),
+      py::arg("replacement"),
+      py::arg("count") = -1,
+      R"pbdoc(
+        Replace ``old`` with ``replacement`` in the array at  ``key``.
+
+        Example:
+
+        .. code-block:: python
+
+          # Replace ' ' with '▁' to prepare for SPM tokenization.
+          dset = dset.replace("text", " ", "\u2581")
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          old (str): The character sequence that we are replacing.
+          replacement (str): The character sequence that we are replacing with.
+          count (int): Perform at most ``count`` replacements. Ignore if negative.
+              Default: ``-1``.
+      )pbdoc");
+  base.def(
+      "replace_if",
+      &T::replace_if,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("key"),
+      py::arg("old"),
+      py::arg("replacement"),
+      py::arg("count") = -1,
+      "Conditional :meth:`Buffer.replace`.");
+
+  base.def(
       "rename_key",
       &T::rename_key,
       py::call_guard<py::gil_scoped_release>(),
@@ -1195,5 +1231,40 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("trie_key_scores") = std::vector<double>({}),
       py::arg("output_key") = "",
       "Conditional :meth:`Buffer.tokenize`.");
+
+  base.def(
+      "tokenize_bpe",
+      &T::tokenize_bpe,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("key"),
+      py::arg("symbols"),
+      py::arg("merges"),
+      py::arg("output_key") = "",
+      R"pbcopy(
+        Tokenize the the contents of the array at ``key`` using the BPE merging
+        algorithm.
+
+        For instance this can be used to match the tokenization of the
+        Sentencepiece tokenizers.
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          symbols (mlx.data.core.CharTrie): A trie containing the basic symbols
+            to use for the tokenization.
+          merges (mlx.data.core.BPEMerges): A datastructure containing the
+            merges of the basic symbols in order of priority.
+          output_key (str): If it is not empty then write the result to this
+            key instead of overwriting ``key``. (default: '')
+      )pbcopy");
+  base.def(
+      "tokenize_bpe_if",
+      &T::tokenize_bpe_if,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("key"),
+      py::arg("symbols"),
+      py::arg("merges"),
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.tokenize_bpe`.");
 }
 } // namespace

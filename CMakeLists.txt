@@ -150,6 +150,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadController.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/ThreadPool.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Tokenizer.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/BPETokenizer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Levenshtein.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Utils.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/Audio.cpp
@@ -204,7 +205,8 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Squeeze.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Tokenize.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ImageTransform.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp)
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Replace.cpp)
 
 if(AWSSDK_FOUND)
   list(APPEND mlxdata-src
