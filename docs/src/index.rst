@@ -28,6 +28,7 @@ processes or having to write in a symbolic language.
 
    quick_start
    buffers_streams_samples
+   hf_datasets_streams
 
 .. toctree::
    :caption: Python API Reference
