@@ -49,12 +49,14 @@ For example, the images in the MNIST dataset are stored as :class:`PIL` images.
         ...
     ]
 
-We can convert them to bytes using the following code:
+We can convert them to numpy arrays using the following code:
 
 .. code-block:: python
 
-    def huggingface_to_bytes_dicts(dataset):    
-        return [{"image": image.tobytes(), "label": label}
+    import numpy as np
+
+    def huggingface_to_array_of_dict(dataset):    
+        return [{"image": np.array(image).copy(), "label": label}
                 for label, image in zip(dataset['label'], dataset['image'])]
 
 Buffer
@@ -65,13 +67,15 @@ This step will save you a lot of time:
 
 .. code-block:: python
 
-    bytes_dicts = huggingface_to_bytes_dicts(dataset)
+    dicts = huggingface_to_array_of_dict(dataset)
 
-    assert type(bytes_dicts) == list
-    assert type(bytes_dicts[0]) == dict
-    assert type(bytes_dicts[0]['image']) == bytes
+    assert type(dicts) == list
+    assert type(dicts[0]) == dict
+    assert type(dicts[0]['image']) == np.ndarray
+    # assert type(dicts[0]['image'].shape) == ... usually for images you will get a HCW shape
+    # but it depends on your use case
 
-We can then convert the dictionaries of bytes to a :class:`Buffer` using :meth:`buffer_from_vector`:
+We can then convert the list of dictionaries to a :class:`Buffer` using :meth:`buffer_from_vector`:
 
 .. code-block:: python
 
@@ -117,13 +121,15 @@ This loads the dataset, converts it to numpy arrays, and creates a stream of bat
     import mlx.data as dx
 
     # Convert the content of the dataset into numpy arrays
-    def huggingface_to_bytes_dicts(dataset):    
-        return [{"image": image.tobytes(), "label": label}
+    def huggingface_to_array_of_dict(dataset):    
+        return [{"image": np.array(image).copy(), "label": label}
                 for label, image in zip(dataset['label'], dataset['image'])]
 
     # Convert the Hugging Face dataset to a stream of batches
     def hf_dataset_to_mlx_stream(dataset, shuffle=False):
-        buffer = dx.buffer_from_vector(huggingface_to_bytes_dicts(dataset))
+        numpy_data = huggingface_to_array_of_dict(dataset)
+
+        buffer = dx.buffer_from_vector(numpy_data)
         if shuffle:
             buffer = buffer.shuffle()    
 
