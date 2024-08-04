@@ -5,6 +5,7 @@
 namespace mlx {
 namespace data {
 namespace op {
+
 Tokenize::Tokenize(
     const std::string& ikey,
     std::shared_ptr<core::Trie<char>> trie,
@@ -15,6 +16,7 @@ Tokenize::Tokenize(
     : KeyTransformOp(ikey, okey),
       tokenizer_(trie, ignore_unk, trie_key_scores),
       mode_(mode) {}
+
 std::shared_ptr<Array> Tokenize::apply_key(
     const std::shared_ptr<const Array>& src) const {
   std::string str(
@@ -34,6 +36,21 @@ std::shared_ptr<Array> Tokenize::apply_key(
 
   return std::make_shared<Array>(tokens);
 }
+
+BPETokenize::BPETokenize(
+    const std::string& ikey,
+    std::shared_ptr<const core::Trie<char>> symbols,
+    std::shared_ptr<const core::BPEMerges> merges,
+    const std::string& okey)
+    : KeyTransformOp(ikey, okey), tokenizer_(symbols, merges) {}
+
+std::shared_ptr<Array> BPETokenize::apply_key(
+    const std::shared_ptr<const Array>& src) const {
+  auto tokens = tokenizer_.tokenize(std::string_view(
+      reinterpret_cast<char*>(src->data()), src->size() * src->itemsize()));
+  return std::make_shared<Array>(tokens);
+}
+
 } // namespace op
 } // namespace data
 } // namespace mlx

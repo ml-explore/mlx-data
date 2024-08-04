@@ -1,7 +1,6 @@
-// Copyright © 2023 Apple Inc.
+// Copyright © 2023-2024 Apple Inc.
 
 #include "mlx/data/core/Utils.h"
-#include <iostream>
 
 namespace {
 
@@ -57,6 +56,7 @@ void uniq_t(
     }
   }
 }
+
 template <class T>
 void remove_t(
     std::shared_ptr<Array> dst,
@@ -102,6 +102,65 @@ void remove_t(
     }
   }
 }
+
+template <typename T>
+void replace_t(
+    std::shared_ptr<Array>& result,
+    const std::shared_ptr<Array> src,
+    const std::shared_ptr<Array> old,
+    const std::shared_ptr<Array> replacement,
+    int count) {
+  int64_t src_size = src->size();
+  int64_t old_size = old->size();
+  int64_t replacement_size = replacement->size();
+
+  T* src_buffer = src->data<T>();
+  T* old_buffer = old->data<T>();
+  T* replacement_buffer = replacement->data<T>();
+
+  // Calculate the result size. If this ends up being slow we can try
+  // a single pass algorithm that grows the buffer using realloc. We can also
+  // try a better search algorithm because this has a worst case complexity
+  // O(src_size old_size).
+  int64_t result_size = src_size;
+  int matches = 0;
+  if (old_size != replacement_size) {
+    for (int64_t i = 0; i < src_size; i++) {
+      if (std::equal(old_buffer, old_buffer + old_size, src_buffer + i)) {
+        i += old_size - 1;
+        result_size += replacement_size - old_size;
+        matches++;
+      }
+      if (matches == count) {
+        break;
+      }
+    }
+  }
+
+  result = std::make_shared<Array>(src->type(), result_size);
+  T* result_buffer = result->data<T>();
+
+  matches = 0;
+  for (int64_t i = 0, j = 0; i < src_size; i++, j++) {
+    if (std::equal(old_buffer, old_buffer + old_size, src_buffer + i)) {
+      std::copy(
+          replacement_buffer,
+          replacement_buffer + replacement_size,
+          result_buffer + j);
+      i += old_size - 1;
+      j += replacement_size - 1;
+      matches++;
+    } else {
+      result_buffer[j] = src_buffer[i];
+    }
+    if (matches == count) {
+      std::copy(
+          src_buffer + i + 1, src_buffer + src_size, result_buffer + j + 1);
+      break;
+    }
+  }
+}
+
 } // namespace
 namespace mlx {
 namespace data {
@@ -190,6 +249,16 @@ Sample merge_batch(
   }
 
   return sample_batch;
+}
+
+std::shared_ptr<Array> replace(
+    const std::shared_ptr<Array> src,
+    const std::shared_ptr<Array> old,
+    const std::shared_ptr<Array> replacement,
+    int count) {
+  std::shared_ptr<Array> result;
+  ARRAY_DISPATCH(src, replace_t, result, src, old, replacement, count);
+  return result;
 }
 
 } // namespace core
