@@ -144,6 +144,43 @@ void init_mlx_data_buffer(py::module& m) {
                   dim (dict): The dimension to concatenate over.
               )pbdoc")
           .def(
+              "ordered_prefetch",
+              &Buffer::ordered_prefetch,
+              py::call_guard<py::gil_scoped_release>(),
+              py::arg("prefetch_size"),
+              py::arg("num_thread"),
+              R"pbcopy(
+                Fetch samples in background threads, while preserving original ordering.
+
+                This operation is the workhorse of data loading. It uses
+                ``num_threads`` background threads and fetches
+                ``prefetch_size`` samples so that they are ready to be used
+                when needed.
+
+                Prefetch can be used both to parallelize operations but also to
+                overlap computation with data loading in a background thread.
+
+                If you don't need deterministic ordering, look for :meth:`Stream.prefetch`
+                instead, as it may be more efficient.
+
+                .. code-block:: python
+
+                  # The final prefetch is parallelizing the whole pipeline and
+                  # ensures that images are going to be available for training.
+                  dset = (
+                    dset
+                    .load_image("image")
+                    .image_resize_smallest_side("image", 256)
+                    .image_center_crop("image", 256, 256)
+                    .batch(32)
+                    .ordered_prefetch(8, 8)
+                  )
+
+                Args:
+                  num_partitions (int): How many different partitions to split the buffer into.
+                  partition (int): Which partition to use (0-based).
+              )pbcopy")
+          .def(
               "partition",
               &Buffer::partition,
               py::call_guard<py::gil_scoped_release>(),

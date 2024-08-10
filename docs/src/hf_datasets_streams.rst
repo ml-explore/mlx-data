@@ -1,5 +1,5 @@
 HuggingFace Datasets and MLX Streams
-============================
+====================================
 
 .. currentmodule:: mlx.data
 

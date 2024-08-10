@@ -9,13 +9,17 @@ class Benchmark:
         self.name = name
         self.runtimes = defaultdict(list)
         self.n_samples = defaultdict(int)
+        self.run_count = 0
 
     def log_run(self, run_name, fn, *args, **kwargs):
+        print(f"Starting run {self.run_count}.", flush=True)
         start = time.time()
         n_samples = fn(*args, **kwargs)
         end = time.time()
         self.runtimes[run_name].append(end - start)
         self.n_samples[run_name] = n_samples
+        print("-------------")
+        self.run_count += 1
 
     def report(self):
         print(f"Benchmark {self.name}")

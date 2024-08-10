@@ -341,6 +341,10 @@ void init_mlx_data_stream(py::module& m) {
                 Prefetch can be used both to parallelize operations but also to
                 overlap computation with data loading in a background thread.
 
+                This prefetching order is not deterministic and samples' ordering depends
+                on scheduling of the threads. If you need deterministic ordering, look for
+                :meth:`Buffer.ordered_prefetch` instead.
+
                 .. code-block:: python
 
                   # The final prefetch is parallelizing the whole pipeline and
