@@ -10,6 +10,7 @@
 #include "mlx/data/buffer/Perm.h"
 #include "mlx/data/buffer/Shuffle.h"
 #include "mlx/data/stream/FromBuffer.h"
+#include "mlx/data/stream/OrderedPrefetch.h"
 
 namespace mlx {
 namespace data {
@@ -57,6 +58,10 @@ Buffer Buffer::dynamic_batch(
     const std::unordered_map<std::string, int>& batch_dims) const {
   return Buffer(std::make_shared<buffer::DynamicBatch>(
       self_, size_buffer.self_, key, max_data_size, pad_values, batch_dims));
+}
+
+Stream Buffer::ordered_prefetch(int prefetch_size, int num_thread) const {
+  return Stream(std::make_shared<stream::OrderedPrefetch>(self_, prefetch_size, num_thread));
 }
 
 Buffer Buffer::partition(int64_t num_partitions, int64_t partition) const {

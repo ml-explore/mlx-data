@@ -47,6 +47,7 @@ transformations that cannot be implemented or do not make sense for a
 .. autosummary::
    :toctree: _autosummary
 
+    Buffer.ordered_prefetch
     Buffer.partition
     Buffer.perm
     Buffer.shuffle

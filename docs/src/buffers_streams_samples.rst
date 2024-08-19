@@ -101,7 +101,7 @@ and :func:`stream_line_reader` or from a :class:`Buffer` by calling its
 :meth:`Buffer.to_stream` method.
 
 Notably streams enable prefetching (:meth:`Stream.prefetch`) for efficient
-iteration. Continuing the example from above:
+iteration. This prefetching is not deterministic. Continuing the example from above:
 
 .. code-block:: python
 
@@ -115,6 +115,25 @@ iteration. Continuing the example from above:
         .to_stream()  # <-- making a stream from the shuffled buffer
         .batch(32)
         .prefetch(8, 4)  # <-- prefetch 8 batches using 4 threads
+    )
+
+    # Now we can iterate over dset
+    sample = next(dset)
+
+If deterministic prefetching is required, :meth:`Buffer.ordered_prefetch` can replace
+:meth:`Buffer.to_stream`.  
+
+.. code-block:: python
+
+    # We can define the rest of the processing pipeline using streams.
+    # 1. First shuffle the buffer
+    # 2. Make a stream
+    # 3. Batch and then prefetch
+    dset = (
+        dset
+        .shuffle()
+        .batch(32)
+        .ordered_prefetch(8, 4)  # <-- prefetch 8 batches in a stream using 4 threads
     )
 
     # Now we can iterate over dset

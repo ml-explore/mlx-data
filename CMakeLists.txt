@@ -179,6 +179,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/CSVReader.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/FromBuffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/LineReader.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/OrderedPrefetch.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Partition.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Prefetch.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Repeat.cpp
