@@ -9,7 +9,7 @@ namespace data {
 namespace stream {
 
 Repeat::Repeat(const std::shared_ptr<Stream>& stream, int64_t num_time)
-    : stream_(stream), numTime_(num_time), numDone_(0){};
+    : stream_(stream), numTime_(num_time), numDone_(0) {};
 
 Sample Repeat::next() const {
   Sample sample;

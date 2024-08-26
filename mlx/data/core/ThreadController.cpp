@@ -53,7 +53,7 @@ namespace core {
 
 struct ThreadControllerSym {
   ThreadControllerSym(void* lib, void* get_sym, void* set_sym)
-      : lib(lib), get_sym(get_sym), set_sym(set_sym){};
+      : lib(lib), get_sym(get_sym), set_sym(set_sym) {};
   void* lib;
   void* get_sym;
   void* set_sym;
