@@ -73,7 +73,7 @@ ImageResizeSmallestSide::ImageResizeSmallestSide(
     const std::string& ikey,
     int64_t size,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), size_(size) {};
+    : ImageTransformOp(ikey, okey), size_(size){};
 
 std::shared_ptr<Array> ImageResizeSmallestSide::apply_image(
     const std::shared_ptr<const Array>& image) const {
@@ -98,7 +98,7 @@ ImageResize::ImageResize(
     int64_t w,
     int64_t h,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), w_(w), h_(h) {};
+    : ImageTransformOp(ikey, okey), w_(w), h_(h){};
 
 std::shared_ptr<Array> ImageResize::apply_image(
     const std::shared_ptr<const Array>& image) const {
@@ -110,7 +110,7 @@ ImageCenterCrop::ImageCenterCrop(
     int64_t w,
     int64_t h,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), w_(w), h_(h) {};
+    : ImageTransformOp(ikey, okey), w_(w), h_(h){};
 
 std::shared_ptr<Array> ImageCenterCrop::apply_image(
     const std::shared_ptr<const Array>& image) const {
@@ -130,7 +130,7 @@ ImageRandomCrop::ImageRandomCrop(
     int64_t w,
     int64_t h,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), w_(w), h_(h) {};
+    : ImageTransformOp(ikey, okey), w_(w), h_(h){};
 
 ImageRandomCrop::Parameters ImageRandomCrop::generate_random_crop_(
     int64_t w,
@@ -318,7 +318,7 @@ ImageRandomHFlip::ImageRandomHFlip(
     const std::string& ikey,
     float prob,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), prob_(prob) {};
+    : ImageTransformOp(ikey, okey), prob_(prob){};
 
 std::shared_ptr<Array> ImageRandomHFlip::apply_image(
     const std::shared_ptr<const Array>& image) const {
@@ -361,7 +361,7 @@ ImageRotate::ImageRotate(
     double angle,
     bool crop,
     const std::string& okey)
-    : ImageTransformOp(ikey, okey), angle_(angle), crop_(crop) {};
+    : ImageTransformOp(ikey, okey), angle_(angle), crop_(crop){};
 
 std::shared_ptr<Array> ImageRotate::apply_image(
     const std::shared_ptr<const Array>& image) const {

@@ -47,7 +47,7 @@ class ThreadPool {
   //   TaskContainer.
   class TaskContainerBase {
    public:
-    virtual ~TaskContainerBase() {};
+    virtual ~TaskContainerBase(){};
 
     virtual void operator()() = 0;
   };

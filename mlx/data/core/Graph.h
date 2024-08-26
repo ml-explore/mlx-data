@@ -127,7 +127,7 @@ class Graph<void, void> : public GraphBase {
 template <class A>
 class Graph<A, void> : public GraphBase {
  public:
-  Graph() : GraphBase() {};
+  Graph() : GraphBase(){};
   A& edge(int64_t id) {
     return uEdges_[id];
   };

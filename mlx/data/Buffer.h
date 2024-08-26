@@ -40,7 +40,7 @@ class Buffer : public Dataset<Buffer, buffer::Buffer> {
       const std::unordered_map<std::string, double>& pad_values = {},
       const std::unordered_map<std::string, int>& batch_dims = {}) const;
 
-  Stream ordered_prefetch(int prefetch_size, int num_thread) const;
+  Stream ordered_prefetch(int prefetch_size, int num_thread) const; 
 
   Buffer partition(int64_t num_partitions, int64_t partition) const;
   Buffer partition_if(bool cond, int64_t num_partitions, int64_t partition)

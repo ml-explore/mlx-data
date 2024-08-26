@@ -14,7 +14,7 @@ namespace stream {
 
 class Stream {
  public:
-  Stream() {};
+  Stream(){};
 
   // fetch next sample
   virtual Sample next() const;

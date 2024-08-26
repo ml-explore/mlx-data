@@ -22,7 +22,7 @@ using TokenizeMode = op::TokenizeMode;
 template <class T, class B>
 class Dataset {
  public:
-  Dataset(const std::shared_ptr<B>& self) : self_(self) {};
+  Dataset(const std::shared_ptr<B>& self) : self_(self){};
 
   T filter_by_shape(
       const std::string& key,

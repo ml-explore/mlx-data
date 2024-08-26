@@ -19,7 +19,7 @@ namespace core {
 
 class FileFetcherHandle {
  public:
-  FileFetcherHandle(int64_t rank) : rank_(rank) {};
+  FileFetcherHandle(int64_t rank) : rank_(rank){};
 
  private:
   int64_t rank_;

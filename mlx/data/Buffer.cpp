@@ -16,7 +16,7 @@ namespace mlx {
 namespace data {
 
 Buffer::Buffer(const std::shared_ptr<buffer::Buffer>& self)
-    : Dataset<Buffer, buffer::Buffer>(self) {};
+    : Dataset<Buffer, buffer::Buffer>(self){};
 
 Sample Buffer::get(int64_t idx) const {
   return self_->get(idx);
@@ -61,8 +61,7 @@ Buffer Buffer::dynamic_batch(
 }
 
 Stream Buffer::ordered_prefetch(int prefetch_size, int num_thread) const {
-  return Stream(std::make_shared<stream::OrderedPrefetch>(
-      self_, prefetch_size, num_thread));
+  return Stream(std::make_shared<stream::OrderedPrefetch>(self_, prefetch_size, num_thread));
 }
 
 Buffer Buffer::partition(int64_t num_partitions, int64_t partition) const {

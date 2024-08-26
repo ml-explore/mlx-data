@@ -8,8 +8,8 @@ namespace mlx {
 namespace data {
 namespace core {
 
-BatchShape::BatchShape() : nodim_(true), num_sample_(0) {};
-BatchShape::BatchShape(int dim) : dim_(dim), nodim_(false), num_sample_(0) {};
+BatchShape::BatchShape() : nodim_(true), num_sample_(0){};
+BatchShape::BatchShape(int dim) : dim_(dim), nodim_(false), num_sample_(0){};
 
 int64_t BatchShape::size() const {
   int64_t size = 1;

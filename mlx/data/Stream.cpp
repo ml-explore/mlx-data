@@ -20,7 +20,7 @@ namespace mlx {
 namespace data {
 
 Stream::Stream(const std::shared_ptr<stream::Stream>& self)
-    : Dataset<Stream, stream::Stream>(self) {};
+    : Dataset<Stream, stream::Stream>(self){};
 
 Sample Stream::next() const {
   return self_->next();

@@ -14,7 +14,7 @@ namespace {
 class PyBufferIterator {
  public:
   PyBufferIterator(Buffer& buffer)
-      : buffer_(buffer), iter_(0), size_(buffer.size()) {};
+      : buffer_(buffer), iter_(0), size_(buffer.size()){};
   py::dict next() {
     if (iter_ >= size_) {
       throw py::stop_iteration();

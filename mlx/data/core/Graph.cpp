@@ -178,7 +178,7 @@ struct ShortestPath {
       : g(g),
         edgeWeights(edge_weights),
         nodeWeights(node_weights),
-        reverse(reverse) {};
+        reverse(reverse){};
 
   virtual void find_from_start_node(
       int64_t start_node_id,
@@ -256,7 +256,7 @@ struct BellmanFordShortestPath : public ShortestPath {
       const std::vector<double>& edge_weights,
       const std::vector<double>& node_weights,
       bool reverse)
-      : ShortestPath(g, edge_weights, node_weights, reverse) {};
+      : ShortestPath(g, edge_weights, node_weights, reverse){};
   virtual void find_from_start_node(
       int64_t start_node_id,
       std::vector<ShortestPathNode>& shortest) override {
@@ -299,7 +299,7 @@ struct DijsktraShortestPath : public ShortestPath {
       const std::vector<double>& edge_weights,
       const std::vector<double>& node_weights,
       bool reverse)
-      : ShortestPath(g, edge_weights, node_weights, reverse) {};
+      : ShortestPath(g, edge_weights, node_weights, reverse){};
   virtual void find_from_start_node(
       int64_t start_node_id,
       std::vector<ShortestPathNode>& shortest) override {

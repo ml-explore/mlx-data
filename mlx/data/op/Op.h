@@ -15,7 +15,7 @@ namespace op {
 
 class Op {
  public:
-  Op() {};
+  Op(){};
 
   // DEBUG: (debatable) sample could be not const
   virtual Sample apply(const Sample& sample) const;

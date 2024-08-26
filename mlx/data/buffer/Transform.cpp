@@ -11,12 +11,12 @@ namespace buffer {
 Transform::Transform(
     const std::shared_ptr<Buffer>& od,
     const std::shared_ptr<op::Op>& op)
-    : od_(od), ops_({op}) {};
+    : od_(od), ops_({op}){};
 
 Transform::Transform(
     const std::shared_ptr<Buffer>& od,
     const std::vector<std::shared_ptr<op::Op>>& ops)
-    : od_(od), ops_(ops) {};
+    : od_(od), ops_(ops){};
 
 Sample Transform::get(const int64_t idx) const {
   auto t_sample = od_->get(idx);
