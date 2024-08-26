@@ -3,6 +3,7 @@
 from unittest import TestCase
 
 import pytest
+
 import mlx.data as dx
 
 
@@ -39,4 +40,3 @@ class TestBuffer(TestCase):
         stream = buffer.ordered_prefetch(prefetch_size, num_threads)
         for i, e in enumerate(stream):
             self.assertEqual(i, e["i"])
-
