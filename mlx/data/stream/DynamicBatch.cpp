@@ -21,7 +21,7 @@ DynamicBatch::DynamicBatch(
           stream,
           buffer_size,
           onRefill_(key, max_data_size, pad_values, batch_dims, shuffle),
-          num_thread){};
+          num_thread) {};
 
 std::function<
     std::shared_ptr<buffer::Buffer>(const std::shared_ptr<buffer::Buffer>)>

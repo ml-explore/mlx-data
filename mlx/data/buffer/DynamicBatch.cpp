@@ -24,7 +24,7 @@ DynamicBatch::DynamicBatch(
           key,
           max_data_size,
           pad_values,
-          batch_dims){};
+          batch_dims) {};
 
 DynamicBatch::DynamicBatch(
     const std::shared_ptr<Buffer>& buffer,
@@ -41,7 +41,7 @@ DynamicBatch::DynamicBatch(
               max_data_size,
               batch_dims),
           pad_values,
-          batch_dims){};
+          batch_dims) {};
 
 DynamicBatch::DynamicBatch(
     std::pair<std::shared_ptr<Buffer>, std::vector<int64_t>> buffer_with_sizes,
@@ -51,7 +51,7 @@ DynamicBatch::DynamicBatch(
           buffer_with_sizes.first,
           buffer_with_sizes.second,
           pad_values,
-          batch_dims){};
+          batch_dims) {};
 
 std::pair<std::shared_ptr<Buffer>, std::vector<int64_t>>
 DynamicBatch::dynamic_batch_(
