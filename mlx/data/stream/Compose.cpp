@@ -11,7 +11,7 @@ namespace stream {
 Compose::Compose(
     std::shared_ptr<Stream>& stream,
     std::function<std::shared_ptr<Stream>(const Sample& sample)> op)
-    : stream_(stream), op_(op){};
+    : stream_(stream), op_(op) {};
 
 bool Compose::next_stream_() const {
   auto sample = stream_->next();

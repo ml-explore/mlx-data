@@ -71,7 +71,7 @@ def load_imagenet_devkit(root=None, quiet=False, validate_download=True):
 
     if not (archive.is_file() or folder.is_dir()):
         raise RuntimeError(
-            f"The devkit is missing from {str(root)}. Make sure to download {archives.name} from the imagenet website."
+            f"The devkit is missing from {str(root)}. Make sure to download {archive.name} from the imagenet website."
         )
 
     if not folder.is_dir():
