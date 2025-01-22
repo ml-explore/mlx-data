@@ -157,7 +157,9 @@ workflows:
   build_on_commit:
     when:
       and:
-        - equal: [ main, << pipeline.git.branch >> ]
+        - matches:
+            pattern: "^(?!pull/)[-\\w]+$"
+            value: << pipeline.git.branch >>
         - not: << pipeline.parameters.dev_release >>
         - not: << pipeline.parameters.pypi_release >>
     jobs:
