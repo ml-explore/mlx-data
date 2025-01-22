@@ -52,41 +52,41 @@ jobs:
             CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
               python setup.py bdist_wheel
 
-  mac_build_on_commit:
-    machine: true
-    resource_class: ml-explore/m-builder
-    parameters:
-      python_version:
-        type: string
-        default: "3.9"
-      macos_version:
-        type: string
-        default: "14"
-      extra_env:
-        type: string
-        default: ""
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            eval "$(conda shell.bash hook)"
-            rm -r $CONDA_PREFIX/envs/runner-env
-            conda create -y -n runner-env python=3.9
-            conda activate runner-env
-            pip install --upgrade cmake
-            pip install --upgrade pybind11[global]
-            pip install numpy
-            pip install twine
-      - run:
-          name: Build package
-          command: |
-            eval "$(conda shell.bash hook)"
-            conda activate runner-env
-            DEVELOPER_DIR=$(developer_dir_macos_14) \
-              CMAKE_BUILD_PARALLEL_LEVEL="" \
-              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
-              python setup.py bdist_wheel
+#  mac_build_on_commit:
+#    machine: true
+#    resource_class: ml-explore/m-builder
+#    parameters:
+#      python_version:
+#        type: string
+#        default: "3.9"
+#      macos_version:
+#        type: string
+#        default: "14"
+#      extra_env:
+#        type: string
+#        default: ""
+#    steps:
+#      - checkout
+#      - run:
+#          name: Install dependencies
+#          command: |
+#            eval "$(conda shell.bash hook)"
+#            rm -r $CONDA_PREFIX/envs/runner-env
+#            conda create -y -n runner-env python=3.9
+#            conda activate runner-env
+#            pip install --upgrade cmake
+#            pip install --upgrade pybind11[global]
+#            pip install numpy
+#            pip install twine
+#      - run:
+#          name: Build package
+#          command: |
+#            eval "$(conda shell.bash hook)"
+#            conda activate runner-env
+#            DEVELOPER_DIR=$(developer_dir_macos_14) \
+#              CMAKE_BUILD_PARALLEL_LEVEL="" \
+#              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
+#              python setup.py bdist_wheel
 
   linux_build_wheels:
     parameters:
@@ -114,41 +114,41 @@ jobs:
       - store_artifacts:
           path: wheelhouse/
 
-  mac_build_wheels:
-    machine: true
-    resource_class: ml-explore/m-builder
-    parameters:
-      python_version:
-        type: string
-        default: "3.8"
-      macos_version:
-        type: string
-        default: "14"
-      extra_env:
-        type: string
-        default: "DEV_RELEASE=1"
-    steps:
-      - checkout
-      - run:
-          name: Install dependencies
-          command: |
-            eval "$(conda shell.bash hook)"
-            rm -r $CONDA_PREFIX/envs/runner-env
-            conda create -y -n runner-env python=<< parameters.python_version >>
-            conda activate runner-env
-            pip install -U pip
-            pip install build
-            pip install delocate
-            DEVELOPER_DIR=$(developer_dir_macos_<< parameters.macos_version >>) \
-              CMAKE_BUILD_PARALLEL_LEVEL="" \
-              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
-              << parameters.extra_env >> \
-              SUPER_BUILD=ON \
-              python -m build --wheel
-            delocate-listdeps dist/*
-            delocate-wheel dist/*
-      - store_artifacts:
-          path: dist/
+#  mac_build_wheels:
+#    machine: true
+#    resource_class: ml-explore/m-builder
+#    parameters:
+#      python_version:
+#        type: string
+#        default: "3.8"
+#      macos_version:
+#        type: string
+#        default: "14"
+#      extra_env:
+#        type: string
+#        default: "DEV_RELEASE=1"
+#    steps:
+#      - checkout
+#      - run:
+#          name: Install dependencies
+#          command: |
+#            eval "$(conda shell.bash hook)"
+#            rm -r $CONDA_PREFIX/envs/runner-env
+#            conda create -y -n runner-env python=<< parameters.python_version >>
+#            conda activate runner-env
+#            pip install -U pip
+#            pip install build
+#            pip install delocate
+#            DEVELOPER_DIR=$(developer_dir_macos_<< parameters.macos_version >>) \
+#              CMAKE_BUILD_PARALLEL_LEVEL="" \
+#              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
+#              << parameters.extra_env >> \
+#              SUPER_BUILD=ON \
+#              python -m build --wheel
+#            delocate-listdeps dist/*
+#            delocate-wheel dist/*
+#      - store_artifacts:
+#          path: dist/
 
 workflows:
   build_on_commit:
@@ -159,7 +159,7 @@ workflows:
         - not: << pipeline.parameters.pypi_release >>
     jobs:
       - linux_build_on_commit
-      - mac_build_on_commit
+      #- mac_build_on_commit
   prb:
     when:
       matches:
@@ -170,8 +170,8 @@ workflows:
           type: approval
       - linux_build_on_commit:
           requires: [ hold ]
-      - mac_build_on_commit:
-          requires: [ hold ]
+      #- mac_build_on_commit:
+      #    requires: [ hold ]
   build_dev_release:
     when:
       and:
@@ -183,12 +183,12 @@ workflows:
             parameters:
               python_version: ["38", "39", "310", "311", "312"]
               extra_env: ["DEV_RELEASE=1"]
-      - mac_build_wheels:
-          matrix:
-            parameters:
-              python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-              macos_version: ["13", "14"]
-              extra_env: ["DEV_RELEASE=1"]
+      #- mac_build_wheels:
+      #    matrix:
+      #      parameters:
+      #        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+      #        macos_version: ["13", "14"]
+      #        extra_env: ["DEV_RELEASE=1"]
 
   build_pypi_release:
     when:
@@ -201,9 +201,9 @@ workflows:
             parameters:
               python_version: ["38", "39", "310", "311", "312"]
               extra_env: ["PYPI_RELEASE=1"]
-      - mac_build_wheels:
-          matrix:
-            parameters:
-              python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-              macos_version: ["13", "14"]
-              extra_env: ["PYPI_RELEASE=1"]
+      #- mac_build_wheels:
+      #    matrix:
+      #      parameters:
+      #        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
+      #        macos_version: ["13", "14"]
+      #        extra_env: ["PYPI_RELEASE=1"]
