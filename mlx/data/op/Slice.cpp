@@ -28,7 +28,7 @@ Slice::Slice(
       starts_(std::move(starts)),
       ends_(std::move(ends)) {
   if (dims_.size() != starts_.size() || dims_.size() != ends_.size()) {
-    throw std::runtime_error(
+    throw std::invalid_argument(
         "Slice: number of dims much match provided starts and ends");
   }
 }
@@ -62,7 +62,7 @@ RandomSlice::RandomSlice(
       dims_(std::move(dims)),
       sizes_(std::move(sizes)) {
   if (dims_.size() != sizes_.size()) {
-    throw std::runtime_error(
+    throw std::invalid_argument(
         "RandomSlice: number of dims much match provided sizes");
   }
 }
