@@ -1,9 +1,6 @@
 // Copyright © 2023 Apple Inc.
 
-#include <random>
 #include "mlx/data/op/Pad.h"
-#include "mlx/data/core/State.h"
-
 
 namespace mlx {
 namespace data {
@@ -36,24 +33,20 @@ PadToSize::PadToSize(
     int dim,
     int64_t size,
     double value,
-    const std::string& okey,
-    bool rand_trim)
-    : KeyTransformOp(ikey, okey), dim_(dim), sizes_({size}), value_(value), rand_trim_(rand_trim) {}
+    const std::string& okey)
+    : KeyTransformOp(ikey, okey), dim_(dim), sizes_({size}), value_(value) {}
 PadToSize::PadToSize(
     const std::string& ikey,
     int dim,
     const std::vector<int64_t>& sizes,
     double value,
-    const std::string& okey,
-    bool rand_trim)
-    : KeyTransformOp(ikey, okey), dim_(dim), sizes_(sizes), value_(value), rand_trim_(rand_trim) {}
+    const std::string& okey)
+    : KeyTransformOp(ikey, okey), dim_(dim), sizes_(sizes), value_(value) {}
 std::shared_ptr<Array> PadToSize::apply_key(
     const std::shared_ptr<const Array>& src) const {
   auto dim = src->checkdim(dim_);
   int64_t min_diff_idx = -1;
   int64_t min_diff_size = std::numeric_limits<int64_t>::max();
-  int64_t max_trim_diff_idx = -1;
-  int64_t max_trim_diff_size = -1;
   int64_t dim_size = src->shape(dim);
   for (int i = 0; i < sizes_.size(); i++) {
     auto diff_size = sizes_[i] - dim_size;
@@ -61,26 +54,9 @@ std::shared_ptr<Array> PadToSize::apply_key(
       min_diff_size = diff_size;
       min_diff_idx = i;
     }
-    auto trim_diff_size = dim_size - sizes_[i];
-    if (trim_diff_size > 0 && trim_diff_size > max_trim_diff_size){
-      max_trim_diff_size = trim_diff_size;
-      max_trim_diff_idx = i;
-    }
   }
   if (min_diff_idx >= 0) {
     return array::pad(src, dim, 0, min_diff_size, value_);
-  } else if (rand_trim_ && max_trim_diff_size > 0) {
-    // do random trim of the array across dim for the max_trim_diff_size
-    std::vector<int64_t> src_offset(src->ndim(), 0);
-    std::vector<int64_t> dst_shape(src->ndim(), 0);
-    for (int i = 0; i < dst_shape.size(); i++) {
-      dst_shape[i] = src->shape(i);
-    }
-    dst_shape[dim] = dst_shape[dim] - max_trim_diff_size;
-    std::uniform_int_distribution<int64_t> trim_uniform{0, max_trim_diff_size};
-    auto state = core::get_state();
-    src_offset[dim] = trim_uniform(state->randomGenerator);
-    return mlx::data::array::sub(src, src_offset, dst_shape);
   } else {
     return mlx::data::array::clone(src);
   }

@@ -256,31 +256,27 @@ class Dataset {
       int dim,
       int64_t size,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false) const;
+      const std::string& okey = "") const;
   T pad_to_size_if(
       bool cond,
       const std::string& ikey,
       int dim,
       int64_t size,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false) const;
+      const std::string& okey = "") const;
   T pad_to_size(
       const std::string& ikey,
       int dim,
       const std::vector<int64_t>& sizes,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false) const;
+      const std::string& okey = "") const;
   T pad_to_size_if(
       bool cond,
       const std::string& ikey,
       int dim,
       const std::vector<int64_t>& sizes,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false) const;
+      const std::string& okey = "") const;
 
   T read_from_tar(
       const std::string& tarkey,

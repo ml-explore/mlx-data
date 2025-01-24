@@ -808,15 +808,13 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
           int,
           int64_t,
           double,
-          const std::string&,
-          const bool>(&T::pad_to_size, py::const_),
+          const std::string&>(&T::pad_to_size, py::const_),
       py::call_guard<py::gil_scoped_release>(),
       py::arg("key"),
       py::arg("dim"),
       py::arg("size"),
       py::arg("pad_value"),
       py::arg("output_key") = "",
-      py::arg("rand_trim") = false,
       R"pbcopy(
         Pad the end of an array such that its size is ``size``.
 
@@ -827,7 +825,6 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
           pad_value (float): What to pad with.
           output_key (str): The key to store the result in. If it is an empty
             string then overwrite the input. (default: '')
-          rand_trim (bool): randomly trim to size if array longer than the size. (default: false)
       )pbcopy");
   base.def(
       "pad_to_size_if",
@@ -837,8 +834,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
           int,
           int64_t,
           double,
-          const std::string&,
-          const bool>(&T::pad_to_size_if, py::const_),
+          const std::string&>(&T::pad_to_size_if, py::const_),
       py::call_guard<py::gil_scoped_release>(),
       py::arg("cond"),
       py::arg("key"),
@@ -846,7 +842,6 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("size"),
       py::arg("pad_value"),
       py::arg("output_key") = "",
-      py::arg("rand_trim") = false,
       "Conditional :meth:`Buffer.pad_to_size`.");
 
   base.def(
