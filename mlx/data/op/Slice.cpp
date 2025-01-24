@@ -76,9 +76,9 @@ std::shared_ptr<Array> RandomSlice::apply_key(
   auto state = core::get_state();
   for (int i = 0; i < dims_.size(); i++) {
     auto d = src->checkdim(dims_[i]);
-    auto max_offset = shape[d] - sizes_[d];
+    auto max_offset = shape[d] - sizes_[i];
     if (max_offset > 0) {
-      shape[d] = sizes_[d];
+      shape[d] = sizes_[i];
       offsets[d] = (max_offset + 1) * rand_offset(state->randomGenerator);
     }
   }
