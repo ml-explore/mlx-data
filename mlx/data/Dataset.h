@@ -278,6 +278,29 @@ class Dataset {
       double value,
       const std::string& okey = "") const;
 
+  T random_slice(
+      const std::string& ikey,
+      int dim,
+      int64_t size,
+      const std::string& okey = "") const;
+  T random_slice_if(
+      bool cond,
+      const std::string& ikey,
+      int dim,
+      int64_t size,
+      const std::string& okey = "") const;
+  T random_slice(
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> sizes,
+      const std::string& okey = "") const;
+  T random_slice_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> sizes,
+      const std::string& okey = "") const;
+
   T read_from_tar(
       const std::string& tarkey,
       const std::string& ikey,
@@ -367,6 +390,33 @@ class Dataset {
       bool cond,
       const std::string& ikey,
       const std::vector<int>& dims,
+      const std::string& okey = "") const;
+
+  T slice(
+      const std::string& ikey,
+      int dim,
+      int64_t start,
+      int64_t end,
+      const std::string& okey = "") const;
+  T slice_if(
+      bool cond,
+      const std::string& ikey,
+      int dim,
+      int64_t start,
+      int64_t end,
+      const std::string& okey = "") const;
+  T slice(
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> starts,
+      std::vector<int64_t> ends,
+      const std::string& okey = "") const;
+  T slice_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> starts,
+      std::vector<int64_t> ends,
       const std::string& okey = "") const;
 
   T tokenize(
