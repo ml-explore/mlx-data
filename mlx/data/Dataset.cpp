@@ -508,10 +508,9 @@ T Dataset<T, B>::pad_to_size(
     int dim,
     int64_t size,
     double value,
-    const std::string& okey,
-    bool rand_trim) const {
+    const std::string& okey) const {
   return transform_(
-      std::make_shared<op::PadToSize>(ikey, dim, size, value, okey, rand_trim));
+      std::make_shared<op::PadToSize>(ikey, dim, size, value, okey));
 }
 
 template <class T, class B>
@@ -521,11 +520,10 @@ T Dataset<T, B>::pad_to_size_if(
     int dim,
     int64_t size,
     double value,
-    const std::string& okey,
-    bool rand_trim) const {
+    const std::string& okey) const {
   if (cond) {
     return transform_(
-        std::make_shared<op::PadToSize>(ikey, dim, size, value, okey, rand_trim));
+        std::make_shared<op::PadToSize>(ikey, dim, size, value, okey));
   } else {
     return T(self_);
   }
@@ -537,10 +535,9 @@ T Dataset<T, B>::pad_to_size(
     int dim,
     const std::vector<int64_t>& sizes,
     double value,
-    const std::string& okey,
-    bool rand_trim) const {
+    const std::string& okey) const {
   return transform_(
-      std::make_shared<op::PadToSize>(ikey, dim, sizes, value, okey, rand_trim));
+      std::make_shared<op::PadToSize>(ikey, dim, sizes, value, okey));
 }
 
 template <class T, class B>
@@ -550,11 +547,10 @@ T Dataset<T, B>::pad_to_size_if(
     int dim,
     const std::vector<int64_t>& sizes,
     double value,
-    const std::string& okey,
-    bool rand_trim) const {
+    const std::string& okey) const {
   if (cond) {
     return transform_(
-        std::make_shared<op::PadToSize>(ikey, dim, sizes, value, okey, rand_trim));
+        std::make_shared<op::PadToSize>(ikey, dim, sizes, value, okey));
   } else {
     return T(self_);
   }

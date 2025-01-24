@@ -34,15 +34,13 @@ class PadToSize : public KeyTransformOp {
       int dim,
       int64_t size,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false);
+      const std::string& okey = "");
   PadToSize(
       const std::string& ikey,
       int dim,
       const std::vector<int64_t>& sizes,
       double value,
-      const std::string& okey = "",
-      bool rand_trim = false);
+      const std::string& okey = "");
 
   virtual std::shared_ptr<Array> apply_key(
       const std::shared_ptr<const Array>& src) const override;
@@ -51,7 +49,6 @@ class PadToSize : public KeyTransformOp {
   int dim_;
   std::vector<int64_t> sizes_;
   double value_;
-  bool rand_trim_;
 };
 
 class PadToMultiple : public KeyTransformOp {
