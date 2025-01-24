@@ -1231,13 +1231,13 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("output_key") = "",
       R"pbcopy(
         Slice the array such that the result contains a subarray starting at
-        ``starts`` and ending at ``ends`` for the axes ``dims``.
+        ``starts`` and ending at ``ends``, so [start, end) will be taken, for the axes ``dims``.
 
         Args:
           key (str): The sample key that contains the array we are operating on.
           dims (int or list of ints): Which dimensions to slice.
-          starts (int or list of ints): The starting offsets for the corresponding dimensions.
-          ends (int or list of ints): The ending offsets for the corresponding dimensions.
+          starts (int or list of ints): The starting offsets for the corresponding dimensions (stars positions are included).
+          ends (int or list of ints): The ending offsets for the corresponding dimensions (ends positions are excluded).
           output_key (str): The key to store the result in. If it is an empty
             string then overwrite the input. (default: '')
       )pbcopy");
