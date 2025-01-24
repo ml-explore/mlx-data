@@ -539,11 +539,8 @@ std::shared_ptr<Array> batch(
 
 std::shared_ptr<Array> sub(
     const std::shared_ptr<const Array>& arr,
-    const std::vector<int64_t> src_offset,
-    const std::vector<int64_t> dst_shape) {
-  auto offset = src_offset;
-  auto shape = dst_shape;
-
+    std::vector<int64_t> offset,
+    std::vector<int64_t> shape) {
   if (arr->ndim() != offset.size()) {
     throw std::runtime_error("Array: sub: array and offset dim mismatch");
   }

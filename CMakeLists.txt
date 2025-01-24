@@ -193,6 +193,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/KeyTransform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SampleTransform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shape.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Slice.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RenameKey.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SaveImage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadAudio.cpp

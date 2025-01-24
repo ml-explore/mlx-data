@@ -17,6 +17,14 @@ using namespace mlx::data;
 
 namespace {
 
+template <typename T>
+std::vector<T> to_vector(std::variant<std::vector<T>, T> x) {
+  if (std::holds_alternative<T>(x)) {
+    return {std::get<T>(x)};
+  }
+  return std::move(std::get<std::vector<T>>(x));
+}
+
 template <class T, typename P>
 void mlx_data_export_dataset(py::class_<T, P>& base) {
   base.def(
@@ -850,6 +858,56 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.pad_to_size`.");
 
   base.def(
+      "random_slice",
+      [](const T& dataset,
+         const std::string& ikey,
+         std::variant<std::vector<int>, int> dims,
+         std::variant<std::vector<int64_t>, int64_t> sizes,
+         const std::string& okey) {
+        std::vector<int> dims_ = to_vector(dims);
+        std::vector<int64_t> sizes_ = to_vector(sizes);
+        return dataset.random_slice(ikey, dims_, sizes_, okey);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("ikey"),
+      py::arg("dims"),
+      py::arg("sizes"),
+      py::arg("output_key") = "",
+      R"pbcopy(
+        Take a random slice of from the array such that the result contains a a
+        random subarray of size ``sizes`` for the axes ``dims``.
+
+        If a dimension is smaller than the given size then the whole dimension
+        is taken.
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          dims (int or list of ints): Which dimensions to slice.
+          sizes (int or list of ints): The size of the corresponding dimensions.
+          output_key (str): The key to store the result in. If it is an empty
+            string then overwrite the input. (default: '')
+      )pbcopy");
+  base.def(
+      "random_slice_if",
+      [](const T& dataset,
+         bool cond,
+         const std::string& ikey,
+         std::variant<std::vector<int>, int> dims,
+         std::variant<std::vector<int64_t>, int64_t> sizes,
+         const std::string& okey) {
+        std::vector<int> dims_ = to_vector(dims);
+        std::vector<int64_t> sizes_ = to_vector(sizes);
+        return dataset.random_slice_if(cond, ikey, dims_, sizes_, okey);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("ikey"),
+      py::arg("dims"),
+      py::arg("sizes"),
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.random_slice`.");
+
+  base.def(
       "read_from_tar",
       &T::read_from_tar,
       py::call_guard<py::gil_scoped_release>(),
@@ -1151,6 +1209,60 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("dim") = nullptr,
       py::arg("output_key") = "",
       "Conditional :meth:`Buffer.squeeze_if`.");
+
+  base.def(
+      "slice",
+      [](const T& dataset,
+         const std::string& ikey,
+         std::variant<std::vector<int>, int> dims,
+         std::variant<std::vector<int64_t>, int64_t> starts,
+         std::variant<std::vector<int64_t>, int64_t> ends,
+         const std::string& okey) {
+        std::vector<int> dims_ = to_vector(dims);
+        std::vector<int64_t> starts_ = to_vector(starts);
+        std::vector<int64_t> ends_ = to_vector(ends);
+        return dataset.slice(ikey, dims_, starts_, ends_, okey);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("ikey"),
+      py::arg("dims"),
+      py::arg("starts"),
+      py::arg("ends"),
+      py::arg("output_key") = "",
+      R"pbcopy(
+        Slice the array such that the result contains a subarray starting at
+        ``starts`` and ending at ``ends`` for the axes ``dims``.
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          dims (int or list of ints): Which dimensions to slice.
+          starts (int or list of ints): The starting offsets for the corresponding dimensions.
+          ends (int or list of ints): The ending offsets for the corresponding dimensions.
+          output_key (str): The key to store the result in. If it is an empty
+            string then overwrite the input. (default: '')
+      )pbcopy");
+  base.def(
+      "slice_if",
+      [](const T& dataset,
+         bool cond,
+         const std::string& ikey,
+         std::variant<std::vector<int>, int> dims,
+         std::variant<std::vector<int64_t>, int64_t> starts,
+         std::variant<std::vector<int64_t>, int64_t> ends,
+         const std::string& okey) {
+        std::vector<int> dims_ = to_vector(dims);
+        std::vector<int64_t> starts_ = to_vector(starts);
+        std::vector<int64_t> ends_ = to_vector(ends);
+        return dataset.slice_if(cond, ikey, dims_, starts_, ends_, okey);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("ikey"),
+      py::arg("dims"),
+      py::arg("starts"),
+      py::arg("ends"),
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.slice`.");
 
   base.def(
       "tokenize",
