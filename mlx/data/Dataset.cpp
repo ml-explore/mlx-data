@@ -708,6 +708,29 @@ T Dataset<T, B>::replace_if(
 }
 
 template <class T, class B>
+T Dataset<T, B>::replace_bytes(
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  return transform_(
+      std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_bytes_if(
+    bool cond,
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
 T Dataset<T, B>::rename_key(const std::string& ikey, const std::string& okey)
     const {
   return transform_(std::make_shared<op::RenameKey>(ikey, okey));

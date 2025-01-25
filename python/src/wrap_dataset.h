@@ -1040,6 +1040,35 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.replace`.");
 
   base.def(
+      "replace_bytes",
+      &T::replace_bytes,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("ikey"),
+      py::arg("byte_map"),
+      py::arg("output_key") = "",
+      R"pbdoc(
+        Replace the bytes at ``key`` using the provided ``byte_map``.
+
+        A byte can map to any string. If an array is not a byte type it will be
+        reinterpreted as a byte array and remapped.
+
+        Args:
+          ikey (str): The sample key that contains the array we are operating on.
+          byte_map (list of str): A list of 256 strings that each byte maps to
+          output_key (str): If it is not empty then write the result to this
+            key instead of overwriting ``key``. (default: '')
+      )pbdoc");
+  base.def(
+      "replace_bytes_if",
+      &T::replace_bytes_if,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("ikey"),
+      py::arg("byte_map"),
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.replace_bytes`.");
+
+  base.def(
       "rename_key",
       &T::rename_key,
       py::call_guard<py::gil_scoped_release>(),

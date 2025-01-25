@@ -106,9 +106,9 @@ void remove_t(
 template <typename T>
 void replace_t(
     std::shared_ptr<Array>& result,
-    const std::shared_ptr<Array> src,
-    const std::shared_ptr<Array> old,
-    const std::shared_ptr<Array> replacement,
+    const std::shared_ptr<const Array>& src,
+    const std::shared_ptr<const Array>& old,
+    const std::shared_ptr<const Array>& replacement,
     int count) {
   int64_t src_size = src->size();
   int64_t old_size = old->size();
@@ -252,9 +252,9 @@ Sample merge_batch(
 }
 
 std::shared_ptr<Array> replace(
-    const std::shared_ptr<Array> src,
-    const std::shared_ptr<Array> old,
-    const std::shared_ptr<Array> replacement,
+    const std::shared_ptr<const Array>& src,
+    const std::shared_ptr<const Array>& old,
+    const std::shared_ptr<const Array>& replacement,
     int count) {
   std::shared_ptr<Array> result;
   ARRAY_DISPATCH(src, replace_t, result, src, old, replacement, count);
