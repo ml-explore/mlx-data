@@ -1,5 +1,6 @@
 # Copyright © 2024 Apple Inc.
 
+import json
 import math
 import re
 from pathlib import Path
@@ -213,3 +214,50 @@ def read_trie_from_vocab(vocab_file):
         trie.insert(token)
 
     return trie
+
+
+def read_bpe_from_hf(json_file, add_special_tokens=True):
+    """Read a tokenizer.json file from a Huggingface tokenizer and attempt to
+    extract the symbols and merges for use with :clas::`mlx.data.core.BPETokenizer`.
+
+    Args:
+        json_file (str): A json file containing the tokenizer as saved using
+            ``hf_tok.save_pretrained(...)``.
+        add_special_tokens (bool): Whether to also add the special tokens found
+            in the tokenizer. Default ``True``.
+
+    Returns:
+        tuple[:class:`mlx.data.core.CharTrie`, :class:`mlx.data.core.BPEMerges`]: The
+        trie and the corresponding BPE merges from the tokenizer file.
+    """
+    with open(json_file) as f:
+        tokenizer = json.load(f)
+    if "model" not in tokenizer or "type" not in tokenizer["model"]:
+        raise ValueError("The provided file doesn't appear to be an HF tokenizer")
+    if tokenizer["model"]["type"] != "BPE":
+        raise ValueError(
+            (
+                "This function is designed to work with BPE tokenizers but "
+                f"it appears to be a {tokenizer['model']['type']} tokenizer"
+            )
+        )
+
+    vocab = tokenizer["model"]["vocab"]
+    merged_tokens = set()
+    merges = BPEMerges()
+    for merge in tokenizer["model"]["merges"]:
+        a, b = merge.split(" ")
+        ab = a + b
+        merged_tokens.add(ab)
+        merges.add(a, b, vocab[ab])
+
+    symbols = CharTrie()
+    for token, token_id in vocab.items():
+        if token not in merged_tokens:
+            symbols.insert(token, token_id)
+
+    if add_special_tokens and "added_tokens" in tokenizer:
+        for token in tokenizer["added_tokens"]:
+            symbols.insert(token["content"], token["id"])
+
+    return symbols, merges
