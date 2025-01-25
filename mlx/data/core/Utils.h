@@ -21,9 +21,9 @@ std::pair<std::shared_ptr<Array>, std::shared_ptr<Array>> remove(
     double pad);
 
 std::shared_ptr<Array> replace(
-    const std::shared_ptr<Array> src,
-    const std::shared_ptr<Array> old,
-    const std::shared_ptr<Array> replacement,
+    const std::shared_ptr<const Array>& src,
+    const std::shared_ptr<const Array>& old,
+    const std::shared_ptr<const Array>& replacement,
     int count);
 
 Sample merge_batch(
