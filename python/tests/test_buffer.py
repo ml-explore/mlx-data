@@ -1,13 +1,11 @@
 # Copyright © 2024 Apple Inc.
 
-from unittest import TestCase
-
-import pytest
+import unittest
 
 import mlx.data as dx
 
 
-class TestBuffer(TestCase):
+class TestBuffer(unittest.TestCase):
     def test__getitem__(self):
         n = 5
         b = dx.buffer_from_vector(list(dict(i=i) for i in range(n)))
@@ -40,3 +38,7 @@ class TestBuffer(TestCase):
         stream = buffer.ordered_prefetch(prefetch_size, num_threads)
         for i, e in enumerate(stream):
             self.assertEqual(i, e["i"])
+
+
+if __name__ == "__main__":
+    unittest.main()
