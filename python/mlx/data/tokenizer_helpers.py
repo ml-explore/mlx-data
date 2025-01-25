@@ -246,7 +246,7 @@ def read_bpe_from_hf(json_file, add_special_tokens=True):
     merged_tokens = set()
     merges = BPEMerges()
     for merge in tokenizer["model"]["merges"]:
-        a, b = merge.split(" ")
+        a, b = merge.split(" ") if isinstance(merge, str) else merge
         ab = a + b
         merged_tokens.add(ab)
         merges.add(a, b, vocab[ab])
