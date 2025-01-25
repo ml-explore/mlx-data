@@ -261,3 +261,41 @@ def read_bpe_from_hf(json_file, add_special_tokens=True):
             symbols.insert(token["content"], token["id"])
 
     return symbols, merges
+
+
+def gpt2_byte_map():
+    """Return the byte map used for preprocessing the text for GPT-2 tokenizers.
+
+    See https://github.com/openai/gpt-2/blob/master/src/encoder.py for details.
+
+    Example:
+
+    .. code-block:: python
+
+        # Usage with tokenize_bpe
+        symbols, merges = read_bpe_from_hf(...)
+        byte_map = gpt2_byte_map()
+
+        dset = (
+            dx.buffer_from_vector([
+                {"text": "Some text here"},
+                ...
+            ])
+            .replace_bytes("text", byte_map)
+            .tokenize_bpe("text", symbols, merges)
+        )
+
+    Returns:
+        list of strings: A list of 256 strings mapping each byte to a unicode string.
+    """
+    limits = [0, ord("!"), ord("~") + 1, ord("¡"), ord("¬") + 1, ord("®"), ord("ÿ") + 1]
+    byte_map = []
+    n = 0
+    for i, (a, b) in enumerate(zip(limits, limits[1:])):
+        if i % 2 != 0:
+            byte_map.extend(chr(j) for j in range(a, b))
+        else:
+            byte_map.extend(chr(2**8 + j) for j in range(n, n + b - a))
+            n += b - a
+
+    return byte_map
