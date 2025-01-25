@@ -21,6 +21,7 @@
 #include "mlx/data/op/ReadFromTAR.h"
 #include "mlx/data/op/RemoveValue.h"
 #include "mlx/data/op/RenameKey.h"
+#include "mlx/data/op/Replace.h"
 #include "mlx/data/op/SampleTransform.h"
 #include "mlx/data/op/SaveImage.h"
 #include "mlx/data/op/Shape.h"
@@ -676,6 +677,54 @@ T Dataset<T, B>::remove_value_if(
   if (cond) {
     return transform_(
         std::make_shared<op::RemoveValue>(key, size_key, dim, value, pad));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace(
+    const std::string& key,
+    const std::string& old,
+    const std::string& replacement,
+    int count) {
+  return transform_(
+      std::make_shared<op::Replace>(key, old, replacement, count));
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_if(
+    bool cond,
+    const std::string& key,
+    const std::string& old,
+    const std::string& replacement,
+    int count) {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::Replace>(key, old, replacement, count));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_bytes(
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  return transform_(
+      std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_bytes_if(
+    bool cond,
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
   } else {
     return T(self_);
   }
