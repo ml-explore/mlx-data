@@ -34,7 +34,7 @@ jobs:
             pip install --upgrade cmake
             pip install --upgrade pybind11[global]
             pip install numpy
-            pip install twine
+            pip install unittest-xml-reporting
             sudo apt-get update
             sudo apt install libsndfile1-dev libsamplerate0-dev ffmpeg libjpeg-turbo8-dev \
               zlib1g-dev libbz2-dev liblzma-dev
@@ -53,7 +53,13 @@ jobs:
           name: Build package
           command: |
             CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
-              python setup.py bdist_wheel
+              python setup.py develop
+      - run:
+          name: Run Python tests
+          command: |
+            python -m xmlrunner discover -v python/tests -o test-results/
+      - store_test_results:
+          path: test-results
 
 #  mac_build_on_commit:
 #    machine: true

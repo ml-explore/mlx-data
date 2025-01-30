@@ -2,8 +2,6 @@
 
 from unittest import TestCase
 
-import pytest
-
 import mlx.data as dx
 
 
