@@ -1,5 +1,7 @@
 // Copyright © 2023 Apple Inc.
 
+#include <sstream>
+
 #include "wrap.h"
 
 #include "mlx/data/Dataset.h"
@@ -36,13 +38,70 @@ void init_mlx_data_ops_image(py::module&);
 namespace mlx {
 namespace pybind {
 
+std::shared_ptr<mlx::data::Array> to_array(py::buffer a) {
+  auto is_contiguous = [](const py::buffer_info& info) {
+    bool contiguous =
+        info.ndim > 0 && info.strides[info.ndim - 1] == info.itemsize;
+    for (int i = 0; i < info.ndim - 1; i++) {
+      contiguous &= info.shape[i + 1] * info.strides[i + 1] == info.strides[i];
+    }
+    return contiguous;
+  };
+
+  py::buffer_info info = a.request();
+  if (!is_contiguous(info)) {
+    throw std::runtime_error(
+        "[to_array] Contiguous buffer expected -- maybe cast to np.array");
+  }
+
+  mlx::data::ArrayType dtype;
+  switch (info.format[0]) {
+    case 'b':
+    case 'S':
+    case 'U':
+      dtype = mlx::data::ArrayType::Int8;
+      break;
+    case 'B':
+      dtype = mlx::data::ArrayType::UInt8;
+      break;
+    case 'i':
+      dtype = mlx::data::ArrayType::Int32;
+      break;
+    case 'l':
+      dtype = mlx::data::ArrayType::Int64;
+      break;
+    case 'd':
+      dtype = mlx::data::ArrayType::Double;
+      break;
+    case 'f':
+      dtype = mlx::data::ArrayType::Float;
+      break;
+    default: {
+      std::ostringstream msg;
+      msg << "[to_array] Unsupported buffer type '" << info.format << "'";
+      throw std::invalid_argument(msg.str());
+    }
+  }
+
+  std::vector<int64_t> shape;
+  shape.reserve(info.ndim);
+  for (auto i : info.shape) {
+    shape.push_back(static_cast<int64_t>(i));
+  }
+  auto nbytes = info.strides[0] * info.shape[0];
+  auto arr = std::make_shared<mlx::data::Array>(dtype, shape);
+  std::memcpy(arr->data(), info.ptr, nbytes);
+
+  return arr;
+}
+
 std::shared_ptr<mlx::data::Array> to_array(py::array a) {
   // make sure "a" is contiguous
   const auto c_contiguous =
       py::detail::npy_api::constants::NPY_ARRAY_C_CONTIGUOUS_;
   if (!(c_contiguous == (a.flags() & c_contiguous))) {
     throw std::runtime_error(
-        "contiguous array expected -- use numpy.ascontiguousarray()");
+        "[to_array] Contiguous array expected -- use numpy.ascontiguousarray()");
   }
   std::vector<int64_t> shape(a.ndim());
   for (int i = 0; i < a.ndim(); i++) {
@@ -82,12 +141,31 @@ std::shared_ptr<mlx::data::Array> to_array(py::array a) {
       return std::make_shared<mlx::data::Array>(
           mlx::data::ArrayType::Int8, shape, data);
 
-    default:
-      throw std::runtime_error(
-          "toArray: NYI (unknown array type: " +
-          std::string(1, a.dtype().char_()) + ")");
+    default: {
+      std::ostringstream msg;
+      msg << "[to_array] Unsupported array type '" << a.dtype().char_() << "'";
+      throw std::invalid_argument(msg.str());
+    }
   }
-  return nullptr;
+}
+
+std::shared_ptr<mlx::data::Array> to_array(py::handle obj) {
+  // A numpy array so we can actually ask for mutable data and avoid a copy
+  if (py::isinstance<py::array>(obj)) {
+    return to_array(obj.cast<py::array>());
+  }
+
+  // A buffer must be copied because the data may not be mutable eg a python
+  // bytes object
+  if (py::isinstance<py::buffer>(obj)) {
+    return to_array(obj.cast<py::buffer>());
+  }
+
+  std::ostringstream msg;
+  msg << "[to_array] Cannot convert type "
+      << py::type::of(obj).attr("__repr__")().cast<std::string>()
+      << " to an array. Use a numpy array or a python buffer.";
+  throw std::invalid_argument(msg.str());
 }
 
 struct PyArrayPayload {
@@ -147,8 +225,7 @@ Sample to_sample(py::dict s) {
   Sample res;
   for (auto& el : s) {
     std::string key = el.first.cast<std::string>();
-    py::array value = el.second.cast<py::array>();
-    res[key] = to_array(value);
+    res[key] = to_array(el.second);
   }
   return res;
 }
