@@ -161,10 +161,25 @@ std::shared_ptr<mlx::data::Array> to_array(py::handle obj) {
     return to_array(obj.cast<py::buffer>());
   }
 
+  // Check for python scalars
+  if (py::isinstance<py::int_>(obj)) {
+    return std::make_shared<mlx::data::Array>(obj.cast<int64_t>());
+  }
+  if (py::isinstance<py::float_>(obj)) {
+    return std::make_shared<mlx::data::Array>(obj.cast<double>());
+  }
+
+  // Special case error for string
+  if (py::isinstance<py::str>(obj)) {
+    throw std::invalid_argument(
+        "[to_array] Cannot convert strings to arrays. Please encode them as bytes first.");
+  }
+
+  auto objtype = py::type::of(obj);
   std::ostringstream msg;
   msg << "[to_array] Cannot convert type "
-      << py::type::of(obj).attr("__repr__")().cast<std::string>()
-      << " to an array. Use a numpy array or a python buffer.";
+      << py::str(objtype).cast<std::string>()
+      << " to an array. Use a numpy array, a python buffer or scalar.";
   throw std::invalid_argument(msg.str());
 }
 
