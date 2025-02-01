@@ -122,41 +122,43 @@ jobs:
       - store_artifacts:
           path: wheelhouse/
 
-#  mac_build_wheels:
-#    machine: true
-#    resource_class: ml-explore/m-builder
-#    parameters:
-#      python_version:
-#        type: string
-#        default: "3.8"
-#      macos_version:
-#        type: string
-#        default: "14"
-#      extra_env:
-#        type: string
-#        default: "DEV_RELEASE=1"
-#    steps:
-#      - checkout
-#      - run:
-#          name: Install dependencies
-#          command: |
-#            eval "$(conda shell.bash hook)"
-#            rm -r $CONDA_PREFIX/envs/runner-env
-#            conda create -y -n runner-env python=<< parameters.python_version >>
-#            conda activate runner-env
-#            pip install -U pip
-#            pip install build
-#            pip install delocate
-#            DEVELOPER_DIR=$(developer_dir_macos_<< parameters.macos_version >>) \
-#              CMAKE_BUILD_PARALLEL_LEVEL="" \
-#              CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
-#              << parameters.extra_env >> \
-#              SUPER_BUILD=ON \
-#              python -m build --wheel
-#            delocate-listdeps dist/*
-#            delocate-wheel dist/*
-#      - store_artifacts:
-#          path: dist/
+  mac_build_wheels:
+    macos:
+      xcode: << parameters.xcode_version >>
+    resource_class: macos.m1.medium.gen1
+    parameters:
+      xcode_version:
+        type: string
+        default: "15.0.0"
+      extra_env:
+        type: string
+        default: "DEV_RELEASE=1"
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            brew install python@3.9
+            brew install libsndfile libsamplerate ffmpeg jpeg-turbo zlib bzip2 xz aws-sdk-cpp
+            python3.9 -m venv env
+            source env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade cmake
+            pip install --upgrade pybind11[global]
+            pip install numpy
+            pip install build
+            pip install delocate
+      - run:
+          name: Build wheel
+          command: |
+            source env/bin/activate
+            SUPER_BUILD=ON \
+              << parameters.extra_env >> \
+              python -m build --wheel
+            delocate-listdeps dist/*
+            delocate-wheel dist/*
+      - store_artifacts:
+          path: dist/
 
 workflows:
   build_on_commit:
@@ -171,6 +173,7 @@ workflows:
       - linux_build_on_commit
       - mac_build_on_commit
       - linux_build_wheels
+      - mac_build_wheels
   prb:
     when:
       matches:
