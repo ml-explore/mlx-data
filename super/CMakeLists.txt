@@ -28,7 +28,8 @@ ExternalProject_Add(
   pkg-config
   URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
       http://fresh-center.net/linux/misc/pkg-config-0.29.2.tar.gz
-  CONFIGURE_COMMAND ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+  CONFIGURE_COMMAND CFLAGS=-Wno-int-conversion CXXFLAGS=-Wno-int-conversion
+                    ./configure --prefix=${CMAKE_BINARY_DIR}/deps
                     --disable-shared --with-internal-glib
   BUILD_COMMAND make
   INSTALL_COMMAND make install
@@ -48,7 +49,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   zlib
-  URL https://www.zlib.net/zlib-1.3.tar.gz
+  URL https://www.zlib.net/zlib-1.3.1.tar.gz
   CONFIGURE_COMMAND PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC
                     ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
   BUILD_COMMAND make
