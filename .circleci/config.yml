@@ -100,7 +100,7 @@ jobs:
     parameters:
       python_version:
         type: string
-        default: "38"
+        default: "39"
       extra_env:
         type: string
         default: "DEV_RELEASE=1"
@@ -170,6 +170,7 @@ workflows:
     jobs:
       - linux_build_on_commit
       - mac_build_on_commit
+      - linux_build_wheels
   prb:
     when:
       matches:
