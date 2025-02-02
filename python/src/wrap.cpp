@@ -136,7 +136,6 @@ std::shared_ptr<mlx::data::Array> to_array(py::array a) {
       return std::make_shared<mlx::data::Array>(
           mlx::data::ArrayType::UInt8, shape, data);
     case 'S':
-    case 'U':
       shape.push_back(a.itemsize());
       return std::make_shared<mlx::data::Array>(
           mlx::data::ArrayType::Int8, shape, data);
@@ -175,12 +174,18 @@ std::shared_ptr<mlx::data::Array> to_array(py::handle obj) {
         "[to_array] Cannot convert strings to arrays. Please encode them as bytes first.");
   }
 
-  auto objtype = py::type::of(obj);
-  std::ostringstream msg;
-  msg << "[to_array] Cannot convert type "
-      << py::str(objtype).cast<std::string>()
-      << " to an array. Use a numpy array, a python buffer or scalar.";
-  throw std::invalid_argument(msg.str());
+  // Attempt to cast to numpy array no matter what the type is. This should
+  // handle all manner of types that define the array interface.
+  try {
+    return to_array(obj.cast<py::array>());
+  } catch (std::invalid_argument e) {
+    auto objtype = py::type::of(obj);
+    std::ostringstream msg;
+    msg << "[to_array] Cannot convert type "
+        << py::str(objtype).cast<std::string>()
+        << " to an array. Use a numpy array, a python buffer or scalar.";
+    throw std::invalid_argument(msg.str());
+  }
 }
 
 struct PyArrayPayload {

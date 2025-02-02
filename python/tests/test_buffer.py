@@ -47,8 +47,6 @@ class TestBuffer(unittest.TestCase):
             b = dx.buffer_from_vector([{"a": "hello"}])
         with self.assertRaises(ValueError):
             b = dx.buffer_from_vector([{"a": object()}])
-        with self.assertRaises(ValueError):
-            b = dx.buffer_from_vector([{"a": list()}])
 
         x = array.array("f")
         x.append(10)
