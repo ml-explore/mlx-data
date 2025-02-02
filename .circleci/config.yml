@@ -119,6 +119,15 @@ jobs:
               $PYBIN/python -m build --wheel
             auditwheel show dist/*
             auditwheel repair dist/*
+      - when:
+          condition:
+            equal: [ << parameters.build_env >>, "PYPI_RELEASE=1" ]
+          steps:
+            - run:
+                name: Upload package
+                command: |
+                  PYBIN=/opt/python/cp<< parameters.python_version >>-cp<< parameters.python_version >>/bin
+                  $PYBIN/python -m twine upload wheelhouse/*
       - store_artifacts:
           path: wheelhouse/
 
@@ -157,6 +166,15 @@ jobs:
               python -m build --wheel
             delocate-listdeps dist/*
             delocate-wheel dist/*
+      - when:
+          condition:
+            equal: [ << parameters.build_env >>, "PYPI_RELEASE=1" ]
+          steps:
+            - run:
+                name: Upload package
+                command: |
+                  source env/bin/activate
+                  twine upload dist/*
       - store_artifacts:
           path: dist/
 
@@ -172,8 +190,6 @@ workflows:
     jobs:
       - linux_build_on_commit
       - mac_build_on_commit
-      - linux_build_wheels
-      - mac_build_wheels
   prb:
     when:
       matches:
@@ -186,6 +202,7 @@ workflows:
           requires: [ hold ]
       - mac_build_on_commit:
           requires: [ hold ]
+
   build_dev_release:
     when:
       and:
@@ -195,14 +212,14 @@ workflows:
       - linux_build_wheels:
           matrix:
             parameters:
-              python_version: ["38", "39", "310", "311", "312"]
+              python_version: ["39", "310", "311", "312", "313"]
               extra_env: ["DEV_RELEASE=1"]
-      #- mac_build_wheels:
-      #    matrix:
-      #      parameters:
-      #        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-      #        macos_version: ["13", "14"]
-      #        extra_env: ["DEV_RELEASE=1"]
+      - mac_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+              xcode_version: ["15.0.0", "15.2.0"]
+              extra_env: ["DEV_RELEASE=1"]
 
   build_pypi_release:
     when:
@@ -213,11 +230,11 @@ workflows:
       - linux_build_wheels:
           matrix:
             parameters:
-              python_version: ["38", "39", "310", "311", "312"]
+              python_version: ["39", "310", "311", "312", "313"]
               extra_env: ["PYPI_RELEASE=1"]
-      #- mac_build_wheels:
-      #    matrix:
-      #      parameters:
-      #        python_version: ["3.8", "3.9", "3.10", "3.11", "3.12"]
-      #        macos_version: ["13", "14"]
-      #        extra_env: ["PYPI_RELEASE=1"]
+      - mac_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+              xcode_version: ["15.0.0", "15.2.0"]
+              extra_env: ["PYPI_RELEASE=1"]
