@@ -23,6 +23,7 @@ class Array {
   Array(const std::shared_ptr<const Array>& src);
   Array(ArrayType type);
   Array(const std::string& str);
+  Array(std::string_view str);
   Array(ArrayType type, const std::vector<int64_t>& shape);
   Array(
       ArrayType type,

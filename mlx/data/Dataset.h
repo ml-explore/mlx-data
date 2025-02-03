@@ -337,6 +337,28 @@ class Dataset {
       double value,
       double pad) const;
 
+  T replace(
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+  T replace_if(
+      bool cond,
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+
+  T replace_bytes(
+      const std::string& ikey,
+      std::vector<std::string> byte_map,
+      const std::string& okey = "");
+  T replace_bytes_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<std::string> byte_map,
+      const std::string& okey = "");
+
   T rename_key(const std::string& ikey, const std::string& okey) const;
   T rename_key_if(bool cond, const std::string& ikey, const std::string& okey)
       const;
