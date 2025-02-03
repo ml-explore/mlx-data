@@ -1,7 +1,6 @@
 // Copyright © 2023 Apple Inc.
 
 #include <cstring>
-#include <iostream>
 #include <memory>
 
 #include "mlx/data/Array.h"
