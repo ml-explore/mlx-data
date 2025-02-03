@@ -121,7 +121,7 @@ jobs:
             auditwheel repair dist/*
       - when:
           condition:
-            equal: [ << parameters.build_env >>, "PYPI_RELEASE=1" ]
+            equal: [ << parameters.extra_env >>, "PYPI_RELEASE=1" ]
           steps:
             - run:
                 name: Upload package
@@ -168,7 +168,7 @@ jobs:
             delocate-wheel dist/*
       - when:
           condition:
-            equal: [ << parameters.build_env >>, "PYPI_RELEASE=1" ]
+            equal: [ << parameters.extra_env >>, "PYPI_RELEASE=1" ]
           steps:
             - run:
                 name: Upload package
