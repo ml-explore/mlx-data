@@ -139,6 +139,9 @@ jobs:
       xcode_version:
         type: string
         default: "15.0.0"
+      python_version:
+        type: string
+        default: "3.9"
       extra_env:
         type: string
         default: "DEV_RELEASE=1"
@@ -147,7 +150,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            brew install python@3.9
+            brew install python@<< parameters.python_version >>
             brew install libsndfile libsamplerate ffmpeg jpeg-turbo zlib bzip2 xz aws-sdk-cpp
             python3.9 -m venv env
             source env/bin/activate
@@ -202,6 +205,24 @@ workflows:
           requires: [ hold ]
       - mac_build_on_commit:
           requires: [ hold ]
+
+  test_dev_release:
+    when:
+      and:
+        - equal: [fix-ci, << pipeline.git.branch >> ]
+        - << pipeline.parameters.dev_release >>
+    jobs:
+      - linux_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["39", "310", "311", "312", "313"]
+              extra_env: ["DEV_RELEASE=1"]
+      - mac_build_wheels:
+          matrix:
+            parameters:
+              python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
+              xcode_version: ["15.0.0", "15.2.0"]
+              extra_env: ["DEV_RELEASE=1"]
 
   build_dev_release:
     when:
