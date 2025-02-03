@@ -149,29 +149,30 @@ std::shared_ptr<mlx::data::Array> to_array(py::array a) {
 }
 
 std::shared_ptr<mlx::data::Array> to_array(py::handle obj) {
-  // A numpy array so we can actually ask for mutable data and avoid a copy
+  // A numpy array so we can actually ask for mutable data and avoid a copy.
   if (py::isinstance<py::array>(obj)) {
     return to_array(obj.cast<py::array>());
   }
 
-  // A buffer must be copied because the data may not be mutable eg a python
-  // bytes object
-  if (py::isinstance<py::buffer>(obj)) {
-    return to_array(obj.cast<py::buffer>());
-  }
-
-  // Check for python scalars
+  // Check for python scalars. Handle bytes and string here.
   if (py::isinstance<py::int_>(obj)) {
     return std::make_shared<mlx::data::Array>(obj.cast<int64_t>());
   }
   if (py::isinstance<py::float_>(obj)) {
     return std::make_shared<mlx::data::Array>(obj.cast<double>());
   }
-
-  // Special case error for string
+  if (py::isinstance<py::bytes>(obj)) {
+    return std::make_shared<mlx::data::Array>(obj.cast<std::string_view>());
+  }
   if (py::isinstance<py::str>(obj)) {
     throw std::invalid_argument(
         "[to_array] Cannot convert strings to arrays. Please encode them as bytes first.");
+  }
+
+  // A buffer must be copied because the data may not be mutable eg a python
+  // bytes object.
+  if (py::isinstance<py::buffer>(obj)) {
+    return to_array(obj.cast<py::buffer>());
   }
 
   // Attempt to cast to numpy array no matter what the type is. This should

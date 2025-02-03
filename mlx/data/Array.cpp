@@ -115,6 +115,11 @@ Array::Array(const std::string& str) {
   std::memcpy(data_.get(), str.data(), str.size());
 }
 
+Array::Array(std::string_view str) {
+  init_(ArrayType::Int8, {static_cast<int64_t>(str.size())});
+  std::memcpy(data_.get(), str.data(), str.size());
+}
+
 template <class T>
 void array_fill(void* data, int64_t size, double value) {
   auto data_t = reinterpret_cast<T*>(data);
