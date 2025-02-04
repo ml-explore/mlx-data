@@ -206,24 +206,6 @@ workflows:
       - mac_build_on_commit:
           requires: [ hold ]
 
-  test_dev_release:
-    when:
-      and:
-        - equal: [fix-ci, << pipeline.git.branch >> ]
-        - << pipeline.parameters.dev_release >>
-    jobs:
-      - linux_build_wheels:
-          matrix:
-            parameters:
-              python_version: ["39", "310", "311", "312", "313"]
-              extra_env: ["DEV_RELEASE=1"]
-      - mac_build_wheels:
-          matrix:
-            parameters:
-              python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-              xcode_version: ["15.0.0"]
-              extra_env: ["DEV_RELEASE=1"]
-
   build_dev_release:
     when:
       and:
