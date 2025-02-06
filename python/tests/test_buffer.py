@@ -1,12 +1,14 @@
 # Copyright © 2024 Apple Inc.
 
-from unittest import TestCase
+import array
+import unittest
 
-import pytest
+import numpy as np
+
 import mlx.data as dx
 
 
-class TestBuffer(TestCase):
+class TestBuffer(unittest.TestCase):
     def test__getitem__(self):
         n = 5
         b = dx.buffer_from_vector(list(dict(i=i) for i in range(n)))
@@ -40,3 +42,40 @@ class TestBuffer(TestCase):
         for i, e in enumerate(stream):
             self.assertEqual(i, e["i"])
 
+    def test_passing_python_objects(self):
+        with self.assertRaises(ValueError):
+            b = dx.buffer_from_vector([{"a": "hello"}])
+        with self.assertRaises(ValueError):
+            b = dx.buffer_from_vector([{"a": object()}])
+
+        x = array.array("f")
+        x.append(10)
+        x.append(-2.5)
+        y = np.random.randn(10)
+        b = dx.buffer_from_vector(
+            [
+                {
+                    "a": 1,
+                    "b": 1.2,
+                    "c": b"Hello world",
+                    "d": y,
+                    "e": x,
+                }
+            ]
+        )
+        self.assertEqual(-2.5, b[0]["e"][1])
+        self.assertEqual(1, b[0]["a"])
+        self.assertTrue(np.all(y == b[0]["d"]))
+        self.assertTrue(np.all(x == b[0]["e"]))
+
+        # Check that we take np arrays without a copy
+        y[0] = 0
+        self.assertTrue(np.all(y == b[0]["d"]))
+
+        # and buffers via copy
+        x[0] = 0
+        self.assertEqual(10, b[0]["e"][0])
+
+
+if __name__ == "__main__":
+    unittest.main()

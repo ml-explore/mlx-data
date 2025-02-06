@@ -1,7 +1,6 @@
 // Copyright © 2023 Apple Inc.
 
 #include <cstring>
-#include <iostream>
 #include <memory>
 
 #include "mlx/data/Array.h"
@@ -112,6 +111,11 @@ void Array::init_(
 }
 
 Array::Array(const std::string& str) {
+  init_(ArrayType::Int8, {static_cast<int64_t>(str.size())});
+  std::memcpy(data_.get(), str.data(), str.size());
+}
+
+Array::Array(std::string_view str) {
   init_(ArrayType::Int8, {static_cast<int64_t>(str.size())});
   std::memcpy(data_.get(), str.data(), str.size());
 }
@@ -539,11 +543,8 @@ std::shared_ptr<Array> batch(
 
 std::shared_ptr<Array> sub(
     const std::shared_ptr<const Array>& arr,
-    const std::vector<int64_t> src_offset,
-    const std::vector<int64_t> dst_shape) {
-  auto offset = src_offset;
-  auto shape = dst_shape;
-
+    std::vector<int64_t> offset,
+    std::vector<int64_t> shape) {
   if (arr->ndim() != offset.size()) {
     throw std::runtime_error("Array: sub: array and offset dim mismatch");
   }

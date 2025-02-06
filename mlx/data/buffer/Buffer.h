@@ -10,7 +10,7 @@ namespace buffer {
 
 class Buffer {
  public:
-  Buffer(){};
+  Buffer() {};
 
   // User-specific
   virtual Sample get(int64_t idx) const;

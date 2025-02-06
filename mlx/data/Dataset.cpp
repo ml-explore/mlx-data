@@ -21,10 +21,12 @@
 #include "mlx/data/op/ReadFromTAR.h"
 #include "mlx/data/op/RemoveValue.h"
 #include "mlx/data/op/RenameKey.h"
+#include "mlx/data/op/Replace.h"
 #include "mlx/data/op/SampleTransform.h"
 #include "mlx/data/op/SaveImage.h"
 #include "mlx/data/op/Shape.h"
 #include "mlx/data/op/Shard.h"
+#include "mlx/data/op/Slice.h"
 #include "mlx/data/op/Squeeze.h"
 #include "mlx/data/op/Tokenize.h"
 
@@ -556,6 +558,53 @@ T Dataset<T, B>::pad_to_size_if(
 }
 
 template <class T, class B>
+T Dataset<T, B>::random_slice(
+    const std::string& ikey,
+    int dim,
+    int64_t size,
+    const std::string& okey) const {
+  return transform_(std::make_shared<op::RandomSlice>(ikey, dim, size, okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::random_slice_if(
+    bool cond,
+    const std::string& ikey,
+    int dim,
+    int64_t size,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(std::make_shared<op::RandomSlice>(ikey, dim, size, okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::random_slice(
+    const std::string& ikey,
+    std::vector<int> dims,
+    std::vector<int64_t> sizes,
+    const std::string& okey) const {
+  return transform_(std::make_shared<op::RandomSlice>(ikey, dims, sizes, okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::random_slice_if(
+    bool cond,
+    const std::string& ikey,
+    std::vector<int> dims,
+    std::vector<int64_t> sizes,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::RandomSlice>(ikey, dims, sizes, okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
 T Dataset<T, B>::read_from_tar(
     const std::string& tarkey,
     const std::string& ikey,
@@ -628,6 +677,54 @@ T Dataset<T, B>::remove_value_if(
   if (cond) {
     return transform_(
         std::make_shared<op::RemoveValue>(key, size_key, dim, value, pad));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace(
+    const std::string& key,
+    const std::string& old,
+    const std::string& replacement,
+    int count) {
+  return transform_(
+      std::make_shared<op::Replace>(key, old, replacement, count));
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_if(
+    bool cond,
+    const std::string& key,
+    const std::string& old,
+    const std::string& replacement,
+    int count) {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::Replace>(key, old, replacement, count));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_bytes(
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  return transform_(
+      std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::replace_bytes_if(
+    bool cond,
+    const std::string& ikey,
+    std::vector<std::string> byte_map,
+    const std::string& okey) {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::ReplaceBytes>(ikey, std::move(byte_map), okey));
   } else {
     return T(self_);
   }
@@ -790,6 +887,58 @@ T Dataset<T, B>::squeeze_if(
     const std::string& okey) const {
   if (cond) {
     return transform_(std::make_shared<op::Squeeze>(ikey, dims, okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::slice(
+    const std::string& ikey,
+    int dim,
+    int64_t start,
+    int64_t end,
+    const std::string& okey) const {
+  return transform_(std::make_shared<op::Slice>(ikey, dim, start, end, okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::slice_if(
+    bool cond,
+    const std::string& ikey,
+    int dim,
+    int64_t start,
+    int64_t end,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(std::make_shared<op::Slice>(ikey, dim, start, end, okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::slice(
+    const std::string& ikey,
+    std::vector<int> dims,
+    std::vector<int64_t> starts,
+    std::vector<int64_t> ends,
+    const std::string& okey) const {
+  return transform_(
+      std::make_shared<op::Slice>(ikey, dims, starts, ends, okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::slice_if(
+    bool cond,
+    const std::string& ikey,
+    std::vector<int> dims,
+    std::vector<int64_t> starts,
+    std::vector<int64_t> ends,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::Slice>(ikey, dims, starts, ends, okey));
   } else {
     return T(self_);
   }

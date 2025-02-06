@@ -22,7 +22,7 @@ using TokenizeMode = op::TokenizeMode;
 template <class T, class B>
 class Dataset {
  public:
-  Dataset(const std::shared_ptr<B>& self) : self_(self){};
+  Dataset(const std::shared_ptr<B>& self) : self_(self) {};
 
   T filter_by_shape(
       const std::string& key,
@@ -278,6 +278,29 @@ class Dataset {
       double value,
       const std::string& okey = "") const;
 
+  T random_slice(
+      const std::string& ikey,
+      int dim,
+      int64_t size,
+      const std::string& okey = "") const;
+  T random_slice_if(
+      bool cond,
+      const std::string& ikey,
+      int dim,
+      int64_t size,
+      const std::string& okey = "") const;
+  T random_slice(
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> sizes,
+      const std::string& okey = "") const;
+  T random_slice_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> sizes,
+      const std::string& okey = "") const;
+
   T read_from_tar(
       const std::string& tarkey,
       const std::string& ikey,
@@ -313,6 +336,28 @@ class Dataset {
       int dim,
       double value,
       double pad) const;
+
+  T replace(
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+  T replace_if(
+      bool cond,
+      const std::string& key,
+      const std::string& old,
+      const std::string& replacement,
+      int count = -1);
+
+  T replace_bytes(
+      const std::string& ikey,
+      std::vector<std::string> byte_map,
+      const std::string& okey = "");
+  T replace_bytes_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<std::string> byte_map,
+      const std::string& okey = "");
 
   T rename_key(const std::string& ikey, const std::string& okey) const;
   T rename_key_if(bool cond, const std::string& ikey, const std::string& okey)
@@ -367,6 +412,33 @@ class Dataset {
       bool cond,
       const std::string& ikey,
       const std::vector<int>& dims,
+      const std::string& okey = "") const;
+
+  T slice(
+      const std::string& ikey,
+      int dim,
+      int64_t start,
+      int64_t end,
+      const std::string& okey = "") const;
+  T slice_if(
+      bool cond,
+      const std::string& ikey,
+      int dim,
+      int64_t start,
+      int64_t end,
+      const std::string& okey = "") const;
+  T slice(
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> starts,
+      std::vector<int64_t> ends,
+      const std::string& okey = "") const;
+  T slice_if(
+      bool cond,
+      const std::string& ikey,
+      std::vector<int> dims,
+      std::vector<int64_t> starts,
+      std::vector<int64_t> ends,
       const std::string& okey = "") const;
 
   T tokenize(

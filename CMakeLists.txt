@@ -193,6 +193,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/KeyTransform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SampleTransform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Shape.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Slice.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RenameKey.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/SaveImage.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/LoadAudio.cpp
@@ -205,7 +206,8 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Squeeze.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Tokenize.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/ImageTransform.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp)
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/RemoveValue.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/op/Replace.cpp)
 
 if(AWSSDK_FOUND)
   list(APPEND mlxdata-src

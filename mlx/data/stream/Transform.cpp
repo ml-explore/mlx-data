@@ -11,12 +11,12 @@ namespace stream {
 Transform::Transform(
     const std::shared_ptr<Stream>& stream,
     const std::shared_ptr<op::Op>& op)
-    : stream_(stream), ops_({op}){};
+    : stream_(stream), ops_({op}) {};
 
 Transform::Transform(
     const std::shared_ptr<Stream>& stream,
     const std::vector<std::shared_ptr<op::Op>>& ops)
-    : stream_(stream), ops_(ops){};
+    : stream_(stream), ops_(ops) {};
 
 Sample Transform::next() const {
   // Process the stream untill it is either exhausted or a sample is

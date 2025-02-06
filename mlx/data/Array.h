@@ -23,6 +23,7 @@ class Array {
   Array(const std::shared_ptr<const Array>& src);
   Array(ArrayType type);
   Array(const std::string& str);
+  Array(std::string_view str);
   Array(ArrayType type, const std::vector<int64_t>& shape);
   Array(
       ArrayType type,
@@ -174,8 +175,8 @@ std::shared_ptr<Array> batch(
 
 std::shared_ptr<Array> sub(
     const std::shared_ptr<const Array>& arr,
-    const std::vector<int64_t> offset,
-    const std::vector<int64_t> shape);
+    std::vector<int64_t> offset,
+    std::vector<int64_t> shape);
 
 template <class T, class F>
 void apply_visitor(void* dst, void* src, int64_t size, const F func) {
