@@ -139,6 +139,9 @@ jobs:
       xcode_version:
         type: string
         default: "15.0.0"
+      python_version:
+        type: string
+        default: "3.9"
       extra_env:
         type: string
         default: "DEV_RELEASE=1"
@@ -147,9 +150,9 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            brew install python@3.9
+            brew install python@<< parameters.python_version >>
             brew install libsndfile libsamplerate ffmpeg jpeg-turbo zlib bzip2 xz aws-sdk-cpp
-            python3.9 -m venv env
+            python<< parameters.python_version >> -m venv env
             source env/bin/activate
             pip install --upgrade pip
             pip install --upgrade cmake
@@ -218,7 +221,7 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-              xcode_version: ["15.0.0", "15.2.0"]
+              xcode_version: ["15.0.0"]
               extra_env: ["DEV_RELEASE=1"]
 
   build_pypi_release:
@@ -236,5 +239,5 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-              xcode_version: ["15.0.0", "15.2.0"]
+              xcode_version: ["15.0.0"]
               extra_env: ["PYPI_RELEASE=1"]
