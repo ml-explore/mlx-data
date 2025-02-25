@@ -1,3 +1,5 @@
+.. _buffers-streams-samples:
+
 Buffers, Streams and Samples
 ============================
 

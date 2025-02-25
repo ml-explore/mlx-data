@@ -5,8 +5,8 @@ Buffer
 
 .. currentmodule:: mlx.data
 
-As also mentioned in `Buffers, Streams and Samples
-<buffers_streams_samples.html>`_ a :class:`Buffer` is an indexable container of
+As also mentioned in :ref:`Buffers, Streams and Samples <buffers-streams-samples>`
+a :class:`Buffer` is an indexable container of
 samples. Using a buffer in python should feel very similar to accessing a list
 of samples.
 
