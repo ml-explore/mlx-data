@@ -8,6 +8,7 @@
 #include "mlx/data/core/AWSFileFetcher.h"
 #endif
 
+#include "mlx/data/core/BPETokenizer.h"
 #include "mlx/data/core/FileFetcher.h"
 #include "mlx/data/core/Graph.h"
 #include "mlx/data/core/Levenshtein.h"
@@ -133,21 +134,26 @@ void init_mlx_data_core(py::module& m) {
       .def(
           "insert",
           [](std::shared_ptr<Trie<char>> trie,
-             std::variant<std::string, std::vector<char>> token) {
+             std::variant<std::string, std::vector<char>> token,
+             int64_t id) {
             if (std::holds_alternative<std::string>(token)) {
-              return trie->insert(std::get<std::string>(token));
+              return trie->insert(std::get<std::string>(token), id);
             } else {
-              return trie->insert(std::get<std::vector<char>>(token));
+              return trie->insert(std::get<std::vector<char>>(token), id);
             }
           },
           py::return_value_policy::reference_internal,
           py::arg("token"),
+          py::arg("id") = -1,
           R"pbcopy(
             Insert a token in the trie making a new token if it doesn't already exist.
 
             Args:
                 token (str or list[char]): The new token to be inserted given
                   either as a string or a list of characters.
+                id (int, optional): The id to assign to the new token to be
+                  inserted. If negative then use ``num_keys()`` as default.
+                  Default: ``-1``.
           )pbcopy")
       .def(
           "search",
@@ -274,6 +280,86 @@ void init_mlx_data_core(py::module& m) {
             Args:
                 input (str): The input string to be tokenized.
            )pbcopy");
+
+  py::class_<BPEMerges, std::shared_ptr<BPEMerges>>(
+      m,
+      "BPEMerges",
+      R"pbcopy(
+        A datastructure that holds all possible merges and allows querying
+        whether two strings can be merged in O(1) time.
+      )pbcopy")
+      .def(py::init<>())
+      .def(
+          "add",
+          &BPEMerges::add,
+          py::arg("left"),
+          py::arg("right"),
+          py::arg("token"),
+          R"pbcopy(
+            Add two strings as a possible merge that results in ``token``.
+
+            Args:
+              left (str): The left side to be merged.
+              right (str): The right side to be merged.
+              token (int): The resulting token.
+          )pbcopy")
+      .def(
+          "can_merge",
+          [](std::shared_ptr<BPEMerges>& merges,
+             const std::string& left,
+             const std::string& right) -> std::optional<int64_t> {
+            auto [can_merge, token] = merges->can_merge(
+                std::string_view(left.data(), left.size()),
+                std::string_view(right.data(), right.size()));
+
+            if (!can_merge) {
+              return {};
+            }
+
+            return token;
+          },
+          py::arg("left"),
+          py::arg("right"),
+          R"pbcopy(
+            Check if ``left`` and ``right`` can be merged to one token.
+
+            Args:
+              left (str): The left side of the possible token.
+              right (str): The right side of the possible token.
+
+            Returns:
+              The token id is returned or None if ``left`` and ``right``
+              couldn't be merged.
+          )pbcopy");
+
+  py::class_<BPETokenizer, std::shared_ptr<BPETokenizer>>(
+      m,
+      "BPETokenizer",
+      R"pbcopy(
+        A tokenizer that uses the BPE algorithm to tokenize strings.
+
+        Args:
+          symbol_trie (mlx.data.core.CharTrie): The trie containing the basic
+            symbols that all merges start from.
+          merges (mlx.data.core.BPEMerges): The datastructure holding the bpe
+            merges.
+      )pbcopy")
+      .def(
+          py::init<
+              std::shared_ptr<const Trie<char>>,
+              std::shared_ptr<const BPEMerges>>(),
+          py::arg("symbols"),
+          py::arg("merges"))
+      .def(
+          "tokenize",
+          &BPETokenizer::tokenize,
+          py::arg("input"),
+          R"pbcopy(
+            Tokenize the input according to the symbols and merges.
+
+            Args:
+              input (str): The input string to be tokenized.
+          )pbcopy");
 
   py::class_<FileFetcherHandle, std::shared_ptr<FileFetcherHandle>>(
       m, "FileFetcherHandle");

@@ -973,6 +973,31 @@ T Dataset<T, B>::tokenize_if(
   }
 }
 
+template <class T, class B>
+T Dataset<T, B>::tokenize_bpe(
+    const std::string& ikey,
+    std::shared_ptr<const core::Trie<char>> symbols,
+    std::shared_ptr<const core::BPEMerges> merges,
+    const std::string& okey) const {
+  return transform_(
+      std::make_shared<op::BPETokenize>(ikey, symbols, merges, okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::tokenize_bpe_if(
+    bool cond,
+    const std::string& ikey,
+    std::shared_ptr<const core::Trie<char>> symbols,
+    std::shared_ptr<const core::BPEMerges> merges,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(
+        std::make_shared<op::BPETokenize>(ikey, symbols, merges, okey));
+  } else {
+    return T(self_);
+  }
+}
+
 // Implement Stream
 template <>
 Stream Dataset<Stream, stream::Stream>::transform_(

@@ -1372,5 +1372,40 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("trie_key_scores") = std::vector<double>({}),
       py::arg("output_key") = "",
       "Conditional :meth:`Buffer.tokenize`.");
+
+  base.def(
+      "tokenize_bpe",
+      &T::tokenize_bpe,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("key"),
+      py::arg("symbols"),
+      py::arg("merges"),
+      py::arg("output_key") = "",
+      R"pbcopy(
+        Tokenize the the contents of the array at ``key`` using the BPE merging
+        algorithm.
+
+        For instance this can be used to match the tokenization of the
+        Sentencepiece tokenizers.
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          symbols (mlx.data.core.CharTrie): A trie containing the basic symbols
+            to use for the tokenization.
+          merges (mlx.data.core.BPEMerges): A datastructure containing the
+            merges of the basic symbols in order of priority.
+          output_key (str): If it is not empty then write the result to this
+            key instead of overwriting ``key``. (default: '')
+      )pbcopy");
+  base.def(
+      "tokenize_bpe_if",
+      &T::tokenize_bpe_if,
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("key"),
+      py::arg("symbols"),
+      py::arg("merges"),
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.tokenize_bpe`.");
 }
 } // namespace
