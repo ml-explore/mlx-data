@@ -37,7 +37,7 @@ Let's start with the simplest example on MNIST.
         x, y = batch["image"], batch["label"]
 
 
-MLX Data provides many `operations <python/dataset.html>`_ that transform
+MLX Data provides many :ref:`operations <operations>` that transform
 samples so you can create arbitrarily complex pipelines.
 
 

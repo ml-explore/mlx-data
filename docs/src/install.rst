@@ -1,3 +1,5 @@
+.. _install:
+
 Build and Install
 =================
 
