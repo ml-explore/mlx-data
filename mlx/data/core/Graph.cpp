@@ -1,5 +1,6 @@
 // Copyright © 2023 Apple Inc.
 
+#include <algorithm>
 #include <limits>
 #include <queue>
 #include <sstream>
