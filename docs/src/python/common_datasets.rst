@@ -67,5 +67,6 @@ the wikitext-103 datasets.
     load_imagenet
     load_images_from_folder
     load_librispeech
+    load_libritts_r
     load_wikitext_lines
     load_speechcommands
