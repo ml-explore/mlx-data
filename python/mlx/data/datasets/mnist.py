@@ -40,19 +40,29 @@ def _load_mnist_wrapper(root=None, train=True, dataset="mnist"):
         for out_file, key, _ in filename[:2]:
             with gzip.open(out_file.name, "rb") as f:
                 mnist[key] = np.frombuffer(f.read(), np.uint8, offset=16).reshape(
-                    -1, 28, 28, 1
+                    -1, 28 * 28
                 )
         for out_file, key, _ in filename[-2:]:
             with gzip.open(out_file.name, "rb") as f:
                 mnist[key] = np.frombuffer(f.read(), np.uint8, offset=8)
-        train_set = [
-            {"image": mnist["training_images"][i], "label": mnist["training_labels"][i]}
-            for i in range(len(mnist["training_images"]))
-        ]
-        test_set = [
-            {"image": mnist["test_images"][i], "label": mnist["test_labels"][i]}
-            for i in range(len(mnist["test_images"]))
-        ]
+
+        train_set = []
+        for i in range(len(mnist["training_images"])):
+            train_set.append(
+                {
+                    "image": np.ascontiguousarray(mnist["training_images"][i]),
+                    "label": mnist["training_labels"][i].item(),
+                }
+            )
+
+        test_set = []
+        for i in range(len(mnist["test_images"])):
+            test_set.append(
+                {
+                    "image": np.ascontiguousarray(mnist["test_images"][i]),
+                    "label": mnist["test_labels"][i].item(),
+                }
+            )
 
         with (root / "train.pkl").open("wb") as f:
             pickle.dump(train_set, f)
