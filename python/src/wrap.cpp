@@ -21,20 +21,6 @@ void init_mlx_data_ops_oparray(py::module&);
 void init_mlx_data_ops_op(py::module&);
 void init_mlx_data_ops_image(py::module&);
 
-// class PyOp : public mlx::data::ops::Op {
-//   using mlx::data::ops::Op::Op;
-//   std::unordered_map<std::string, std::shared_ptr<mlx::data::Array>>
-//   apply(const std::unordered_map<std::string,
-//   std::shared_ptr<mlx::data::Array>>& input) override {
-//     PYBIND11_OVERRIDE_PURE(
-//       (std::unordered_map<std::string, std::shared_ptr<mlx::data::Array>>),
-//                            mlx::data::ops::Op,
-//                            apply,
-//                            input);
-//   };
-
-// };
-
 namespace mlx {
 namespace pybind {
 
@@ -49,7 +35,7 @@ std::shared_ptr<mlx::data::Array> to_array(py::buffer a) {
   };
 
   py::buffer_info info = a.request();
-  if (!is_contiguous(info)) {
+  if (info.ndim > 0 && !is_contiguous(info)) {
     throw std::runtime_error(
         "[to_array] Contiguous buffer expected -- maybe cast to np.array");
   }
@@ -88,7 +74,8 @@ std::shared_ptr<mlx::data::Array> to_array(py::buffer a) {
   for (auto i : info.shape) {
     shape.push_back(static_cast<int64_t>(i));
   }
-  auto nbytes = info.strides[0] * info.shape[0];
+  auto nbytes =
+      (info.ndim > 0) ? info.strides[0] * info.shape[0] : info.itemsize;
   auto arr = std::make_shared<mlx::data::Array>(dtype, shape);
   std::memcpy(arr->data(), info.ptr, nbytes);
 
