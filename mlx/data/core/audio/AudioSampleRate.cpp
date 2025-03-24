@@ -19,6 +19,10 @@ std::shared_ptr<Array> resample(
     ResampleMode resample_mode,
     int src_sample_rate,
     int dst_sample_rate) {
+  if ((dst_sample_rate <= 0) || (src_sample_rate == dst_sample_rate)) {
+    return audio;
+  }
+
   int64_t audio_channels = channels(audio);
   int64_t audio_length = frames(audio);
 
