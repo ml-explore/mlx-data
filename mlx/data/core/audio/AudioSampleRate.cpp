@@ -15,7 +15,7 @@ namespace audio {
 #ifdef MLX_HAS_SAMPLERATE
 
 std::shared_ptr<Array> resample(
-    const std::shared_ptr<const Array>& audio,
+    const std::shared_ptr<Array>& audio,
     ResampleMode resample_mode,
     int src_sample_rate,
     int dst_sample_rate) {
@@ -54,7 +54,7 @@ std::shared_ptr<Array> resample(
 #else
 
 std::shared_ptr<Array> resample(
-    const std::shared_ptr<const Array>& audio,
+    const std::shared_ptr<Array>& audio,
     ResampleMode resample_mode,
     int src_sample_rate,
     int dst_sample_rate) {
