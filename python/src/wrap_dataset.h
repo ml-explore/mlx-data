@@ -469,6 +469,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
          LoadAudioInfo info_type,
          int sample_rate,
          const std::string& resampling_quality,
+         const std::string& info_key,
          const std::string& output_key) -> T {
         static const std::unordered_map<std::string, LoadAudioResamplingQuality>
             e_resampling_quality = {
@@ -491,6 +492,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
             info_type,
             sample_rate,
             it->second,
+            info_key,
             output_key);
       },
       py::call_guard<py::gil_scoped_release>(),
@@ -501,6 +503,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("info_type") = LoadAudioInfo::All,
       py::arg("sample_rate") = 0,
       py::arg("resampling_quality") = "sinc-fastest",
+      py::arg("info_key") = "",
       py::arg("output_key") = "",
       R"pbcopy(
         Load an audio file.
@@ -532,7 +535,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
           key (str): The sample key that contains the array we are operating on.
           prefix (str): The filepath prefix to use when loading the audio files.
           info (bool): If set to True load the audio file information instead
-            of the data. (default: False)
+            of the data in ``output_key``, when ``info_key`` is not provided. (default: False)
           from_memory (bool): If true assume the file contents are in the array
             instead of the file name. (default: False)
           info_type (LoadAudioInfo): If ``info`` is True then load this type of
@@ -543,6 +546,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
             (sinc-fastest|sinc-medium|sinc-best|zero-order-hold|linear): Chooses
             the audio resampling quality if resampling is performed. (default:
             sinc-fastest)
+          info_key (str): The key to store the audio metadata in, if desired. (default: '')
           output_key (str): The key to store the result in. If it is an empty
             string then overwrite the input. (default: '')
       )pbcopy");
@@ -557,6 +561,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
          LoadAudioInfo info_type,
          int sample_rate,
          const std::string& resampling_quality,
+         const std::string& info_key,
          const std::string& output_key) -> T {
         static const std::unordered_map<std::string, LoadAudioResamplingQuality>
             e_resampling_quality = {
@@ -580,6 +585,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
             info_type,
             sample_rate,
             it->second,
+            info_key,
             output_key);
       },
       py::call_guard<py::gil_scoped_release>(),
@@ -591,6 +597,7 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       py::arg("info_type") = LoadAudioInfo::All,
       py::arg("sample_rate") = 0,
       py::arg("resampling_quality") = "sinc-fastest",
+      py::arg("info_key") = "",
       py::arg("output_key") = "",
       "Conditional :meth:`Buffer.load_audio`.");
 
