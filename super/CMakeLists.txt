@@ -28,9 +28,9 @@ ExternalProject_Add(
   pkg-config
   URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
       http://fresh-center.net/linux/misc/pkg-config-0.29.2.tar.gz
-  CONFIGURE_COMMAND CFLAGS=-Wno-int-conversion CXXFLAGS=-Wno-int-conversion
-                    ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-                    --disable-shared --with-internal-glib
+  CONFIGURE_COMMAND
+    CFLAGS=-Wno-int-conversion CXXFLAGS=-Wno-int-conversion ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --with-internal-glib
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
