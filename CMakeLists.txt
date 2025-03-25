@@ -26,7 +26,10 @@ FetchContent_Declare(
   GIT_REPOSITORY "https://github.com/nothings/stb.git"
   GIT_TAG "03f50e343d796e492e6579a11143a085429d7f5d"
   CONFIGURE_COMMAND "" BUILD_COMMAND "")
-FetchContent_MakeAvailable(stb)
+FetchContent_GetProperties(stb)
+if(NOT stb_POPULATED)
+  FetchContent_Populate(stb)
+endif()
 add_library(stb INTERFACE)
 target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
 
@@ -66,7 +69,7 @@ FetchContent_Declare(
   PATCH_COMMAND ${bxzstr_patch} || true CONFIGURE_COMMAND "" BUILD_COMMAND "")
 FetchContent_GetProperties(bxzstr)
 if(NOT bxzstr_POPULATED)
-  FetchContent_MakeAvailable(bxzstr)
+  FetchContent_Populate(bxzstr)
   configure_file(${bxzstr_SOURCE_DIR}/bxzstr/config.hpp.in
                  ${bxzstr_SOURCE_DIR}/bxzstr/config.hpp)
 endif()
@@ -89,7 +92,7 @@ if(MLX_BUILD_PYTHON_BINDINGS)
 
   FetchContent_GetProperties(pybind11)
   if(NOT pybind11_POPULATED)
-    FetchContent_MakeAvailable(pybind11)
+    FetchContent_Populate(pybind11)
     add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
   endif()
 endif()
