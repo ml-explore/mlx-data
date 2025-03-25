@@ -52,7 +52,7 @@ def warped_to_hertz_scale(wrp, freqscale):
     if freqscale == FrequencyScale.MEL:
         return 700.0 * (10 ** (wrp / 2595.0) - 1)
     elif freqscale == FrequencyScale.LOG10:
-        return np.pow(10, wrp)
+        return np.power(10, wrp)
     elif freqscale == FrequencyScale.LINEAR:
         return wrp
     else:
