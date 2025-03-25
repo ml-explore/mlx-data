@@ -171,6 +171,24 @@ class Dataset {
       const std::string& info_key = "",
       const std::string& okey = "") const;
 
+  T resample_audio(
+      const std::string& ikey,
+      int output_sample_rate,
+      int input_sample_rate = 0,
+      const std::string& info_key = "",
+      LoadAudioResamplingQuality resampling_quality =
+          LoadAudioResamplingQuality::SincFastest,
+      const std::string& okey = "") const;
+  T resample_audio_if(
+      bool cond,
+      const std::string& ikey,
+      int output_sample_rate,
+      int input_sample_rate = 0,
+      const std::string& info_key = "",
+      LoadAudioResamplingQuality resampling_quality =
+          LoadAudioResamplingQuality::SincFastest,
+      const std::string& okey = "") const;
+
   T load_file(
       const std::string& ikey,
       const std::filesystem::path& prefix = "",

@@ -123,6 +123,59 @@ Sample LoadAudio::apply(const Sample& sample) const {
   }
   return res;
 }
+
+ResampleAudio::ResampleAudio(
+    const std::string& ikey,
+    int output_sample_rate,
+    int input_sample_rate,
+    const std::string& infokey,
+    LoadAudioResamplingQuality resampling_quality,
+    const std::string& okey)
+    : Op(),
+      iKey_(ikey),
+      oKey_(okey),
+      infoKey_(infokey),
+      resamplingQuality_(resampling_quality),
+      inputSampleRate_(input_sample_rate),
+      outputSampleRate_(output_sample_rate) {
+  if (infoKey_.empty() && inputSampleRate_ <= 0) {
+    throw std::runtime_error(
+        "ResampleAudio: info key or input sampling rate must be provided");
+  }
+  if (!infoKey_.empty() && inputSampleRate_ > 0) {
+    throw std::runtime_error(
+        "ResampleAudio: either info key or input sampling rate must be positive");
+  }
+}
+
+Sample ResampleAudio::apply(const Sample& sample) const {
+  auto audio = sample::check_key(sample, iKey_, ArrayType::Any);
+  auto okey = (oKey_.empty() ? iKey_ : oKey_);
+  auto res = sample;
+
+  int inputSampleRate = inputSampleRate_;
+  if (!infoKey_.empty()) {
+    auto info = sample::check_key(sample, infoKey_, ArrayType::Int64);
+    if (info->size() == 3) {
+      inputSampleRate = info->data<int64_t>()[2];
+    } else if (info->size() == 1) {
+      inputSampleRate = info->data<int64_t>()[0];
+    } else {
+      throw std::runtime_error(
+          "ResampleAudio: info key should be either an int64 scalar, or an int64[3]");
+    }
+  }
+  audio = core::audio::resample(
+      audio,
+      convert_resample_mode(resamplingQuality_),
+      inputSampleRate,
+      outputSampleRate_);
+
+  res[okey] = audio;
+
+  return res;
+}
+
 } // namespace op
 } // namespace data
 } // namespace mlx

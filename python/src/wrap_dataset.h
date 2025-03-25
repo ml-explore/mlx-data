@@ -602,6 +602,120 @@ void mlx_data_export_dataset(py::class_<T, P>& base) {
       "Conditional :meth:`Buffer.load_audio`.");
 
   base.def(
+      "resample_audio",
+      [](T& dataset,
+         const std::string& key,
+         int output_sample_rate,
+         int input_sample_rate,
+         const std::string& info_key,
+         const std::string& resampling_quality,
+         const std::string& output_key) -> T {
+        static const std::unordered_map<std::string, LoadAudioResamplingQuality>
+            e_resampling_quality = {
+                {"sinc-best", LoadAudioResamplingQuality::SincBest},
+                {"sinc-medium", LoadAudioResamplingQuality::SincMedium},
+                {"sinc-fastest", LoadAudioResamplingQuality::SincFastest},
+                {"zero-order-hold", LoadAudioResamplingQuality::ZeroOrderHold},
+                {"linear", LoadAudioResamplingQuality::Linear}};
+
+        auto it = e_resampling_quality.find(resampling_quality);
+        if (it == e_resampling_quality.end()) {
+          throw std::runtime_error(
+              "invalid resampling quality (expected {sinc-best, sinc-medium, sinc-fastest, zero-order-hold, linear})");
+        }
+        return dataset.resample_audio(
+            key,
+            output_sample_rate,
+            input_sample_rate,
+            info_key,
+            it->second,
+            output_key);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("key"),
+      py::arg("sample_rate"),
+      py::arg("input_sample_rate") = 0,
+      py::arg("info_key") = "",
+      py::arg("resampling_quality") = "sinc-fastest",
+      py::arg("output_key") = "",
+      R"pbcopy(
+        Resample audio to the requested rate.
+
+        Either the explicit ``input_sample_rate`` or ``info_key`` must be
+        provided. If ``info_key`` is provided, it is assumed to contain
+        either a scalar array (the input sampling rate) or an array with
+        three elements, the last one being the sampling rate. The format
+        follows the metadata information returned by
+        :meth:`Buffer.load_audio`.
+
+        The following example resamples previously loaded audio to 16kHz.
+
+        .. code-block:: python
+
+          dset = (
+            dset
+            .load_audio("audio_file", info_type=LoadAudioInfo.NumSeconds, output_key="audio", info_key="audio_info")
+            .resample_audio("audio", 16000, info_key="audio_info")
+          )
+
+        Args:
+          key (str): The sample key that contains the array we are operating on.
+          sample_rate (int): The requested sample frequency in frames per
+            second. No operation will be performed if it is a negative value.
+          input_sample_rate (int): The input sample frequency in frames per
+            second. (Default: 0)
+          info_key (str): The key where audio metadata is stored, to infer
+          input sample rate. (default: '')
+          resampling_quality
+            (sinc-fastest|sinc-medium|sinc-best|zero-order-hold|linear): Chooses
+            the audio resampling quality if resampling is performed. (default:
+            sinc-fastest)
+          output_key (str): The key to store the result in. If it is an empty
+            string then overwrite the input. (default: '')
+      )pbcopy");
+  base.def(
+      "resample_audio_if",
+      [](T& dataset,
+         bool cond,
+         const std::string& key,
+         int sample_rate,
+         int input_sample_rate,
+         const std::string& info_key,
+         const std::string& resampling_quality,
+         const std::string& output_key) -> T {
+        static const std::unordered_map<std::string, LoadAudioResamplingQuality>
+            e_resampling_quality = {
+                {"sinc-best", LoadAudioResamplingQuality::SincBest},
+                {"sinc-medium", LoadAudioResamplingQuality::SincMedium},
+                {"sinc-fastest", LoadAudioResamplingQuality::SincFastest},
+                {"zero-order-hold", LoadAudioResamplingQuality::ZeroOrderHold},
+                {"linear", LoadAudioResamplingQuality::Linear}};
+
+        auto it = e_resampling_quality.find(resampling_quality);
+        if (it == e_resampling_quality.end()) {
+          throw std::runtime_error(
+              "invalid resampling quality (expected {sinc-best, sinc-medium, sinc-fastest, zero-order-hold, linear})");
+        }
+        return dataset.resample_audio_if(
+            cond,
+            key,
+            sample_rate,
+            input_sample_rate,
+            info_key,
+            it->second,
+            output_key);
+      },
+      py::call_guard<py::gil_scoped_release>(),
+      py::arg("cond"),
+      py::arg("key"),
+      py::arg("sample_rate"),
+      py::arg("input_sample_rate") = 0,
+      py::arg("info_key") = "",
+      py::arg("resampling_quality") = "sinc-fastest",
+      py::arg("output_key") = "",
+      "Conditional :meth:`Buffer.resample_audio`.");
+
+  base.def(
       "load_file",
       &T::load_file,
       py::call_guard<py::gil_scoped_release>(),
