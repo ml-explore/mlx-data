@@ -11,11 +11,11 @@ namespace audio {
 
 std::shared_ptr<Array> load_sndfile(const std::string& path, AudioInfo* info);
 std::shared_ptr<Array> load_sndfile(
-    const std::shared_ptr<const Array>& contents,
+    const std::shared_ptr<Array>& contents,
     AudioInfo* info);
 
 AudioInfo info_sndfile(const std::string& path);
-AudioInfo info_sndfile(const std::shared_ptr<const Array>& contents);
+AudioInfo info_sndfile(const std::shared_ptr<Array>& contents);
 
 } // namespace audio
 } // namespace core

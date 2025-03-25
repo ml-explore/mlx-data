@@ -156,6 +156,7 @@ class Dataset {
       int sample_rate = 0,
       LoadAudioResamplingQuality resampling_quality =
           LoadAudioResamplingQuality::SincFastest,
+      const std::string& info_key = "",
       const std::string& okey = "") const;
   T load_audio_if(
       bool cond,
@@ -165,6 +166,25 @@ class Dataset {
       bool from_memory = false,
       LoadAudioInfo info_type = LoadAudioInfo::All,
       int sample_rate = 0,
+      LoadAudioResamplingQuality resampling_quality =
+          LoadAudioResamplingQuality::SincFastest,
+      const std::string& info_key = "",
+      const std::string& okey = "") const;
+
+  T resample_audio(
+      const std::string& ikey,
+      int output_sample_rate,
+      int input_sample_rate = 0,
+      const std::string& info_key = "",
+      LoadAudioResamplingQuality resampling_quality =
+          LoadAudioResamplingQuality::SincFastest,
+      const std::string& okey = "") const;
+  T resample_audio_if(
+      bool cond,
+      const std::string& ikey,
+      int output_sample_rate,
+      int input_sample_rate = 0,
+      const std::string& info_key = "",
       LoadAudioResamplingQuality resampling_quality =
           LoadAudioResamplingQuality::SincFastest,
       const std::string& okey = "") const;

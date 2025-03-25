@@ -19,25 +19,25 @@ struct AudioInfo {
 
 std::shared_ptr<Array> load(const std::string& path, AudioInfo* info);
 std::shared_ptr<Array> load(
-    const std::shared_ptr<const Array>& contents,
+    const std::shared_ptr<Array>& contents,
     AudioInfo* info);
 
 AudioInfo info(const std::string& path);
-AudioInfo info(const std::shared_ptr<const Array>& contents);
+AudioInfo info(const std::shared_ptr<Array>& contents);
 
 /// Verify that the given Array is structured like audio:
 /// two dimensions (s, c).
-void verify_audio(const std::shared_ptr<const Array>& audio);
+void verify_audio(const std::shared_ptr<Array>& audio);
 
 /// Return the number of frames in the audio.  Requires that `verifyAudio()` be
 /// called previously.
-inline const int64_t frames(const std::shared_ptr<const Array>& audio) {
+inline const int64_t frames(const std::shared_ptr<Array>& audio) {
   return audio->shape()[0];
 }
 
 /// Return the channel count of the audio.  Requires that `verifyAudio()` be
 /// called previously.
-inline const int64_t channels(const std::shared_ptr<const Array>& audio) {
+inline const int64_t channels(const std::shared_ptr<Array>& audio) {
   return audio->shape()[1];
 }
 
@@ -52,7 +52,7 @@ enum class ResampleMode {
 };
 
 std::shared_ptr<Array> resample(
-    const std::shared_ptr<const Array>& audio,
+    const std::shared_ptr<Array>& audio,
     ResampleMode resample_mode,
     int src_sample_rate,
     int dst_sample_rate);

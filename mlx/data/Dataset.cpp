@@ -307,6 +307,7 @@ T Dataset<T, B>::load_audio(
     LoadAudioInfo infoType,
     int sampleRate,
     LoadAudioResamplingQuality resamplingQuality,
+    const std::string& info_key,
     const std::string& okey) const {
   return transform_(std::make_shared<op::LoadAudio>(
       ikey,
@@ -316,6 +317,7 @@ T Dataset<T, B>::load_audio(
       infoType,
       sampleRate,
       resamplingQuality,
+      info_key,
       okey));
 }
 
@@ -329,6 +331,7 @@ T Dataset<T, B>::load_audio_if(
     LoadAudioInfo infoType,
     int sampleRate,
     LoadAudioResamplingQuality resamplingQuality,
+    const std::string& info_key,
     const std::string& okey) const {
   if (cond) {
     return transform_(std::make_shared<op::LoadAudio>(
@@ -339,6 +342,46 @@ T Dataset<T, B>::load_audio_if(
         infoType,
         sampleRate,
         resamplingQuality,
+        info_key,
+        okey));
+  } else {
+    return T(self_);
+  }
+}
+
+template <class T, class B>
+T Dataset<T, B>::resample_audio(
+    const std::string& ikey,
+    int output_sample_rate,
+    int input_sample_rate,
+    const std::string& info_key,
+    LoadAudioResamplingQuality resampling_quality,
+    const std::string& okey) const {
+  return transform_(std::make_shared<op::ResampleAudio>(
+      ikey,
+      output_sample_rate,
+      input_sample_rate,
+      info_key,
+      resampling_quality,
+      okey));
+}
+
+template <class T, class B>
+T Dataset<T, B>::resample_audio_if(
+    bool cond,
+    const std::string& ikey,
+    int output_sample_rate,
+    int input_sample_rate,
+    const std::string& info_key,
+    LoadAudioResamplingQuality resampling_quality,
+    const std::string& okey) const {
+  if (cond) {
+    return transform_(std::make_shared<op::ResampleAudio>(
+        ikey,
+        output_sample_rate,
+        input_sample_rate,
+        info_key,
+        resampling_quality,
         okey));
   } else {
     return T(self_);

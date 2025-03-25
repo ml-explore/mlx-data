@@ -132,7 +132,7 @@ std::shared_ptr<Array> load_sndfile(const std::string& path, AudioInfo* info) {
 }
 
 std::shared_ptr<Array> load_sndfile(
-    const std::shared_ptr<const Array>& contents,
+    const std::shared_ptr<Array>& contents,
     AudioInfo* info) {
   SfVioRo sfctx;
   sfctx.data = contents->data();
@@ -160,7 +160,7 @@ AudioInfo info_sndfile(const std::string& path) {
   return audio_info;
 }
 
-AudioInfo info_sndfile(const std::shared_ptr<const Array>& contents) {
+AudioInfo info_sndfile(const std::shared_ptr<Array>& contents) {
   SfVioRo sfctx;
   sfctx.data = contents->data();
   sfctx.size = contents->size() * contents->itemsize();
@@ -184,7 +184,7 @@ std::shared_ptr<Array> load_sndfile(const std::string& path, AudioInfo* info) {
 }
 
 std::shared_ptr<Array> load_sndfile(
-    const std::shared_ptr<const Array>& contents,
+    const std::shared_ptr<Array>& contents,
     AudioInfo* info) {
   no_sndfile();
 }
@@ -193,7 +193,7 @@ AudioInfo info_sndfile(const std::string& path) {
   no_sndfile();
 }
 
-AudioInfo info_sndfile(const std::shared_ptr<const Array>& contents) {
+AudioInfo info_sndfile(const std::shared_ptr<Array>& contents) {
   no_sndfile();
 }
 
