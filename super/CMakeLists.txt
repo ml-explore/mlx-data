@@ -77,7 +77,7 @@ ExternalProject_Add(
 # needed on x86 by few projects
 ExternalProject_Add(
   nasm
-  URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz
+  URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz
   CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
     ./configure --prefix=${CMAKE_BINARY_DIR}/deps
