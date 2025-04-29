@@ -243,12 +243,12 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   curl
-  URL https://curl.se/download/curl-8.5.0.tar.bz2
+  URL https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
   DEPENDS openssl pkg-config
   CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
     CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
-    --prefix=${CMAKE_BINARY_DIR}/deps
+    --without-libpsl --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
