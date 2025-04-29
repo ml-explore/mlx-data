@@ -62,16 +62,16 @@ ExternalProject_Add(
 # lzma support
 ExternalProject_Add(
   xz
-  URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
-      https://tukaani.org/xz/xz-5.4.5.tar.gz
-  CONFIGURE_COMMAND
-    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
-    --disable-xz --disable-xzdec --disable-lzmadec --disable-lzmainfo
-    --disable-scripts --disable-doc
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
+  URL https://downloads.sourceforge.net/project/lzmautils/xz-5.8.1.tar.gz
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_SHARED_LIBS=OFF
+             -DXZ_TOOL_XZ=OFF
+             -DXZ_TOOL_XZDEC=OFF
+             -DXZ_TOOL_LZMADEC=OFF
+             -DXZ_TOOL_LZMAINFO=OFF
+             -DXZ_DOC=OFF
+             -DENABLE_SCRIPTS=OFF
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # needed on x86 by few projects
