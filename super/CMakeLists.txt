@@ -286,7 +286,8 @@ ExternalProject_Add(
     cd build/generic && ${CMAKE_COMMAND} -E env PATH=${PATH}
     PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
     --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND cd build/generic && make -j1
+  BUILD_COMMAND cd build/generic && ${CMAKE_COMMAND} -E env PATH=${PATH}
+                PKG_CONFIG_PATH=${PKG_CONFIG_PATH} make -j1
   INSTALL_COMMAND cd build/generic && make install
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
