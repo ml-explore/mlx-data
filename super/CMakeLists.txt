@@ -130,8 +130,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   flac
   DEPENDS libogg pkg-config
-  URL https://github.com/xiph/flac/releases/download/1.4.3/flac-1.4.3.tar.xz
-  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.4.3.patch
+  URL https://github.com/xiph/flac/archive/refs/tags/1.5.0.tar.gz
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.5.0.patch
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DINSTALL_MANPAGES=OFF
              -DBUILD_TESTING=OFF
