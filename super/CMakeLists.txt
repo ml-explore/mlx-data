@@ -161,7 +161,7 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   opus
-  URL https://github.com/xiph/opus/releases/download/v1.4/opus-1.4.tar.gz
+  URL https://github.com/xiph/opus/releases/download/v1.5.2/opus-1.5.2.tar.gz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DOPUS_BUILD_SHARED_LIBRARY=OFF
              -DOPUS_BUILD_TESTING=OFF
