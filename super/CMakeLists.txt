@@ -304,7 +304,7 @@ ExternalProject_Add(
           libvorbis
           xvidcore
           pkg-config
-  URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
+  URL https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.bz2
   CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
     ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
