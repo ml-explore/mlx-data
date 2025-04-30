@@ -260,9 +260,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   aws-s3
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
-  GIT_TAG 1.11.231
+  GIT_TAG 1.11.557
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.231.patch
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch
   DEPENDS openssl curl pkg-config
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
