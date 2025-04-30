@@ -233,10 +233,10 @@ ExternalProject_Add(
 
 ExternalProject_Add(
   openssl
-  URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
+  URL https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz
   CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-    CFLAGS=-fPIC ./config no-shared no-idea no-mdc2 no-rc5 no-tests
+    CFLAGS=-fPIC ./config no-shared no-ssl3 no-ssl3-method no-zlib no-tests
     --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make depend && make
   INSTALL_COMMAND make install_sw
