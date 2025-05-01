@@ -1,23 +1,13 @@
-diff --git a/cmake/AWSSDKConfig.cmake b/cmake/AWSSDKConfig.cmake
-index ba9183f543..a2c29f1491 100644
---- a/cmake/AWSSDKConfig.cmake
-+++ b/cmake/AWSSDKConfig.cmake
-@@ -312,5 +312,18 @@ if (AWSSDK_FIND_COMPONENTS)
-     endforeach()
- endif()
- 
-+find_library(LIB_CURL curl)
-+if(LIB_CURL)
-+  list(APPEND AWSSDK_LINK_LIBRARIES ${LIB_CURL})
-+endif()
-+find_library(LIB_SSL ssl)
-+if(LIB_SSL)
-+  list(APPEND AWSSDK_LINK_LIBRARIES ${LIB_SSL})
-+endif()
-+find_library(LIB_CRYPTO crypto)
-+if(LIB_CRYPTO)
-+  list(APPEND AWSSDK_LINK_LIBRARIES ${LIB_CRYPTO})
-+endif()
-+
- set(AWSSDK_INCLUDE_DIRS ${AWSSDK_INCLUDE_DIR})
- set(AWSSDK_LIBRARIES ${AWSSDK_LINK_LIBRARIES})
+diff --git a/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt b/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
+index fbb502d..1af7612 100644
+--- a/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
++++ b/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
+@@ -102,7 +102,7 @@ if (NOT BYO_CRYPTO)
+         if (USE_OPENSSL AND NOT ANDROID)
+             find_package(OpenSSL REQUIRED)
+             find_package(Threads REQUIRED)
+-            list(APPEND PLATFORM_LIBS OpenSSL::Crypto Threads::Threads)
++            list(APPEND PLATFORM_LIBS OpenSSL::SSL OpenSSL::Crypto Threads::Threads)
+             message(STATUS "Using libcrypto from system: ${OPENSSL_CRYPTO_LIBRARY}")
+         elseif(NOT USE_OPENSSL AND IN_SOURCE_BUILD)
+             if (TARGET crypto)
