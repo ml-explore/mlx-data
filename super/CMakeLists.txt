@@ -233,30 +233,40 @@ ExternalProject_Add(
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-ExternalProject_Add(
-  openssl
-  URL https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz
-  CONFIGURE_COMMAND
-    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-    CFLAGS=-fPIC ./config no-shared no-ssl3 no-ssl3-method no-zlib no-tests
-    --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND make depend && make
-  INSTALL_COMMAND make install_sw
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
+if(APPLE)
+  # system-provided
+  add_custom_target(curl)
+  add_custom_target(openssl)
+else()
+  ExternalProject_Add(
+    openssl
+    URL https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz
+    CONFIGURE_COMMAND
+      ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+      CFLAGS=-fPIC ./config no-shared no-ssl3 no-ssl3-method no-zlib no-tests
+      --prefix=${CMAKE_BINARY_DIR}/deps
+    BUILD_COMMAND make depend && make
+    INSTALL_COMMAND make install_sw
+    BUILD_IN_SOURCE 1
+    DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-ExternalProject_Add(
-  curl
-  URL https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
-  DEPENDS openssl pkg-config
-  CONFIGURE_COMMAND
-    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-    CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
-    --without-libpsl --disable-docs --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
+  ExternalProject_Add(
+    curl
+    URL https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
+    DEPENDS openssl pkg-config
+    CONFIGURE_COMMAND
+      ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+      CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
+      --without-libpsl --disable-docs --prefix=${CMAKE_BINARY_DIR}/deps
+    BUILD_COMMAND make
+    INSTALL_COMMAND make install
+    BUILD_IN_SOURCE 1
+    DOWNLOAD_EXTRACT_TIMESTAMP 1)
+
+  set(AWS_S3_PATCH_COMMAND
+      "patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch")
+
+endif()
 
 # patch aws-sdk-cpp to add necessary static libs at link time
 ExternalProject_Add(
@@ -264,7 +274,7 @@ ExternalProject_Add(
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
   GIT_TAG 1.11.557
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch
+  PATCH_COMMAND ${AWS_S3_PATCH_COMMAND}
   DEPENDS openssl curl pkg-config
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
