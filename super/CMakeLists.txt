@@ -247,7 +247,7 @@ ExternalProject_Add(
   CONFIGURE_COMMAND
     ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
     CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
-    --without-libpsl --prefix=${CMAKE_BINARY_DIR}/deps
+    --without-libpsl --disable-docs --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
