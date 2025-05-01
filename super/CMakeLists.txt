@@ -263,8 +263,8 @@ else()
     BUILD_IN_SOURCE 1
     DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-  set(AWS_S3_PATCH_COMMAND
-      "patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch")
+  set(AWS_S3_PATCH_COMMAND patch -p1 <
+                           ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch)
 
 endif()
 
