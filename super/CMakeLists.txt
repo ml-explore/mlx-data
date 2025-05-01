@@ -1,6 +1,6 @@
 # Copyright © 2024 Apple Inc.
 
-cmake_minimum_required(VERSION 3.22)
+cmake_minimum_required(VERSION 3.23.3)
 
 project(mlx-data-deps)
 
@@ -20,6 +20,8 @@ set(PKG_CONFIG_PATH
 
 # note: using "${CMAKE_COMMAND} -E env" even for non-CMake commands as sometimes
 # CMake may unexpectedly add a quote to the env variables at the wrong place.
+
+# note: FindSSL is broken before CMake 3.23.3. Also, xz needs CMake 3.20.
 
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
   set(X86 TRUE)
