@@ -18,6 +18,9 @@ set(PKG_CONFIG_PATH
 # 3.24) changed the previous behavior. This causes problems in some packages,
 # where configure feels it is not up-to-date and try to run automake.
 
+# note: using "${CMAKE_COMMAND} -E env" even for non-CMake commands as sometimes
+# CMake may unexpectedly add a quote to the env variables at the wrong place.
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
   set(X86 TRUE)
 else()
