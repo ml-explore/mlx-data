@@ -17,6 +17,66 @@ executors:
       - image: quay.io/pypa/manylinux2014_x86_64
 
 jobs:
+  build_documentation:
+    parameters:
+      upload-docs:
+        type: boolean
+        default: false
+    macos:
+      xcode: "15.0.0"
+    resource_class: m2pro.medium
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            brew install python@3.9
+            brew install doxygen
+            brew install libsndfile libsamplerate ffmpeg jpeg-turbo zlib bzip2 xz aws-sdk-cpp
+            python3.9 -m venv env
+            source env/bin/activate
+            pip install --upgrade pip
+            pip install --upgrade cmake
+            pip install --upgrade pybind11[global]
+            pip install numpy
+      - run:
+          name: Build and install package
+          command: |
+            source env/bin/activate
+            pip install -r docs/requirements.txt
+            CMAKE_ARGS="-DMLX_ENABLE_AWS=ON" \
+              CMAKE_BUILD_PARALLEL_LEVEL=`sysctl -n hw.ncpu` \
+              pip install . -v
+      - when:
+          condition:
+            not: << parameters.upload-docs >>
+          steps:
+            - run:
+               name: Build documentation
+               command: |
+                 source env/bin/activate
+                 cd docs && make html O=-W
+      - when:
+          condition: << parameters.upload-docs >>
+          steps:
+            - add_ssh_keys:
+                fingerprints:
+                  - "SHA256:DMz9cDVA4TMhGAPT8PkGOTvtKCModSdZqorNfZfynms"
+            - run:
+               name: Upload documentation
+               command: |
+                 source env/bin/activate
+                 git config user.email "mlx@group.apple.com"
+                 git config user.name "CircleCI Docs"
+                 git checkout gh-pages
+                 git rebase main
+                 cd docs
+                 git rm -rf build/html
+                 make html O=-W
+                 git add -f build/html
+                 git commit -m "rebase"
+                 git push -f origin gh-pages
+
   linux_build_on_commit:
     docker:
       - image: cimg/python:3.9
@@ -193,6 +253,7 @@ workflows:
     jobs:
       - linux_build_on_commit
       - mac_build_on_commit
+      - build_documentation
   prb:
     when:
       matches:
@@ -241,3 +302,5 @@ workflows:
               python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
               xcode_version: ["15.0.0"]
               extra_env: ["PYPI_RELEASE=1"]
+      - build_documentation:
+          upload-docs: true
