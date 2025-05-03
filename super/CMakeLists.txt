@@ -76,6 +76,7 @@ ExternalProject_Add(
              -DXZ_TOOL_LZMAINFO=OFF
              -DXZ_DOC=OFF
              -DENABLE_SCRIPTS=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
