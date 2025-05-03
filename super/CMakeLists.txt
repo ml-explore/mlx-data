@@ -1,6 +1,6 @@
 # Copyright © 2024 Apple Inc.
 
-cmake_minimum_required(VERSION 3.6)
+cmake_minimum_required(VERSION 3.23.3)
 
 project(mlx-data-deps)
 
@@ -18,6 +18,11 @@ set(PKG_CONFIG_PATH
 # 3.24) changed the previous behavior. This causes problems in some packages,
 # where configure feels it is not up-to-date and try to run automake.
 
+# note: using "${CMAKE_COMMAND} -E env" even for non-CMake commands as sometimes
+# CMake may unexpectedly add a quote to the env variables at the wrong place.
+
+# note: FindSSL is broken before CMake 3.23.3. Also, xz needs CMake 3.20.
+
 if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
   set(X86 TRUE)
 else()
@@ -29,19 +34,9 @@ ExternalProject_Add(
   URL http://pkgconfig.freedesktop.org/releases/pkg-config-0.29.2.tar.gz
       http://fresh-center.net/linux/misc/pkg-config-0.29.2.tar.gz
   CONFIGURE_COMMAND
-    CFLAGS=-Wno-int-conversion CXXFLAGS=-Wno-int-conversion ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --with-internal-glib
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
-
-ExternalProject_Add(
-  libiconv
-  URL https://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.17.tar.gz
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    ${CMAKE_COMMAND} -E env CFLAGS=-Wno-int-conversion
+    CXXFLAGS=-Wno-int-conversion ./configure --prefix=${CMAKE_BINARY_DIR}/deps
+    --disable-shared --with-internal-glib
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -50,8 +45,9 @@ ExternalProject_Add(
 ExternalProject_Add(
   zlib
   URL https://www.zlib.net/zlib-1.3.1.tar.gz
-  CONFIGURE_COMMAND PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC
-                    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
+  CONFIGURE_COMMAND
+    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --static
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -71,24 +67,28 @@ ExternalProject_Add(
 # lzma support
 ExternalProject_Add(
   xz
-  URL https://downloads.sourceforge.net/project/lzmautils/xz-5.4.5.tar.gz
-      https://tukaani.org/xz/xz-5.4.5.tar.gz
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --disable-xz
-    --disable-xzdec --disable-lzmadec --disable-lzmainfo --disable-scripts
-    --disable-doc
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
+  URL https://downloads.sourceforge.net/project/lzmautils/xz-5.8.1.tar.gz
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DBUILD_SHARED_LIBS=OFF
+             -DXZ_TOOL_XZ=OFF
+             -DXZ_TOOL_XZDEC=OFF
+             -DXZ_TOOL_LZMADEC=OFF
+             -DXZ_TOOL_LZMAINFO=OFF
+             -DXZ_DOC=OFF
+             -DENABLE_SCRIPTS=OFF
+             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 # needed on x86 by few projects
 ExternalProject_Add(
   nasm
-  URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.01/nasm-2.16.01.tar.xz
-  CONFIGURE_COMMAND PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} ./configure
-                    --prefix=${CMAKE_BINARY_DIR}/deps
+  URL https://www.nasm.us/pub/nasm/releasebuilds/2.16.03/nasm-2.16.03.tar.xz
+  CONFIGURE_COMMAND
+    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -97,7 +97,7 @@ ExternalProject_Add(
 ExternalProject_Add(
   libjpeg-turbo
   DEPENDS nasm
-  URL https://downloads.sourceforge.net/project/libjpeg-turbo/3.0.0/libjpeg-turbo-3.0.0.tar.gz
+  URL https://github.com/libjpeg-turbo/libjpeg-turbo/releases/download/3.1.0/libjpeg-turbo-3.1.0.tar.gz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DENABLE_SHARED=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
@@ -117,6 +117,7 @@ ExternalProject_Add(
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
@@ -128,6 +129,7 @@ ExternalProject_Add(
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
@@ -135,8 +137,8 @@ ExternalProject_Add(
 ExternalProject_Add(
   flac
   DEPENDS libogg pkg-config
-  URL https://github.com/xiph/flac/releases/download/1.4.3/flac-1.4.3.tar.xz
-  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.4.3.patch
+  URL https://github.com/xiph/flac/archive/refs/tags/1.5.0.tar.gz
+  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/flac-1.5.0.patch
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DINSTALL_MANPAGES=OFF
              -DBUILD_TESTING=OFF
@@ -144,6 +146,7 @@ ExternalProject_Add(
              -DBUILD_EXAMPLES=OFF
              -DBUILD_DOCS=OFF
              -DBUILD_SHARED_LIBS=OFF
+             -DENABLE_MULTITHREADING=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
@@ -159,12 +162,13 @@ ExternalProject_Add(
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
 ExternalProject_Add(
   opus
-  URL https://github.com/xiph/opus/releases/download/v1.4/opus-1.4.tar.gz
+  URL https://github.com/xiph/opus/releases/download/v1.5.2/opus-1.5.2.tar.gz
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DOPUS_BUILD_SHARED_LIBRARY=OFF
              -DOPUS_BUILD_TESTING=OFF
@@ -179,9 +183,9 @@ ExternalProject_Add(
   lame
   URL https://downloads.sourceforge.net/project/lame/lame/3.100/lame-3.100.tar.gz
   CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug --disable-frontend
-    --disable-shared --disable-gtktest
+    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-debug
+    --disable-frontend --disable-shared --disable-gtktest
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -200,11 +204,11 @@ endif()
 
 ExternalProject_Add(
   mpg123
-  URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.3/mpg123-1.32.3.tar.bz2
+  URL https://sourceforge.net/projects/mpg123/files/mpg123/1.32.10/mpg123-1.32.10.tar.bz2
   CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --disable-components
-    --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
+    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared
+    --disable-components --enable-libmpg123 ${MPG123_COMPILE_OPTIONS}
   BUILD_COMMAND make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
@@ -227,40 +231,52 @@ ExternalProject_Add(
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_POLICY_VERSION_MINIMUM=3.5
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-ExternalProject_Add(
-  openssl
-  URL https://www.openssl.org/source/openssl-1.1.1q.tar.gz
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./config
-    no-shared no-idea no-mdc2 no-rc5 no-tests --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND make depend && make
-  INSTALL_COMMAND make install_sw
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
+if(APPLE)
+  # system-provided
+  add_custom_target(curl)
+  add_custom_target(openssl)
+else()
+  ExternalProject_Add(
+    openssl
+    URL https://github.com/openssl/openssl/releases/download/openssl-3.5.0/openssl-3.5.0.tar.gz
+    CONFIGURE_COMMAND
+      ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+      CFLAGS=-fPIC ./config no-shared no-ssl3 no-ssl3-method no-zlib no-tests
+      --prefix=${CMAKE_BINARY_DIR}/deps
+    BUILD_COMMAND make depend && make
+    INSTALL_COMMAND make install_sw
+    BUILD_IN_SOURCE 1
+    DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-ExternalProject_Add(
-  curl
-  URL https://curl.se/download/curl-8.5.0.tar.bz2
-  DEPENDS openssl pkg-config
-  CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
-    --disable-shared --with-openssl --disable-ldap
-    --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND make
-  INSTALL_COMMAND make install
-  BUILD_IN_SOURCE 1
-  DOWNLOAD_EXTRACT_TIMESTAMP 1)
+  ExternalProject_Add(
+    curl
+    URL https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
+    DEPENDS openssl pkg-config
+    CONFIGURE_COMMAND
+      ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+      CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
+      --without-libpsl --disable-docs --prefix=${CMAKE_BINARY_DIR}/deps
+    BUILD_COMMAND make
+    INSTALL_COMMAND make install
+    BUILD_IN_SOURCE 1
+    DOWNLOAD_EXTRACT_TIMESTAMP 1)
+
+  set(AWS_S3_PATCH_COMMAND patch -p1 <
+                           ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.557.patch)
+
+endif()
 
 # patch aws-sdk-cpp to add necessary static libs at link time
 ExternalProject_Add(
   aws-s3
   GIT_REPOSITORY https://github.com/aws/aws-sdk-cpp.git
-  GIT_TAG 1.11.231
+  GIT_TAG 1.11.557
   GIT_SHALLOW 1
-  PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/aws-1.11.231.patch
+  PATCH_COMMAND ${AWS_S3_PATCH_COMMAND}
   DEPENDS openssl curl pkg-config
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DBUILD_ONLY=s3
@@ -274,7 +290,7 @@ ExternalProject_Add(
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
-# patch xvidcore to disable shared lib we build single thread, otherwise it may
+# Patch xvidcore to disable shared lib we build single thread, otherwise it may
 # fail sometimes
 ExternalProject_Add(
   xvidcore
@@ -282,9 +298,11 @@ ExternalProject_Add(
   URL https://downloads.xvid.com/downloads/xvidcore-1.3.7.tar.bz2
   PATCH_COMMAND patch -p1 < ${CMAKE_SOURCE_DIR}/cmake/xvidcore-1.3.7.patch
   CONFIGURE_COMMAND
-    cd build/generic && PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
-    CFLAGS=-fPIC ./configure --prefix=${CMAKE_BINARY_DIR}/deps
-  BUILD_COMMAND cd build/generic && make -j1
+    cd build/generic && ${CMAKE_COMMAND} -E env PATH=${PATH}
+    PKG_CONFIG_PATH=${PKG_CONFIG_PATH} CFLAGS=-fPIC ./configure
+    --prefix=${CMAKE_BINARY_DIR}/deps
+  BUILD_COMMAND cd build/generic && ${CMAKE_COMMAND} -E env PATH=${PATH}
+                PKG_CONFIG_PATH=${PKG_CONFIG_PATH} make -j1
   INSTALL_COMMAND cd build/generic && make install
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
@@ -299,10 +317,10 @@ ExternalProject_Add(
           libvorbis
           xvidcore
           pkg-config
-  URL https://ffmpeg.org/releases/ffmpeg-6.1.1.tar.bz2
+  URL https://ffmpeg.org/releases/ffmpeg-7.1.1.tar.bz2
   CONFIGURE_COMMAND
-    PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH} ./configure
-    --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
+    ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
+    ./configure --prefix=${CMAKE_BINARY_DIR}/deps --disable-shared --enable-pic
     --enable-runtime-cpudetect --enable-libvorbis --enable-libopus
     --disable-iconv --disable-programs --disable-doc --disable-htmlpages
     --disable-manpages --disable-podpages --disable-txtpages --disable-alsa
@@ -310,9 +328,10 @@ ExternalProject_Add(
     --disable-d3d11va --disable-dxva2 --disable-nvdec --disable-nvenc
     --disable-v4l2-m2m --disable-vdpau
     --pkg-config=${CMAKE_BINARY_DIR}/deps/bin/pkg-config
-    --extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib\ -L${CMAKE_BINARY_DIR}/deps/lib64
-    --extra-libs=-lvorbis\ -logg\ -lm
-  BUILD_COMMAND PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} && make
+    "--extra-ldflags=-L${CMAKE_BINARY_DIR}/deps/lib -L${CMAKE_BINARY_DIR}/deps/lib64"
+    "--extra-libs=-lvorbis -logg -lm"
+  BUILD_COMMAND ${CMAKE_COMMAND} -E env
+                PATH=${CMAKE_BINARY_DIR}/deps/bin:$ENV{PATH} make
   INSTALL_COMMAND make install
   BUILD_IN_SOURCE 1
   DOWNLOAD_EXTRACT_TIMESTAMP 1)

@@ -12,7 +12,11 @@ import numpy.core.multiarray
 # alternatively, one can set OPENBLAS_NUM_THREADS=1.
 import numpy  # isort: skip
 
-del numpy.core.multiarray
+try:
+    del numpy.core.multiarray
+except AttributeError:
+    pass
+
 del numpy
 
 from . import tokenizer_helpers

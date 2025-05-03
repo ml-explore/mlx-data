@@ -1,0 +1,13 @@
+diff --git a/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt b/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
+index fbb502d..1af7612 100644
+--- a/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
++++ b/crt/aws-crt-cpp/crt/aws-c-cal/CMakeLists.txt
+@@ -102,7 +102,7 @@ if (NOT BYO_CRYPTO)
+         if (USE_OPENSSL AND NOT ANDROID)
+             find_package(OpenSSL REQUIRED)
+             find_package(Threads REQUIRED)
+-            list(APPEND PLATFORM_LIBS OpenSSL::Crypto Threads::Threads)
++            list(APPEND PLATFORM_LIBS OpenSSL::SSL OpenSSL::Crypto Threads::Threads)
+             message(STATUS "Using libcrypto from system: ${OPENSSL_CRYPTO_LIBRARY}")
+         elseif(NOT USE_OPENSSL AND IN_SOURCE_BUILD)
+             if (TARGET crypto)
