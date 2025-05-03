@@ -14,88 +14,36 @@ endif()
 
 # ----------------------------- 3rdparty -----------------------------
 
-include(FetchContent)
-# Avoid warning about DOWNLOAD_EXTRACT_TIMESTAMP in CMake 3.24:
-if(POLICY CMP0135)
-  cmake_policy(SET CMP0135 NEW)
-endif()
+include(ExternalProject)
 
 # stb
-FetchContent_Declare(
-  stb
+ExternalProject_Add(
+  stb-repo
   GIT_REPOSITORY "https://github.com/nothings/stb.git"
-  GIT_TAG "03f50e343d796e492e6579a11143a085429d7f5d"
-  CONFIGURE_COMMAND "" BUILD_COMMAND "")
-FetchContent_GetProperties(stb)
-if(NOT stb_POPULATED)
-  FetchContent_Populate(stb)
-endif()
+  GIT_TAG "f0569113c93ad095470c54bf34a17b36646bbbb5"
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND ""
+  INSTALL_COMMAND "")
+ExternalProject_Get_Property(stb-repo SOURCE_DIR)
 add_library(stb INTERFACE)
-target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
+add_dependencies(stb stb-repo)
+target_include_directories(stb INTERFACE ${SOURCE_DIR})
 
 # bxzstr
-find_package(ZLIB)
-find_package(BZip2)
-find_package(LibLZMA)
-add_library(bxzstr INTERFACE)
-if(ZLIB_FOUND)
-  target_include_directories(bxzstr INTERFACE ${ZLIB_INCLUDE_DIRS})
-  target_link_libraries(bxzstr INTERFACE ${ZLIB_LIBRARIES})
-  set(BXZSTR_Z_SUPPORT 1)
-else()
-  set(BXZSTR_Z_SUPPORT 0)
-endif()
-if(BZIP2_FOUND)
-  target_include_directories(bxzstr INTERFACE ${BZIP2_INCLUDE_DIRS})
-  target_link_libraries(bxzstr INTERFACE ${BZIP2_LIBRARIES})
-  set(BXZSTR_BZ2_SUPPORT 1)
-else()
-  set(BXZSTR_BZ2_SUPPORT 0)
-endif()
-if(LIBLZMA_FOUND)
-  target_include_directories(bxzstr INTERFACE ${LIBLZMA_INCLUDE_DIRS})
-  target_link_libraries(bxzstr INTERFACE ${LIBLZMA_LIBRARIES})
-  set(BXZSTR_LZMA_SUPPORT 1)
-else()
-  set(BXZSTR_LZMA_SUPPORT 0)
-endif()
-set(BXZSTR_ZSTD_SUPPORT 0)
-set(bxzstr_patch git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr.patch)
-FetchContent_Declare(
-  bxzstr
+ExternalProject_Add(
+  bxzstr-repo
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
-  GIT_TAG "a6e5d743b5547a3ec23fd842813dec8067c8aff1"
-  # patch is always applied, so we silently fail if already patched
-  PATCH_COMMAND ${bxzstr_patch} || true CONFIGURE_COMMAND "" BUILD_COMMAND "")
-FetchContent_GetProperties(bxzstr)
-if(NOT bxzstr_POPULATED)
-  FetchContent_Populate(bxzstr)
-  configure_file(${bxzstr_SOURCE_DIR}/bxzstr/config.hpp.in
-                 ${bxzstr_SOURCE_DIR}/bxzstr/config.hpp)
-endif()
-target_include_directories(bxzstr INTERFACE ${bxzstr_SOURCE_DIR})
-
-# pybind11
-if(MLX_BUILD_PYTHON_BINDINGS)
-  find_package(Python COMPONENTS Interpreter Development.Module)
-
-  # avoid warning regarding FindPythonInterp and FindPythonLibs modules which
-  # are deprecated from CMake 3.27
-  set(pybind11_patch git apply
-                     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/pybind11-v2.11.1.patch)
-  FetchContent_Declare(
-    pybind11
-    GIT_REPOSITORY https://github.com/pybind/pybind11
-    GIT_TAG v2.11.1
-    # patch is always applied, so we silently fail if already patched
-    PATCH_COMMAND ${pybind11_patch} || true)
-
-  FetchContent_GetProperties(pybind11)
-  if(NOT pybind11_POPULATED)
-    FetchContent_Populate(pybind11)
-    add_subdirectory(${pybind11_SOURCE_DIR} ${pybind11_BINARY_DIR})
-  endif()
-endif()
+  GIT_TAG "v1.2.3"
+  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch
+  # never update (thus never patch again)
+  UPDATE_COMMAND ""
+  # note: we do run configure
+  BUILD_COMMAND ""
+  INSTALL_COMMAND "")
+add_library(bxzstr INTERFACE)
+add_dependencies(bxzstr bxzstr-repo)
+ExternalProject_Get_Property(bxzstr-repo SOURCE_DIR)
+target_include_directories(bxzstr INTERFACE ${SOURCE_DIR})
 
 # ----------------------------- lib -----------------------------
 

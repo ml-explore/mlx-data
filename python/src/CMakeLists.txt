@@ -1,3 +1,13 @@
+find_package(
+  Python
+  COMPONENTS Interpreter Development.Module
+  REQUIRED)
+execute_process(
+  COMMAND "${Python_EXECUTABLE}" -m pybind11 --cmakedir
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+  OUTPUT_VARIABLE pybind11_ROOT)
+find_package(pybind11 CONFIG REQUIRED)
+
 pybind11_add_module(
   _c
   ${CMAKE_CURRENT_LIST_DIR}/wrap.cpp
