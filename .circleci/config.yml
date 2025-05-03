@@ -168,6 +168,10 @@ jobs:
     steps:
       - checkout
       - run:
+          name: Install dependencies
+          command: |
+            yum install -q perl-IPC-Cmd
+      - run:
           name: Build wheel
           command: |
             PYBIN=/opt/python/cp<< parameters.python_version >>-cp<< parameters.python_version >>/bin
