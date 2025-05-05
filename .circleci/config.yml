@@ -177,6 +177,7 @@ jobs:
             PYBIN=/opt/python/cp<< parameters.python_version >>-cp<< parameters.python_version >>/bin
             $PYBIN/pip install -U pip
             $PYBIN/pip install build
+            $PYBIN/pip install twine
             SUPER_BUILD=ON \
               << parameters.extra_env >> \
               CMAKE_BUILD_PARALLEL_LEVEL="" \
@@ -224,6 +225,7 @@ jobs:
             pip install numpy
             pip install build
             pip install delocate
+            pip install twine
       - run:
           name: Build wheel
           command: |
