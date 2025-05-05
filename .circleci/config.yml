@@ -180,7 +180,6 @@ jobs:
             $PYBIN/pip install twine
             SUPER_BUILD=ON \
               << parameters.extra_env >> \
-              CMAKE_BUILD_PARALLEL_LEVEL="" \
               $PYBIN/python -m build --wheel
             auditwheel show dist/*
             auditwheel repair dist/*
