@@ -1,13 +1,12 @@
 
-
 <!DOCTYPE html>
 
 
-<html lang="en" data-content_root="" >
+<html lang="en" data-content_root="../../" >
 
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <title>mlx.data.core.AWSFileFetcher.prefetch &#8212; MLX Data 0.0.2 documentation</title>
   
@@ -15,34 +14,32 @@
   
   <script data-cfasync="false">
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
-    document.documentElement.dataset.theme = localStorage.getItem("theme") || "light";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/bootstrap.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
 
   
-  <link href="../../_static/vendor/fontawesome/6.5.1/css/all.min.css?digest=8d27b9dea8ad943066ae" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.1/webfonts/fa-regular-400.woff2" />
+  <link href="../../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
 
-    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
-    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/sphinx-book-theme.css?v=eba8b062" />
   
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae" />
-  <script src="../../_static/vendor/fontawesome/6.5.1/js/all.min.js?digest=8d27b9dea8ad943066ae"></script>
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
 
-    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
-    <script src="../../_static/jquery.js"></script>
-    <script src="../../_static/underscore.js"></script>
-    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
-    <script src="../../_static/doctools.js"></script>
-    <script src="../../_static/scripts/sphinx-book-theme.js"></script>
+    <script src="../../_static/documentation_options.js?v=f131489c"></script>
+    <script src="../../_static/doctools.js?v=9bcbadda"></script>
+    <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'python/_autosummary/mlx.data.core.AWSFileFetcher.prefetch';</script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -56,27 +53,23 @@
 
   
   
-  <a id="pst-skip-link" class="skip-link" href="#main-content">Skip to main content</a>
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
-    <i class="fa-solid fa-arrow-up"></i>
-    Back to top
-  </button>
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__primary"
-          id="__primary"/>
-  <label class="overlay overlay-primary" for="__primary"></label>
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
   
   <input type="checkbox"
           class="sidebar-toggle"
-          name="__secondary"
-          id="__secondary"/>
-  <label class="overlay overlay-secondary" for="__secondary"></label>
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
   
   <div class="search-button__wrapper">
     <div class="search-button__overlay"></div>
@@ -98,8 +91,13 @@
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
 </form></div>
   </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar">
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
     </header>
   
 
@@ -123,6 +121,8 @@
         <div class="sidebar-primary-item">
 
   
+    
+  
 
 <a class="navbar-brand logo" href="../../index.html">
   
@@ -144,7 +144,7 @@
 
  <script>
  document.write(`
-   <button class="btn navbar-btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass"></i>
     <span class="search-button__default-text">Search</span>
     <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -161,10 +161,11 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../../quick_start.html">Quick Start Guide</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../buffers_streams_samples.html">Buffers, Streams and Samples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../hf_datasets_streams.html">HuggingFace Datasets and MLX Streams</a></li>
 </ul>
 <p aria-level="2" class="caption" role="heading"><span class="caption-text">Python API Reference</span></p>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../dataset.html">Common operations</a><input class="toctree-checkbox" id="toctree-checkbox-1" name="toctree-checkbox-1" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-1"><i class="fa-solid fa-chevron-down"></i></label><ul>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../dataset.html">Common operations</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.batch.html">mlx.data.Buffer.batch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.filter_by_shape.html">mlx.data.Buffer.filter_by_shape</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.filter_key.html">mlx.data.Buffer.filter_key</a></li>
@@ -194,17 +195,18 @@
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.squeeze.html">mlx.data.Buffer.squeeze</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.tokenize.html">mlx.data.Buffer.tokenize</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../buffer.html">Buffer</a><input class="toctree-checkbox" id="toctree-checkbox-2" name="toctree-checkbox-2" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-2"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../buffer.html">Buffer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.buffer_from_vector.html">mlx.data.buffer_from_vector</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.files_from_tar.html">mlx.data.files_from_tar</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.ordered_prefetch.html">mlx.data.Buffer.ordered_prefetch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.partition.html">mlx.data.Buffer.partition</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.perm.html">mlx.data.Buffer.perm</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.shuffle.html">mlx.data.Buffer.shuffle</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Buffer.to_stream.html">mlx.data.Buffer.to_stream</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../stream.html">Stream</a><input class="toctree-checkbox" id="toctree-checkbox-3" name="toctree-checkbox-3" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-3"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../stream.html">Stream</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.stream_csv_reader.html">mlx.data.stream_csv_reader</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.stream_csv_reader_from_string.html">mlx.data.stream_csv_reader_from_string</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.stream_line_reader.html">mlx.data.stream_line_reader</a></li>
@@ -219,27 +221,29 @@
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Stream.sliding_window.html">mlx.data.Stream.sliding_window</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.Stream.prefetch.html">mlx.data.Stream.prefetch</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../common_datasets.html">Common Datasets</a><input class="toctree-checkbox" id="toctree-checkbox-4" name="toctree-checkbox-4" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-4"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../common_datasets.html">Common Datasets</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_mnist.html">mlx.data.datasets.load_mnist</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_fashion_mnist.html">mlx.data.datasets.load_fashion_mnist</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_cifar10.html">mlx.data.datasets.load_cifar10</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_cifar100.html">mlx.data.datasets.load_cifar100</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_imagenet.html">mlx.data.datasets.load_imagenet</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_images_from_folder.html">mlx.data.datasets.load_images_from_folder</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_librispeech.html">mlx.data.datasets.load_librispeech</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_libritts_r.html">mlx.data.datasets.load_libritts_r</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_wikitext_lines.html">mlx.data.datasets.load_wikitext_lines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.datasets.load_speechcommands.html">mlx.data.datasets.load_speechcommands</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a><input class="toctree-checkbox" id="toctree-checkbox-5" name="toctree-checkbox-5" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-5"><i class="fa-solid fa-chevron-down"></i></label><ul>
-<li class="toctree-l2 has-children"><a class="reference internal" href="mlx.data.core.Tokenizer.html">mlx.data.core.Tokenizer</a><input class="toctree-checkbox" id="toctree-checkbox-6" name="toctree-checkbox-6" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-6"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../tokenizing.html">Tokenizing with MLX data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mlx.data.core.Tokenizer.html">mlx.data.core.Tokenizer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.__init__.html">mlx.data.core.Tokenizer.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.tokenize.html">mlx.data.core.Tokenizer.tokenize</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.tokenize_rand.html">mlx.data.core.Tokenizer.tokenize_rand</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.Tokenizer.tokenize_shortest.html">mlx.data.core.Tokenizer.tokenize_shortest</a></li>
 </ul>
-</li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="mlx.data.core.CharTrie.html">mlx.data.core.CharTrie</a><input class="toctree-checkbox" id="toctree-checkbox-7" name="toctree-checkbox-7" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-7"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="mlx.data.core.CharTrie.html">mlx.data.core.CharTrie</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.__init__.html">mlx.data.core.CharTrie.__init__</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.insert.html">mlx.data.core.CharTrie.insert</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.key.html">mlx.data.core.CharTrie.key</a></li>
@@ -249,23 +253,23 @@
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.root.html">mlx.data.core.CharTrie.root</a></li>
 <li class="toctree-l3"><a class="reference internal" href="_autosummary/mlx.data.core.CharTrie.search.html">mlx.data.core.CharTrie.search</a></li>
 </ul>
-</li>
+</details></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.tokenizer_helpers.read_trie_from_vocab.html">mlx.data.tokenizer_helpers.read_trie_from_vocab</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.tokenizer_helpers.read_trie_from_spm.html">mlx.data.tokenizer_helpers.read_trie_from_spm</a></li>
 </ul>
-</li>
-<li class="toctree-l1 has-children"><a class="reference internal" href="../features.html">Feature extraction</a><input class="toctree-checkbox" id="toctree-checkbox-8" name="toctree-checkbox-8" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-8"><i class="fa-solid fa-chevron-down"></i></label><ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../features.html">Feature extraction</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.features.WindowType.html">mlx.data.features.WindowType</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.features.FrequencyScale.html">mlx.data.features.FrequencyScale</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.features.mfsc.html">mlx.data.features.mfsc</a></li>
 </ul>
-</li>
-<li class="toctree-l1 current active has-children"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a><input checked="" class="toctree-checkbox" id="toctree-checkbox-9" name="toctree-checkbox-9" type="checkbox"/><label class="toctree-toggle" for="toctree-checkbox-9"><i class="fa-solid fa-chevron-down"></i></label><ul class="current">
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../miscellaneous.html">Miscellaneous</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.core.AWSFileFetcher.__init__.html">mlx.data.core.AWSFileFetcher.__init__</a></li>
 <li class="toctree-l2"><a class="reference internal" href="mlx.data.core.AWSFileFetcher.fetch.html">mlx.data.core.AWSFileFetcher.fetch</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">mlx.data.core.AWSFileFetcher.prefetch</a></li>
 </ul>
-</li>
+</details></li>
 </ul>
 
     </div>
@@ -281,7 +285,7 @@
 
       </div>
       
-      <main id="main-content" class="bd-main">
+      <main id="main-content" class="bd-main" role="main">
         
         
 
@@ -290,14 +294,14 @@
           <div class="bd-content">
             <div class="bd-article-container">
               
-              <div class="bd-header-article">
+              <div class="bd-header-article d-print-none">
 <div class="header-article-items header-article__inner">
   
     <div class="header-article-items__start">
       
-        <div class="header-article-item"><label class="sidebar-toggle primary-toggle btn btn-sm" for="__primary" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
   <span class="fa-solid fa-bars"></span>
-</label></div>
+</button></div>
       
     </div>
   
@@ -390,10 +394,10 @@
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <span class="theme-switch nav-link" data-mode="light"><i class="fa-solid fa-sun fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="dark"><i class="fa-solid fa-moon fa-lg"></i></span>
-    <span class="theme-switch nav-link" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg"></i></span>
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
   </button>
 `);
 </script>
@@ -401,12 +405,14 @@ document.write(`
 
 <script>
 document.write(`
-  <button class="btn btn-sm navbar-btn search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
   </button>
 `);
 </script>
-
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
 </div></div>
       
     </div>
@@ -422,6 +428,14 @@ document.write(`
     <div id="print-main-content">
         <div id="jb-print-toc">
             
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlx.data.core.AWSFileFetcher.prefetch"><code class="docutils literal notranslate"><span class="pre">AWSFileFetcher.prefetch()</span></code></a></li>
+</ul>
+            </nav>
         </div>
     </div>
 </div>
@@ -432,10 +446,10 @@ document.write(`
                 <article class="bd-article">
                   
   <section id="mlx-data-core-awsfilefetcher-prefetch">
-<h1>mlx.data.core.AWSFileFetcher.prefetch<a class="headerlink" href="#mlx-data-core-awsfilefetcher-prefetch" title="Permalink to this heading">#</a></h1>
+<h1>mlx.data.core.AWSFileFetcher.prefetch<a class="headerlink" href="#mlx-data-core-awsfilefetcher-prefetch" title="Link to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="mlx.data.core.AWSFileFetcher.prefetch">
-<span class="sig-prename descclassname"><span class="pre">AWSFileFetcher.</span></span><span class="sig-name descname"><span class="pre">prefetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">mlx.data._c.core.FileFetcher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.12)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#mlx.data.core.AWSFileFetcher.prefetch" title="Permalink to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">AWSFileFetcher.</span></span><span class="sig-name descname"><span class="pre">prefetch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">self</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">mlx.data._c.core.FileFetcher</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filenames</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.13)"><span class="pre">None</span></a></span></span><a class="headerlink" href="#mlx.data.core.AWSFileFetcher.prefetch" title="Link to this definition">#</a></dt>
 <dd><p>Start prefetching these files.</p>
 <p><code class="docutils literal notranslate"><span class="pre">num_prefetch_max</span></code> files are downloaded with
 <code class="docutils literal notranslate"><span class="pre">num_prefetch_threads</span></code> parallelism. When one of the prefetched
@@ -444,7 +458,7 @@ downloaded.</p>
 <p>At any given point we keep <code class="docutils literal notranslate"><span class="pre">num_kept_files</span></code> in the local cache.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.12)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.12)"><em>str</em></a><em>]</em>) – A list of filenames to be prefetched in order.</p>
+<dd class="field-odd"><p><strong>filenames</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – A list of filenames to be prefetched in order.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -459,7 +473,7 @@ downloaded.</p>
               
               
               
-                <footer class="prev-next-footer">
+                <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
     <a class="left-prev"
@@ -478,7 +492,20 @@ downloaded.</p>
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"></div>
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mlx.data.core.AWSFileFetcher.prefetch"><code class="docutils literal notranslate"><span class="pre">AWSFileFetcher.prefetch()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
               
             
           </div>
@@ -523,8 +550,8 @@ By MLX Contributors
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="../../_static/scripts/bootstrap.js?digest=8d27b9dea8ad943066ae"></script>
-<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=8d27b9dea8ad943066ae"></script>
+  <script src="../../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
 
   <footer class="bd-footer">
   </footer>
