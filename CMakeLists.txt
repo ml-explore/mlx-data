@@ -29,21 +29,15 @@ add_library(stb INTERFACE)
 add_dependencies(stb stb-repo)
 target_include_directories(stb INTERFACE ${SOURCE_DIR})
 
+include(FetchContent)
+
 # bxzstr
-ExternalProject_Add(
-  bxzstr-repo
+FetchContent_Declare(
+  bxzstr
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
   GIT_TAG "v1.2.3"
-  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch
-  # never update (thus never patch again)
-  UPDATE_COMMAND ""
-  # note: we do run configure
-  BUILD_COMMAND ""
-  INSTALL_COMMAND "")
-add_library(bxzstr INTERFACE)
-add_dependencies(bxzstr bxzstr-repo)
-ExternalProject_Get_Property(bxzstr-repo SOURCE_DIR)
-target_include_directories(bxzstr INTERFACE ${SOURCE_DIR})
+  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch)
+FetchContent_MakeAvailable(bxzstr)
 
 # ----------------------------- lib -----------------------------
 
