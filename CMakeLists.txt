@@ -14,36 +14,26 @@ endif()
 
 # ----------------------------- 3rdparty -----------------------------
 
-include(ExternalProject)
+include(FetchContent)
 
 # stb
-ExternalProject_Add(
-  stb-repo
+FetchContent_Declare(
+  stb
   GIT_REPOSITORY "https://github.com/nothings/stb.git"
-  GIT_TAG "f0569113c93ad095470c54bf34a17b36646bbbb5"
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND "")
-ExternalProject_Get_Property(stb-repo SOURCE_DIR)
-add_library(stb INTERFACE)
-add_dependencies(stb stb-repo)
-target_include_directories(stb INTERFACE ${SOURCE_DIR})
+  GIT_TAG "f0569113c93ad095470c54bf34a17b36646bbbb5")
+FetchContent_MakeAvailable(stb)
+add_library(stb INTERFACE) # because no CMake file in stb
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
 
 # bxzstr
-ExternalProject_Add(
-  bxzstr-repo
+FetchContent_Declare(
+  bxzstr
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
   GIT_TAG "v1.2.3"
   PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch
   # never update (thus never patch again)
-  UPDATE_COMMAND ""
-  # note: we do run configure
-  BUILD_COMMAND ""
-  INSTALL_COMMAND "")
-add_library(bxzstr INTERFACE)
-add_dependencies(bxzstr bxzstr-repo)
-ExternalProject_Get_Property(bxzstr-repo SOURCE_DIR)
-target_include_directories(bxzstr INTERFACE ${SOURCE_DIR})
+  UPDATE_COMMAND "")
+FetchContent_MakeAvailable(bxzstr)
 
 # ----------------------------- lib -----------------------------
 
@@ -52,6 +42,7 @@ find_package(SampleRate)
 find_package(Threads REQUIRED)
 find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale
                                swresample)
+find_package(ZLIB) # AWS SDK CMake misses this one
 find_package(
   AWSSDK
   COMPONENTS s3

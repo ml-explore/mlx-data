@@ -1,21 +1,32 @@
-From 01ab32488012f6783e860df2ef26655be544ff5c Mon Sep 17 00:00:00 2001
+From 666f5dd155a0e77c398150734bc34719b8d2f95a Mon Sep 17 00:00:00 2001
 From: Ronan Collobert <collobert@apple.com>
-Date: Fri, 2 May 2025 16:12:12 -0700
-Subject: [PATCH] bxzstr/ instead of include/
+Date: Mon, 12 May 2025 15:49:17 -0700
+Subject: [PATCH] fix build
 
 ---
- CMakeLists.txt                              |  2 +-
- {include => bxzstr}/bxzstr.hpp              |  6 +++---
- {include => bxzstr}/bz_stream_wrapper.hpp   |  2 +-
- {include => bxzstr}/compression_types.hpp   | 10 +++++-----
- {include => bxzstr}/config.hpp              |  0
- {include => bxzstr}/config.hpp.in           |  0
- {include => bxzstr}/lzma_stream_wrapper.hpp |  2 +-
- {include => bxzstr}/stream_wrapper.hpp      |  0
- {include => bxzstr}/strict_fstream.hpp      |  0
- {include => bxzstr}/z_stream_wrapper.hpp    |  2 +-
- {include => bxzstr}/zstd_stream_wrapper.hpp |  2 +-
- 11 files changed, 13 insertions(+), 13 deletions(-)
+ CMakeLists.txt                                | 194 ++++++++----------
+ {include => bxzstr}/bxzstr.hpp                |   6 +-
+ {include => bxzstr}/bz_stream_wrapper.hpp     |   2 +-
+ {include => bxzstr}/compression_types.hpp     |  10 +-
+ {include => bxzstr}/config.hpp                |   0
+ {include => bxzstr}/config.hpp.in             |   0
+ {include => bxzstr}/lzma_stream_wrapper.hpp   |   2 +-
+ {include => bxzstr}/stream_wrapper.hpp        |   0
+ {include => bxzstr}/strict_fstream.hpp        |   0
+ {include => bxzstr}/z_stream_wrapper.hpp      |   2 +-
+ {include => bxzstr}/zstd_stream_wrapper.hpp   |   2 +-
+ .../bxzstr_ifstream_integrationtest.hpp       |   2 +-
+ .../bxzstr_ofstream_integrationtest.hpp       |   2 +-
+ test/include/bz_stream_wrapper_unittest.hpp   |   2 +-
+ test/include/compression_types_unittest.hpp   |   2 +-
+ test/include/lzma_stream_wrapper_unittest.hpp |   2 +-
+ test/include/z_stream_wrapper_unittest.hpp    |   2 +-
+ test/include/zstd_stream_wrapper_unittest.hpp |   2 +-
+ test/src/bz_stream_wrapper_unittest.cpp       |   2 +-
+ test/src/lzma_stream_wrapper_unittest.cpp     |   2 +-
+ test/src/z_stream_wrapper_unittest.cpp        |   2 +-
+ test/src/zstd_stream_wrapper_unittest.cpp     |   2 +-
+ 22 files changed, 111 insertions(+), 129 deletions(-)
  rename {include => bxzstr}/bxzstr.hpp (99%)
  rename {include => bxzstr}/bz_stream_wrapper.hpp (98%)
  rename {include => bxzstr}/compression_types.hpp (95%)
@@ -28,18 +39,249 @@ Subject: [PATCH] bxzstr/ instead of include/
  rename {include => bxzstr}/zstd_stream_wrapper.hpp (99%)
 
 diff --git a/CMakeLists.txt b/CMakeLists.txt
-index de23a9d..45260cc 100644
+index de23a9d..fd1873f 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -69,7 +69,7 @@ else()
-   endif()
+@@ -1,151 +1,133 @@
+ cmake_minimum_required(VERSION 3.13)
+ project(bxzstr)
+ 
+-## For FindZstd
++# -- add target
++
++add_library(bxzstr INTERFACE)
++add_library(bxzstr::bxzstr ALIAS bxzstr)
++
++target_include_directories(bxzstr INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}")
++target_compile_features(bxzstr INTERFACE cxx_std_11) # require c++11 flag
++
++# For FindZstd
+ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+ 
+-if(DEFINED ZLIB_FOUND)
+-  if(ZLIB_FOUND)
+-    set(BXZSTR_Z_SUPPORT 1)
+-  else()
+-    set(BXZSTR_Z_SUPPORT 0)
+-  endif()
++# -- locate zlib
++find_package(ZLIB) # defines imported target ZLIB::ZLIB
++if(ZLIB_FOUND)
++  message(STATUS "bxzstr - found libz (version: ${ZLIB_VERSION_STRING})")
++  set(BXZSTR_Z_SUPPORT 1)
++  target_link_libraries(bxzstr INTERFACE ZLIB::ZLIB)
+ else()
+-  # -- locate zlib
+-  find_package(ZLIB) # defines imported target ZLIB::ZLIB
+-  if(ZLIB_FOUND)
+-    message(STATUS "bxzstr - found libz (version: ${ZLIB_VERSION_STRING})")
+-    set(BXZSTR_Z_SUPPORT 1)
+-  else()
+-    set(BXZSTR_Z_SUPPORT 0)
+-  endif()
++  set(BXZSTR_Z_SUPPORT 0)
+ endif()
+ 
+-if(DEFINED BZIP2_FOUND)
+-  if(BZIP2_FOUND)
+-    set(BXZSTR_BZ2_SUPPORT 1)
+-  else()
+-    set(BXZSTR_BZ2_SUPPORT 0)
+-  endif()
++find_package(BZip2)
++if(BZIP2_FOUND)
++  message(STATUS "bxzstr - found libbz2 (version: ${BZIP2_VERSION_STRING})")
++  set(BXZSTR_BZ2_SUPPORT 1)
++  target_link_libraries(bxzstr INTERFACE BZip2::BZip2)
+ else()
+-  find_package(BZip2)
+-  if(BZIP2_FOUND)
+-    message(STATUS "bxzstr - found libbz2 (version: ${BZIP2_VERSION_STRING})")
+-    set(BXZSTR_BZ2_SUPPORT 1)
+-  else()
+-    set(BXZSTR_BZ2_SUPPORT 0)
+-  endif()
++  set(BXZSTR_BZ2_SUPPORT 0)
+ endif()
+ 
+-if(DEFINED LIBLZMA_FOUND)
+-  if(LIBLZMA_FOUND)
+-    set(BXZSTR_LZMA_SUPPORT 1)
+-  else()
+-    set(BXZSTR_LZMA_SUPPORT 0)
+-  endif()
++find_package(LibLZMA)
++if(LIBLZMA_FOUND)
++  message(STATUS "bxzstr - found liblzma (version: ${LIBLZMA_VERSION_STRING})")
++  set(BXZSTR_LZMA_SUPPORT 1)
++  target_link_libraries(bxzstr INTERFACE LibLZMA::LibLZMA)
+ else()
+-  find_package(LibLZMA)
+-  if(LIBLZMA_FOUND)
+-    message(STATUS "bxzstr - found liblzma (version: ${LIBLZMA_VERSION_STRING})")
+-    set(BXZSTR_LZMA_SUPPORT 1)
+-  else()
+-    set(BXZSTR_LZMA_SUPPORT 0)
+-  endif()
++  set(BXZSTR_LZMA_SUPPORT 0)
+ endif()
+ 
+-if(DEFINED ZSTD_FOUND)
+-  if(ZSTD_FOUND)
+-    set(BXZSTR_ZSTD_SUPPORT 1)
+-  else()
+-    set(BXZSTR_ZSTD_SUPPORT 0)
+-  endif()
++find_package(Zstd)
++if(ZSTD_FOUND)
++  message(STATUS "bxzstr - found libzstd (version: ${ZSTD_VERSION_STRING})")
++  set(BXZSTR_ZSTD_SUPPORT 1)
++  target_link_libraries(bxzstr INTERFACE Zstd::Zstd)
+ else()
+-  find_package(Zstd)
+-  if(ZSTD_FOUND)
+-    message(STATUS "bxzstr - found libzstd (version: ${ZSTD_VERSION_STRING})")
+-    set(BXZSTR_ZSTD_SUPPORT 1)
+-  else()
+-    set(BXZSTR_ZSTD_SUPPORT 0)
+-  endif()
++  set(BXZSTR_ZSTD_SUPPORT 0)
  endif()
  
 -configure_file(include/config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/include/config.hpp @ONLY)
-+configure_file(bxzstr/config.hpp.in ${CMAKE_CURRENT_SOURCE_DIR}/bxzstr/config.hpp @ONLY)
++configure_file(bxzstr/config.hpp.in
++               ${CMAKE_CURRENT_SOURCE_DIR}/bxzstr/config.hpp @ONLY)
  
  if(CMAKE_BUILD_TYPE MATCHES Debug)
    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -Wpedantic")
+-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -g -Wall -Wextra -Wpedantic")
+-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -g -Wall -Wextra -Wpedantic")
++  set(CMAKE_EXE_LINKER_FLAGS
++      "${CMAKE_EXE_LINKER_FLAGS} -g -Wall -Wextra -Wpedantic")
++  set(CMAKE_SHARED_LINKER_FLAGS
++      "${CMAKE_SHARED_LINKER_FLAGS} -g -Wall -Wextra -Wpedantic")
+ endif()
+ 
+-if (CMAKE_VERSION VERSION_LESS "3.1")
+-  if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+-    set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
+-  endif ()
+-else ()
+-  set (CMAKE_CXX_STANDARD 11)
+-endif ()
+-
+-# -- add target
+-
+-add_library(bxzstr INTERFACE)
+-add_library(bxzstr::bxzstr ALIAS bxzstr)
+-
+-# -- set target properties
+-
+-target_include_directories(bxzstr INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/include")
+-target_link_libraries(bxzstr INTERFACE ZLIB::ZLIB BZip2::BZip2 LibLZMA::LibLZMA Zstd::Zstd)
+-target_compile_features(bxzstr INTERFACE cxx_std_11) # require c++11 flag
++if(CMAKE_VERSION VERSION_LESS "3.1")
++  if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
++    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++11")
++  endif()
++else()
++  set(CMAKE_CXX_STANDARD 11)
++endif()
+ 
+-## Download googletest if building tests
++# Download googletest if building tests
+ if(CMAKE_BUILD_TESTS)
+-  if (DEFINED CMAKE_GOOGLETEST_HEADERS)
+-    message(STATUS "googletest headers provided in: ${CMAKE_GOOGLETEST_HEADERS}")
++  if(CMAKE_GOOGLETEST_HEADERS)
++    message(
++      STATUS "googletest headers provided in: ${CMAKE_GOOGLETEST_HEADERS}")
+   else()
+-    configure_file(${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists-googletest.txt.in ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download/CMakeLists.txt)
+-    execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
++    configure_file(
++      ${CMAKE_CURRENT_SOURCE_DIR}/test/CMakeLists-googletest.txt.in
++      ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download/CMakeLists.txt)
++    execute_process(
++      COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+       RESULT_VARIABLE result
+-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download )
++      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download
++    )
+     if(result)
+       message(FATAL_ERROR "CMake step for googletest failed: ${result}")
+     endif()
+-    execute_process(COMMAND ${CMAKE_COMMAND} --build .
++    execute_process(
++      COMMAND ${CMAKE_COMMAND} --build .
+       RESULT_VARIABLE result
+-      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download )
++      WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/external/googletest-download
++    )
+     if(result)
+       message(FATAL_ERROR "Build step for googletest failed: ${result}")
+     endif()
+-    set(CMAKE_GOOGLETEST_HEADERS ${CMAKE_CURRENT_BINARY_DIR}/external/googletest/googletest/include)
++    set(CMAKE_GOOGLETEST_HEADERS
++        ${CMAKE_CURRENT_BINARY_DIR}/external/googletest/googletest/include)
+     add_subdirectory(${CMAKE_CURRENT_BINARY_DIR}/external/googletest
+                      ${CMAKE_CURRENT_BINARY_DIR}/external/googletest/build)
+   endif()
+   set_target_properties(gmock PROPERTIES EXCLUDE_FROM_ALL 1)
+   set_target_properties(gmock_main PROPERTIES EXCLUDE_FROM_ALL 1)
+   include_directories("${CMAKE_GOOGLETEST_HEADERS}")
+-  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/include ${CMAKE_CURRENT_SOURCE_DIR}/include)
++  include_directories(${CMAKE_CURRENT_SOURCE_DIR}/test/include
++                      ${CMAKE_CURRENT_SOURCE_DIR})
+   enable_testing()
+-  add_executable(runTests
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/compression_types_unittest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/z_stream_wrapper_unittest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bz_stream_wrapper_unittest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/lzma_stream_wrapper_unittest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/zstd_stream_wrapper_unittest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bxzstr_ofstream_integrationtest.cpp
+-    ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bxzstr_ifstream_integrationtest.cpp)
+-  add_test(runTests runTests)
+-
+-  if(DEFINED ZLIB_FOUND)
+-    target_link_libraries(runTests gtest gtest_main z)
++  set(runTests-src
++      ${CMAKE_CURRENT_SOURCE_DIR}/test/src/compression_types_unittest.cpp
++      ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bxzstr_ofstream_integrationtest.cpp
++      ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bxzstr_ifstream_integrationtest.cpp)
++  if(ZLIB_FOUND)
++    list(APPEND runTests-src
++         ${CMAKE_CURRENT_SOURCE_DIR}/test/src/z_stream_wrapper_unittest.cpp)
+   endif()
+-
+-  if(DEFINED BZIP2_FOUND)
+-    target_link_libraries(runTests gtest gtest_main bz2)
++  if(BZIP2_FOUND)
++    list(APPEND runTests-src
++         ${CMAKE_CURRENT_SOURCE_DIR}/test/src/bz_stream_wrapper_unittest.cpp)
+   endif()
+-
+-  if(DEFINED LIBLZMA_FOUND)
+-    target_link_libraries(runTests gtest gtest_main lzma)
++  if(LIBLZMA_FOUND)
++    list(APPEND runTests-src
++         ${CMAKE_CURRENT_SOURCE_DIR}/test/src/lzma_stream_wrapper_unittest.cpp)
+   endif()
+-
+-  if(DEFINED ZSTD_FOUND)
+-    target_link_libraries(runTests gtest gtest_main zstd)
++  if(ZSTD_FOUND)
++    list(APPEND runTests-src
++         ${CMAKE_CURRENT_SOURCE_DIR}/test/src/zstd_stream_wrapper_unittest.cpp)
+   endif()
++
++  add_executable(runTests ${runTests-src})
++  target_link_libraries(runTests gtest gtest_main bxzstr)
++
++  add_test(runTests runTests)
++
+ endif()
 diff --git a/include/bxzstr.hpp b/bxzstr/bxzstr.hpp
 similarity index 99%
 rename from include/bxzstr.hpp
@@ -164,6 +406,149 @@ index 7bc7aa0..65704cc 100644
  
  namespace bxz {
  /// Exception class thrown by failed zstd operations.
+diff --git a/test/include/bxzstr_ifstream_integrationtest.hpp b/test/include/bxzstr_ifstream_integrationtest.hpp
+index 8c9a23e..9e63c75 100644
+--- a/test/include/bxzstr_ifstream_integrationtest.hpp
++++ b/test/include/bxzstr_ifstream_integrationtest.hpp
+@@ -15,7 +15,7 @@
+ 
+ #include "gtest/gtest.h"
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ // Integration tests for bxz::ifstream
+ //
+diff --git a/test/include/bxzstr_ofstream_integrationtest.hpp b/test/include/bxzstr_ofstream_integrationtest.hpp
+index 99dacfe..3b1b6ed 100644
+--- a/test/include/bxzstr_ofstream_integrationtest.hpp
++++ b/test/include/bxzstr_ofstream_integrationtest.hpp
+@@ -15,7 +15,7 @@
+ 
+ #include "gtest/gtest.h"
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ // Integration tests for bxz::ofstream
+ //
+diff --git a/test/include/bz_stream_wrapper_unittest.hpp b/test/include/bz_stream_wrapper_unittest.hpp
+index 3b8a9e4..0bb7ff2 100644
+--- a/test/include/bz_stream_wrapper_unittest.hpp
++++ b/test/include/bz_stream_wrapper_unittest.hpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_BZ2_SUPPORT) && (BXZSTR_BZ2_SUPPORT) == 1
+ 
+diff --git a/test/include/compression_types_unittest.hpp b/test/include/compression_types_unittest.hpp
+index a4bef3d..3eff9ce 100644
+--- a/test/include/compression_types_unittest.hpp
++++ b/test/include/compression_types_unittest.hpp
+@@ -13,7 +13,7 @@
+ 
+ #include "gtest/gtest.h"
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ // Test detect_type
+ //
+diff --git a/test/include/lzma_stream_wrapper_unittest.hpp b/test/include/lzma_stream_wrapper_unittest.hpp
+index 86f4b1c..f84956c 100644
+--- a/test/include/lzma_stream_wrapper_unittest.hpp
++++ b/test/include/lzma_stream_wrapper_unittest.hpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_BZ2_SUPPORT) && (BXZSTR_BZ2_SUPPORT) == 1
+ 
+diff --git a/test/include/z_stream_wrapper_unittest.hpp b/test/include/z_stream_wrapper_unittest.hpp
+index c990bc6..21dbf82 100644
+--- a/test/include/z_stream_wrapper_unittest.hpp
++++ b/test/include/z_stream_wrapper_unittest.hpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_Z_SUPPORT) && (BXZSTR_Z_SUPPORT) == 1
+ 
+diff --git a/test/include/zstd_stream_wrapper_unittest.hpp b/test/include/zstd_stream_wrapper_unittest.hpp
+index 8add158..a94bc23 100644
+--- a/test/include/zstd_stream_wrapper_unittest.hpp
++++ b/test/include/zstd_stream_wrapper_unittest.hpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_ZSTD_SUPPORT) && (BXZSTR_ZSTD_SUPPORT) == 1
+ 
+diff --git a/test/src/bz_stream_wrapper_unittest.cpp b/test/src/bz_stream_wrapper_unittest.cpp
+index e6f63a3..885f1fe 100644
+--- a/test/src/bz_stream_wrapper_unittest.cpp
++++ b/test/src/bz_stream_wrapper_unittest.cpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_BZ2_SUPPORT) && (BXZSTR_BZ2_SUPPORT) == 1
+ 
+diff --git a/test/src/lzma_stream_wrapper_unittest.cpp b/test/src/lzma_stream_wrapper_unittest.cpp
+index 6287c94..f018877 100644
+--- a/test/src/lzma_stream_wrapper_unittest.cpp
++++ b/test/src/lzma_stream_wrapper_unittest.cpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_LZMA_SUPPORT) && (BXZSTR_LZMA_SUPPORT) == 1
+ 
+diff --git a/test/src/z_stream_wrapper_unittest.cpp b/test/src/z_stream_wrapper_unittest.cpp
+index 8be492d..f7b7eeb 100644
+--- a/test/src/z_stream_wrapper_unittest.cpp
++++ b/test/src/z_stream_wrapper_unittest.cpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_Z_SUPPORT) && (BXZSTR_Z_SUPPORT) == 1
+ 
+diff --git a/test/src/zstd_stream_wrapper_unittest.cpp b/test/src/zstd_stream_wrapper_unittest.cpp
+index ba95874..5a204dc 100644
+--- a/test/src/zstd_stream_wrapper_unittest.cpp
++++ b/test/src/zstd_stream_wrapper_unittest.cpp
+@@ -5,7 +5,7 @@
+  * This file is a part of bxzstr (https://github.com/tmaklin/bxzstr)
+  * Written by Tommi Mäklin (tommi@maklin.fi) */
+ 
+-#include "bxzstr.hpp"
++#include "bxzstr/bxzstr.hpp"
+ 
+ #if defined(BXZSTR_LZMA_SUPPORT) && (BXZSTR_LZMA_SUPPORT) == 1
+ 
 -- 
-2.48.0
+2.34.1
 
