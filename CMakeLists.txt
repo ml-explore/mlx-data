@@ -42,6 +42,7 @@ find_package(SampleRate)
 find_package(Threads REQUIRED)
 find_package(FFMPEG COMPONENTS avcodec avdevice avformat avutil swscale
                                swresample)
+find_package(ZLIB) # AWS SDK CMake misses this one
 find_package(
   AWSSDK
   COMPONENTS s3
