@@ -16,6 +16,7 @@
 #include "mlx/data/core/Tokenizer.h"
 #include "mlx/data/core/Trie.h"
 #include "mlx/data/core/Utils.h"
+#include "mlx/data/core/Version.h"
 
 #include <cstring>
 
@@ -36,6 +37,10 @@ void init_mlx_data_core(py::module& m) {
       .value("float", ArrayType::Float)
       .value("double", ArrayType::Double)
       .export_values();
+
+  m.def("version", &version);
+  m.def("supported_libs", &supported_libs);
+  m.def("supported_libs_version", &supported_libs_version);
 
   m.def("set_state", &set_state, py::arg("seed") = 1234);
 
