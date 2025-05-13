@@ -14,22 +14,16 @@ endif()
 
 # ----------------------------- 3rdparty -----------------------------
 
-include(ExternalProject)
+include(FetchContent)
 
 # stb
-ExternalProject_Add(
-  stb-repo
+FetchContent_Declare(
+  stb
   GIT_REPOSITORY "https://github.com/nothings/stb.git"
-  GIT_TAG "f0569113c93ad095470c54bf34a17b36646bbbb5"
-  CONFIGURE_COMMAND ""
-  BUILD_COMMAND ""
-  INSTALL_COMMAND "")
-ExternalProject_Get_Property(stb-repo SOURCE_DIR)
-add_library(stb INTERFACE)
-add_dependencies(stb stb-repo)
-target_include_directories(stb INTERFACE ${SOURCE_DIR})
-
-include(FetchContent)
+  GIT_TAG "f0569113c93ad095470c54bf34a17b36646bbbb5")
+FetchContent_MakeAvailable(stb)
+add_library(stb INTERFACE) # because no CMake file in stb
+target_include_directories(stb INTERFACE ${stb_SOURCE_DIR})
 
 # bxzstr
 FetchContent_Declare(
