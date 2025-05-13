@@ -92,6 +92,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/BPETokenizer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Levenshtein.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Utils.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/Audio.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSndfile.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/audio/AudioSampleRate.cpp
@@ -177,7 +178,26 @@ set_property(TARGET mlxdata PROPERTY POSITION_INDEPENDENT_CODE ON)
 if(SndFile_FOUND)
   target_link_libraries(mlxdata PRIVATE SndFile::sndfile)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_SNDFILE)
+  if(FLAC_FOUND)
+    set_property(
+      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
+      APPEND
+      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_FLAC")
+  endif()
+  if(OGG_FOUND)
+    set_property(
+      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
+      APPEND
+      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_OGG")
+  endif()
+  if(VORBIS_FOUND)
+    set_property(
+      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
+      APPEND
+      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_VORBIS")
+  endif()
 endif()
+
 if(SampleRate_FOUND)
   target_link_libraries(mlxdata PRIVATE SampleRate::samplerate)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_SAMPLERATE)
@@ -205,6 +225,7 @@ endif()
 if(FFMPEG_avformat_FOUND)
   target_include_directories(mlxdata PRIVATE ${FFMPEG_INCLUDE_DIRS})
   target_link_libraries(mlxdata PRIVATE ${FFMPEG_LIBRARIES})
+  message(STATUS "DUDE: ${FFMPEG_LIBRARIES}")
   target_compile_definitions(mlxdata PUBLIC MLX_HAS_FFMPEG)
 endif()
 
