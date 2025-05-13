@@ -36,7 +36,9 @@ FetchContent_Declare(
   bxzstr
   GIT_REPOSITORY "https://github.com/tmaklin/bxzstr.git"
   GIT_TAG "v1.2.3"
-  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch)
+  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/bxzstr-v1.2.3.patch
+  # never update (thus never patch again)
+  UPDATE_COMMAND "")
 FetchContent_MakeAvailable(bxzstr)
 
 # ----------------------------- lib -----------------------------
