@@ -11,7 +11,7 @@
 # libsamplerate
 #
 
-find_package(SampleRate CONFIG)
+find_package(SampleRate CONFIG QUIET)
 
 if(NOT TARGET SampleRate::samplerate)
   find_path(
