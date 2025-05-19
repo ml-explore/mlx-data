@@ -10,25 +10,9 @@
 # libsndfile include directory SndFile_LIBRARIES - Link these to use libsndfile
 #
 
-find_package(SndFile CONFIG)
-
-if(TARGET SndFile::sndfile AND NOT SndFile_WITH_EXTERNAL_LIBS)
-  message(FATAL_ERROR "Found sndfile but was NOT built with external libs.")
-endif()
+find_package(SndFile CONFIG QUIET)
 
 if(NOT TARGET SndFile::sndfile)
-  # SndFile must be built with encoder libs. These transitive dependencies will
-  # be taken care of if a SndFile config is found via find_dependency() - we
-  # need them for creating a new IMPORTED target
-  find_package(Ogg)
-  find_package(Vorbis)
-  find_package(FLAC)
-endif()
-
-if(NOT TARGET SndFile::sndfile
-   AND OGG_FOUND
-   AND VORBIS_FOUND
-   AND FLAC_FOUND)
   find_path(
     SndFile_INCLUDE_DIR sndfile.h
     PATHS ${SndFile_INC_DIR} ${SndFile_ROOT_DIR}/include
@@ -49,13 +33,138 @@ if(NOT TARGET SndFile::sndfile
                                     SndFile_LIBRARIES)
 
   if(SndFile_FOUND)
-    get_target_property(VORBIS_LIB Vorbis::vorbis IMPORTED_LOCATION)
-    get_target_property(VORBIS_ENC_LIB Vorbis::vorbisenc IMPORTED_LOCATION)
-    get_target_property(FLAC_LIB FLAC::FLAC IMPORTED_LOCATION)
-    get_target_property(OGG_LIB Ogg::ogg IMPORTED_LOCATION)
-    list(APPEND SNDFILE_DEP_LIBRARIES ${VORBIS_LIB} ${VORBIS_ENC_LIB}
-         ${FLAC_LIB} ${OGG_LIB})
+    # We will run-time check if SndFile supports libraries. We want to link only
+    # againsts the necessary ones.
 
+    # SndFile must be built with encoder libs. These transitive dependencies
+    # will be taken care of if a SndFile config is found via find_dependency() -
+    # we need them for creating a new IMPORTED target
+    find_package(Ogg)
+    find_package(Vorbis)
+    find_package(FLAC)
+    # recent SndFile may also include the following
+    find_package(Opus)
+    find_package(mpg123)
+    find_package(mp3lame)
+
+    set(CODEC_LIBRARIES)
+    if(OGG_FOUND)
+      list(APPEND CODEC_LIBRARIES ${OGG_LIBRARIES})
+    endif()
+    if(VORBIS_FOUND)
+      list(APPEND CODEC_LIBRARIES ${VORBIS_LIBRARIES})
+    endif()
+    if(FLAC_FOUND)
+      list(APPEND CODEC_LIBRARIES ${FLAC_LIBRARIES})
+    endif()
+    if(OPUS_FOUND)
+      list(APPEND CODEC_LIBRARIES ${OPUS_LIBRARIES})
+    endif()
+    if(MPG123_FOUND)
+      list(APPEND CODEC_LIBRARIES ${MPG123_LIBRARIES})
+    endif()
+    if(MP3LAME_FOUND)
+      list(APPEND CODEC_LIBRARIES ${MP3LAME_LIBRARIES})
+    endif()
+    function(sndfile_supports_format format_name format var)
+      set(src_${format_name}
+          "
+#include <sndfile.h>
+#include <memory.h>
+#if !defined(SF_FORMAT_MPEG)
+#define SF_FORMAT_MPEG 0x230000
+#endif
+#if !defined(SF_FORMAT_MPEG_LAYER_I)
+#define SF_FORMAT_MPEG_LAYER_I 0x0080
+#endif
+#if !defined(SF_FORMAT_OPUS)
+#define SF_FORMAT_OPUS 0x0064
+#endif
+int main() {
+SF_INFO sfinfo;
+memset (&sfinfo, 0, sizeof (sfinfo));
+sfinfo.samplerate= 44000;
+sfinfo.channels = 1;
+sfinfo.format = ${format};
+return !sf_format_check(&sfinfo);
+}
+     ")
+      set(src_${format_name}_filename
+          "${CMAKE_CURRENT_BINARY_DIR}/test_sndfile_${format_name}.c")
+      file(WRITE ${src_${format_name}_filename} "${src_${format_name}}")
+      try_run(
+        ${format_name}_EXITCODE ${format_name}_COMPILES
+        ${CMAKE_CURRENT_BINARY_DIR} ${src_${format_name}_filename}
+        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${SndFile_INCLUDE_DIRS}"
+                    LINK_LIBRARIES "${SndFile_LIBRARIES}"
+        # these are not use at this time but could be useful for debug
+        COMPILE_OUTPUT_VARIABLE ${format_name}_COMPILE_OUTPUT
+        RUN_OUTPUT_VARIABLE ${format_name}_RUN_OUTPUT)
+      if(${format_name}_EXITCODE STREQUAL "0")
+        set(${var}
+            TRUE
+            PARENT_SCOPE)
+        message(STATUS "SndFile: support for ${format_name} detected")
+      else()
+        set(${var}
+            FALSE
+            PARENT_SCOPE)
+        message(STATUS "SndFile: does not support ${format_name}")
+      endif()
+    endfunction()
+    sndfile_supports_format(flac "SF_FORMAT_FLAC  | SF_FORMAT_PCM_16"
+                            SNDFILE_SUPPORTS_FLAC)
+    sndfile_supports_format(vorbis "SF_FORMAT_OGG  | SF_FORMAT_VORBIS"
+                            SNDFILE_SUPPORTS_OGG)
+    sndfile_supports_format(opus "SF_FORMAT_OGG  | SF_FORMAT_OPUS"
+                            SNDFILE_SUPPORTS_OPUS)
+    sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_I"
+                            SNDFILE_SUPPORTS_MPEG)
+
+    # add dependencies on found libraries
+    if(SNDFILE_SUPPORTS_FLAC)
+      if(FLAC_FOUND)
+        get_target_property(FLAC_LIB FLAC::FLAC IMPORTED_LOCATION)
+        list(APPEND SNDFILE_DEP_LIBRARIES ${FLAC_LIB})
+      else()
+        message(FATAL_ERROR "SndFile supports FLAC but FLAC not found")
+      endif()
+    endif()
+    if(SNDFILE_SUPPORTS_OGG OR SNDFILE_SUPPORTS_OPUS)
+      if(VORBIS_FOUND)
+        get_target_property(VORBIS_LIB Vorbis::vorbis IMPORTED_LOCATION)
+        get_target_property(VORBIS_ENC_LIB Vorbis::vorbisenc IMPORTED_LOCATION)
+        list(APPEND SNDFILE_DEP_LIBRARIES ${VORBIS_LIB} ${VORBIS_ENC_LIB})
+      else()
+        message(FATAL_ERROR "SndFile supports Vorbis but Vorbis not found")
+      endif()
+      if(SNDFILE_SUPPORTS_OGG)
+        if(OGG_FOUND)
+          get_target_property(OGG_LIB Ogg::ogg IMPORTED_LOCATION)
+          list(APPEND SNDFILE_DEP_LIBRARIES ${OGG_LIB})
+        else()
+          message(FATAL_ERROR "SndFile supports Ogg but Ogg not found")
+        endif()
+      endif()
+      if(SNDFILE_SUPPORTS_OPUS)
+        if(OPUS_FOUND)
+          get_target_property(OPUS_LIB Opus::opus IMPORTED_LOCATION)
+          list(APPEND SNDFILE_DEP_LIBRARIES ${OPUS_LIB})
+        else()
+          message(FATAL_ERROR "SndFile supports Opus but Opus not found")
+        endif()
+      endif()
+    endif()
+    if(SNDFILE_SUPPORTS_MPEG)
+      if(MPG123_FOUND AND MP3LAME_FOUND)
+        get_target_property(MPG123_LIB MPG123::libmpg123 IMPORTED_LOCATION)
+        get_target_property(MP3LAME_LIB mp3lame::mp3lame IMPORTED_LOCATION)
+        list(APPEND SNDFILE_DEP_LIBRARIES ${MPG123_LIB} ${MP3LAME_LIB})
+      else()
+        message(
+          FATAL_ERROR "SndFile supports MPEG but mpg123 and mp3lame not found")
+      endif()
+    endif()
     add_library(SndFile::sndfile UNKNOWN IMPORTED)
     set_target_properties(
       SndFile::sndfile
@@ -69,4 +178,4 @@ if(NOT TARGET SndFile::sndfile
   else()
     message(STATUS "libsndfile not found.")
   endif()
-endif() # NOT TARGET SndFile::sndfile
+endif()
