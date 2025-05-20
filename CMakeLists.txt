@@ -178,24 +178,6 @@ set_property(TARGET mlxdata PROPERTY POSITION_INDEPENDENT_CODE ON)
 if(SndFile_FOUND)
   target_link_libraries(mlxdata PRIVATE SndFile::sndfile)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_SNDFILE)
-  if(FLAC_FOUND)
-    set_property(
-      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
-      APPEND
-      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_FLAC")
-  endif()
-  if(OGG_FOUND)
-    set_property(
-      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
-      APPEND
-      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_OGG")
-  endif()
-  if(VORBIS_FOUND)
-    set_property(
-      SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
-      APPEND
-      PROPERTY COMPILE_DEFINITIONS "MLX_HAS_VORBIS")
-  endif()
 endif()
 
 if(SampleRate_FOUND)
@@ -225,9 +207,49 @@ endif()
 if(FFMPEG_avformat_FOUND)
   target_include_directories(mlxdata PRIVATE ${FFMPEG_INCLUDE_DIRS})
   target_link_libraries(mlxdata PRIVATE ${FFMPEG_LIBRARIES})
-  message(STATUS "DUDE: ${FFMPEG_LIBRARIES}")
   target_compile_definitions(mlxdata PUBLIC MLX_HAS_FFMPEG)
 endif()
+
+# Version extra definitions
+get_directory_property(BXZSTR_HAS_ZLIB DIRECTORY ${bxzstr_SOURCE_DIR}
+                                                 DEFINITION ZLIB_FOUND)
+get_directory_property(BXZSTR_HAS_BZIP2 DIRECTORY ${bxzstr_SOURCE_DIR}
+                                                  DEFINITION BZIP2_FOUND)
+get_directory_property(BXZSTR_HAS_LZMA DIRECTORY ${bxzstr_SOURCE_DIR}
+                                                 DEFINITION LIBLZMA_FOUND)
+get_directory_property(BXZSTR_HAS_ZSTD DIRECTORY ${bxzstr_SOURCE_DIR}
+                                                 DEFINITION ZSTD_FOUND)
+if(BXZSTR_HAS_ZLIB)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_ZLIB")
+endif()
+if(BXZSTR_HAS_BZIP2)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_BZIP2")
+endif()
+if(BXZSTR_HAS_LZMA)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_LZMA")
+endif()
+if(BXZSTR_HAS_ZSTD)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_ZSTD")
+endif()
+if(SNDFILE_SUPPORTS_FLAC)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_FLAC")
+endif()
+if(SNDFILE_SUPPORTS_VORBIS OR SNDFILE_SUPPORTS_OPUS)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_OGG")
+endif()
+if(SNDFILE_SUPPORTS_VORBIS)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_VORBIS")
+endif()
+if(SNDFILE_SUPPORTS_OPUS)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_OPUS")
+endif()
+if(SNDFILE_SUPPORTS_MPEG)
+  list(APPEND VERSION_DEFINITIONS "MLX_HAS_MPEG")
+endif()
+set_property(
+  SOURCE ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/Version.cpp
+  APPEND
+  PROPERTY COMPILE_DEFINITIONS ${VERSION_DEFINITIONS})
 
 include("tests/CMakeLists.txt")
 
