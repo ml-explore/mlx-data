@@ -10,9 +10,68 @@
 # libsndfile include directory SndFile_LIBRARIES - Link these to use libsndfile
 #
 
+# this function runtime-checks if SndFile supports the given format
+function(sndfile_supports_format format_name format var)
+  set(src_${format_name}
+      "
+#include <sndfile.h>
+#include <memory.h>
+#if !defined(SF_FORMAT_MPEG)
+#define SF_FORMAT_MPEG 0x230000
+#endif
+#if !defined(SF_FORMAT_MPEG_LAYER_I)
+#define SF_FORMAT_MPEG_LAYER_I 0x0080
+#endif
+#if !defined(SF_FORMAT_OPUS)
+#define SF_FORMAT_OPUS 0x0064
+#endif
+int main() {
+SF_INFO sfinfo;
+memset (&sfinfo, 0, sizeof (sfinfo));
+sfinfo.samplerate= 44000;
+sfinfo.channels = 1;
+sfinfo.format = ${format};
+return !sf_format_check(&sfinfo);
+}
+     ")
+  set(src_${format_name}_filename
+      "${CMAKE_CURRENT_BINARY_DIR}/test_sndfile_${format_name}.c")
+  file(WRITE ${src_${format_name}_filename} "${src_${format_name}}")
+  try_run(
+    ${format_name}_EXITCODE ${format_name}_COMPILES ${CMAKE_CURRENT_BINARY_DIR}
+    ${src_${format_name}_filename}
+    CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${SndFile_INCLUDE_DIRS}" LINK_LIBRARIES
+                "${SndFile_LIBRARIES};${CODEC_LIBRARIES}"
+    # these are not use at this time but could be useful for debug
+    COMPILE_OUTPUT_VARIABLE ${format_name}_COMPILE_OUTPUT
+    RUN_OUTPUT_VARIABLE ${format_name}_RUN_OUTPUT)
+  if(${format_name}_EXITCODE STREQUAL "0")
+    set(${var}
+        TRUE
+        PARENT_SCOPE)
+    message(STATUS "SndFile: support for ${format_name} detected")
+  else()
+    set(${var}
+        FALSE
+        PARENT_SCOPE)
+    message(STATUS "SndFile: does not support ${format_name}")
+  endif()
+endfunction()
+
 find_package(SndFile CONFIG QUIET)
 
-if(NOT TARGET SndFile::sndfile)
+if(TARGET SndFile::sndfile)
+  sndfile_supports_format(flac "SF_FORMAT_FLAC  | SF_FORMAT_PCM_16"
+                          SNDFILE_SUPPORTS_FLAC "")
+  sndfile_supports_format(vorbis "SF_FORMAT_OGG  | SF_FORMAT_VORBIS"
+                          SNDFILE_SUPPORTS_VORBIS "")
+  sndfile_supports_format(opus "SF_FORMAT_OGG  | SF_FORMAT_OPUS"
+                          SNDFILE_SUPPORTS_OPUS "")
+  sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_I"
+                          SNDFILE_SUPPORTS_MPEG "")
+  # message(STATUS"Found libsndfile: (lib: ${SndFile_LIBRARIES} include:
+  # ${SndFile_INCLUDE_DIRS})")
+else()
   find_path(
     SndFile_INCLUDE_DIR sndfile.h
     PATHS ${SndFile_INC_DIR} ${SndFile_ROOT_DIR}/include
@@ -66,52 +125,6 @@ if(NOT TARGET SndFile::sndfile)
     if(MP3LAME_FOUND)
       list(APPEND CODEC_LIBRARIES ${MP3LAME_LIBRARIES})
     endif()
-    function(sndfile_supports_format format_name format var)
-      set(src_${format_name}
-          "
-#include <sndfile.h>
-#include <memory.h>
-#if !defined(SF_FORMAT_MPEG)
-#define SF_FORMAT_MPEG 0x230000
-#endif
-#if !defined(SF_FORMAT_MPEG_LAYER_I)
-#define SF_FORMAT_MPEG_LAYER_I 0x0080
-#endif
-#if !defined(SF_FORMAT_OPUS)
-#define SF_FORMAT_OPUS 0x0064
-#endif
-int main() {
-SF_INFO sfinfo;
-memset (&sfinfo, 0, sizeof (sfinfo));
-sfinfo.samplerate= 44000;
-sfinfo.channels = 1;
-sfinfo.format = ${format};
-return !sf_format_check(&sfinfo);
-}
-     ")
-      set(src_${format_name}_filename
-          "${CMAKE_CURRENT_BINARY_DIR}/test_sndfile_${format_name}.c")
-      file(WRITE ${src_${format_name}_filename} "${src_${format_name}}")
-      try_run(
-        ${format_name}_EXITCODE ${format_name}_COMPILES
-        ${CMAKE_CURRENT_BINARY_DIR} ${src_${format_name}_filename}
-        CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${SndFile_INCLUDE_DIRS}"
-                    LINK_LIBRARIES "${SndFile_LIBRARIES}"
-        # these are not use at this time but could be useful for debug
-        COMPILE_OUTPUT_VARIABLE ${format_name}_COMPILE_OUTPUT
-        RUN_OUTPUT_VARIABLE ${format_name}_RUN_OUTPUT)
-      if(${format_name}_EXITCODE STREQUAL "0")
-        set(${var}
-            TRUE
-            PARENT_SCOPE)
-        message(STATUS "SndFile: support for ${format_name} detected")
-      else()
-        set(${var}
-            FALSE
-            PARENT_SCOPE)
-        message(STATUS "SndFile: does not support ${format_name}")
-      endif()
-    endfunction()
     sndfile_supports_format(flac "SF_FORMAT_FLAC  | SF_FORMAT_PCM_16"
                             SNDFILE_SUPPORTS_FLAC)
     sndfile_supports_format(vorbis "SF_FORMAT_OGG  | SF_FORMAT_VORBIS"
