@@ -273,7 +273,7 @@ else()
   ExternalProject_Add(
     curl
     URL https://github.com/curl/curl/releases/download/curl-8_13_0/curl-8.13.0.tar.gz
-    DEPENDS openssl pkg-config
+    DEPENDS zlib openssl pkg-config
     CONFIGURE_COMMAND
       ${CMAKE_COMMAND} -E env PATH=${PATH} PKG_CONFIG_PATH=${PKG_CONFIG_PATH}
       CFLAGS=-fPIC ./configure --disable-shared --with-openssl --disable-ldap
