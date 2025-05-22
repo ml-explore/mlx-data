@@ -82,6 +82,24 @@ ExternalProject_Add(
   INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
   DOWNLOAD_EXTRACT_TIMESTAMP 1)
 
+# zstd support
+if(APPLE)
+  set(OSX_ARCHITECTURES "x86_64$<SEMICOLON>x86_64h$<SEMICOLON>arm64")
+endif()
+ExternalProject_Add(
+  zstd
+  URL https://github.com/facebook/zstd/archive/refs/tags/v1.5.7.tar.gz
+  CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
+             -DCMAKE_OSX_ARCHITECTURES=${OSX_ARCHITECTURES}
+             -DZSTD_BUILD_SHARED=OFF
+             -DZSTD_MULTITHREAD_SUPPORT=OFF
+             -DZSTD_BUILD_PROGRAMS=OFF
+             -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
+             -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
+  SOURCE_SUBDIR build/cmake
+  INSTALL_DIR ${CMAKE_BINARY_DIR}/deps
+  DOWNLOAD_EXTRACT_TIMESTAMP 1)
+
 # needed on x86 by few projects
 ExternalProject_Add(
   nasm
@@ -367,6 +385,7 @@ ExternalProject_Add(
   DEPENDS zlib
           bzip2
           xz
+          zstd
           libsndfile
           libsamplerate
           libjpeg-turbo
