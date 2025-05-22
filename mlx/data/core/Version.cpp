@@ -1,6 +1,7 @@
 // Copyright © 2023-2025 Apple Inc.
 
 #include "mlx/data/core/Version.h"
+#include <cstring>
 
 extern "C" {
 #if MLX_HAS_ZLIB
