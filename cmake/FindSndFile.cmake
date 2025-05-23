@@ -10,6 +10,8 @@
 # libsndfile include directory SndFile_LIBRARIES - Link these to use libsndfile
 #
 
+find_package(SndFile CONFIG QUIET)
+
 # this function runtime-checks if SndFile supports the given format
 function(sndfile_supports_format format_name format var)
   set(src_${format_name}
@@ -25,13 +27,33 @@ function(sndfile_supports_format format_name format var)
 #if !defined(SF_FORMAT_OPUS)
 #define SF_FORMAT_OPUS 0x0064
 #endif
+sf_count_t noop_vio_get_filelen(void* user_data) {
+  return 0;
+}
+sf_count_t noop_vio_seek(sf_count_t offset, int whence, void* user_data) {
+  return 0;
+}
+sf_count_t noop_vio_read(void* ptr, sf_count_t count, void* user_data) {
+  return count;
+}
+sf_count_t noop_vio_write(const void* ptr, sf_count_t count, void* user_data) {
+  return count;
+}
+sf_count_t noop_vio_tell(void* user_data) {
+  return 0;
+}
 int main() {
-SF_INFO sfinfo;
-memset (&sfinfo, 0, sizeof (sfinfo));
-sfinfo.samplerate= 44000;
-sfinfo.channels = 1;
-sfinfo.format = ${format};
-return !sf_format_check(&sfinfo);
+  SF_VIRTUAL_IO noop_io = {
+      noop_vio_get_filelen,
+      noop_vio_seek,
+      noop_vio_read,
+      noop_vio_write,
+      noop_vio_tell};
+  SF_INFO info;
+  info.samplerate = 16000;
+  info.channels = 2;
+  info.format = ${format};
+  return sf_open_virtual(&noop_io, SFM_WRITE, &info, NULL) == NULL;
 }
      ")
   set(src_${format_name}_filename
@@ -41,7 +63,7 @@ return !sf_format_check(&sfinfo);
     ${format_name}_EXITCODE ${format_name}_COMPILES ${CMAKE_CURRENT_BINARY_DIR}
     ${src_${format_name}_filename}
     CMAKE_FLAGS "-DINCLUDE_DIRECTORIES=${SndFile_INCLUDE_DIRS}" LINK_LIBRARIES
-                "${SndFile_LIBRARIES};${CODEC_LIBRARIES}"
+                ${SndFile_LIBRARIES} ${CODEC_LIBRARIES}
     # these are not use at this time but could be useful for debug
     COMPILE_OUTPUT_VARIABLE ${format_name}_COMPILE_OUTPUT
     RUN_OUTPUT_VARIABLE ${format_name}_RUN_OUTPUT)
@@ -57,8 +79,6 @@ return !sf_format_check(&sfinfo);
     message(STATUS "SndFile: does not support ${format_name}")
   endif()
 endfunction()
-
-find_package(SndFile CONFIG QUIET)
 
 if(TARGET SndFile::sndfile)
   sndfile_supports_format(flac "SF_FORMAT_FLAC  | SF_FORMAT_PCM_16"
