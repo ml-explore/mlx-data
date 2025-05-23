@@ -32,22 +32,16 @@ extern "C" {
 #if !defined(SF_FORMAT_OPUS)
 #define SF_FORMAT_OPUS 0x0064
 #endif
-#endif
-
-#if MLX_HAS_FLAC
-#include <FLAC/format.h>
-#endif
-
-#if MLX_HAS_VORBIS
-#include <vorbis/codec.h>
-#endif
-
-#if MLX_HAS_OPUS
-#include <opus/opus.h>
-#endif
-
-#if MLX_HAS_MPEG
-#include <mpg123.h>
+// FLAC, Vorbis, Opus, mp123 are not
+// directly used from mlx-data so headers
+// might not be there.
+extern const char* FLAC__VERSION_STRING;
+extern const char* vorbis_version_string(void);
+extern const char* opus_get_version_string(void);
+extern const char* mpg123_distversion(
+    unsigned int* major,
+    unsigned int* minor,
+    unsigned int* patch);
 #endif
 
 #if MLX_HAS_SAMPLERATE
@@ -116,13 +110,33 @@ std::string jpeg_get_version() {
 std::string sndfile_get_version() {
   return std::string(sf_version_string());
 }
+sf_count_t noop_vio_get_filelen(void* user_data) {
+  return 0;
+}
+sf_count_t noop_vio_seek(sf_count_t offset, int whence, void* user_data) {
+  return 0;
+}
+sf_count_t noop_vio_read(void* ptr, sf_count_t count, void* user_data) {
+  return count;
+}
+sf_count_t noop_vio_write(const void* ptr, sf_count_t count, void* user_data) {
+  return count;
+}
+sf_count_t noop_vio_tell(void* user_data) {
+  return 0;
+}
 bool sndfile_supports_format(int format) {
-  SF_INFO sfinfo;
-  memset(&sfinfo, 0, sizeof(sfinfo));
-  sfinfo.samplerate = 44000;
-  sfinfo.channels = 1;
-  sfinfo.format = format;
-  return sf_format_check(&sfinfo);
+  SF_VIRTUAL_IO noop_io = {
+      noop_vio_get_filelen,
+      noop_vio_seek,
+      noop_vio_read,
+      noop_vio_write,
+      noop_vio_tell};
+  SF_INFO info;
+  info.samplerate = 16000;
+  info.channels = 2;
+  info.format = format;
+  return sf_open_virtual(&noop_io, SFM_WRITE, &info, NULL) != nullptr;
 }
 #else
 std::string sndfile_get_version() {
