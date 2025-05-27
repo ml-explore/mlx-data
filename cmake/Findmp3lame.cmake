@@ -30,7 +30,10 @@ find_package_handle_standard_args(mp3lame REQUIRED_VARS MP3LAME_LIBRARY
                                                         MP3LAME_INCLUDE_DIR)
 
 if(MP3LAME_FOUND)
-  set(MP3LAME_LIBRARIES ${MP3LAME_LIBRARY} ${MP3LAME_HIP_LIBRARY})
+  set(MP3LAME_LIBRARIES ${MP3LAME_LIBRARY})
+  if(MP3LAME_HIP_LIBRARY)
+    list(APPEND MP3LAME_LIBRARIES ${MP3LAME_HIP_LIBRARY})
+  endif()
   set(MP3LAME_INCLUDE_DIRS ${MP3LAME_INCLUDE_DIR})
 
   if(NOT TARGET mp3lame::mp3lame)
