@@ -26,8 +26,8 @@ extern "C" {
 #if !defined(SF_FORMAT_MPEG)
 #define SF_FORMAT_MPEG 0x230000
 #endif
-#if !defined(SF_FORMAT_MPEG_LAYER_I)
-#define SF_FORMAT_MPEG_LAYER_I 0x0080
+#if !defined(SF_FORMAT_MPEG_LAYER_III)
+#define SF_FORMAT_MPEG_LAYER_I 0x0082
 #endif
 #if !defined(SF_FORMAT_OPUS)
 #define SF_FORMAT_OPUS 0x0064
