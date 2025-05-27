@@ -142,7 +142,7 @@ else()
                             SNDFILE_SUPPORTS_VORBIS)
     sndfile_supports_format(opus "SF_FORMAT_OGG  | SF_FORMAT_OPUS"
                             SNDFILE_SUPPORTS_OPUS)
-    sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_I"
+    sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_III"
                             SNDFILE_SUPPORTS_MPEG)
 
     # add dependencies on found libraries
