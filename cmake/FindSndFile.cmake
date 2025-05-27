@@ -18,15 +18,6 @@ function(sndfile_supports_format format_name format var)
       "
 #include <sndfile.h>
 #include <memory.h>
-#if !defined(SF_FORMAT_MPEG)
-#define SF_FORMAT_MPEG 0x230000
-#endif
-#if !defined(SF_FORMAT_MPEG_LAYER_I)
-#define SF_FORMAT_MPEG_LAYER_I 0x0080
-#endif
-#if !defined(SF_FORMAT_OPUS)
-#define SF_FORMAT_OPUS 0x0064
-#endif
 sf_count_t noop_vio_get_filelen(void* user_data) {
   return 0;
 }
@@ -87,7 +78,7 @@ if(TARGET SndFile::sndfile)
                           SNDFILE_SUPPORTS_VORBIS "")
   sndfile_supports_format(opus "SF_FORMAT_OGG  | SF_FORMAT_OPUS"
                           SNDFILE_SUPPORTS_OPUS "")
-  sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_I"
+  sndfile_supports_format(mpeg "SF_FORMAT_MPEG  | SF_FORMAT_MPEG_LAYER_III"
                           SNDFILE_SUPPORTS_MPEG "")
   # message(STATUS"Found libsndfile: (lib: ${SndFile_LIBRARIES} include:
   # ${SndFile_INCLUDE_DIRS})")
