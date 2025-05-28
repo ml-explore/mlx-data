@@ -138,39 +138,67 @@ bool sndfile_supports_format(int format) {
   info.format = format;
   return sf_open_virtual(&noop_io, SFM_WRITE, &info, NULL) != nullptr;
 }
+std::string flac_get_version() {
+  if (sndfile_supports_format(SF_FORMAT_FLAC | SF_FORMAT_PCM_16)) {
+#if MLX_HAS_FLAC
+    return std::string(FLAC__VERSION_STRING);
+#else
+    return "unknown";
+#endif
+  } else {
+    return {};
+  }
+}
+std::string vorbis_get_version() {
+  if (sndfile_supports_format(SF_FORMAT_OGG | SF_FORMAT_VORBIS)) {
+#if MLX_HAS_VORBIS
+    return std::string(vorbis_version_string());
+#else
+    return "unknown";
+#endif
+  } else {
+    return {};
+  }
+}
+std::string opus_get_version() {
+  if (sndfile_supports_format(SF_FORMAT_OGG | SF_FORMAT_OPUS)) {
+#if MLX_HAS_OPUS
+    return std::string(opus_get_version_string());
+#else
+    return "unknown";
+#endif
+  } else {
+    return {};
+  }
+}
+std::string mpg123_get_version() {
+  if (sndfile_supports_format(SF_FORMAT_MPEG | SF_FORMAT_MPEG_LAYER_I)) {
+#if MLX_HAS_MPEG
+    return std::string(mpg123_distversion(nullptr, nullptr, nullptr));
+#else
+    return "unknown";
+#endif
+  } else {
+    return {};
+  }
+}
 #else
 std::string sndfile_get_version() {
   return {};
 }
-#endif
 std::string flac_get_version() {
-#if MLX_HAS_FLAC
-  return std::string(FLAC__VERSION_STRING);
-#else
   return {};
-#endif
 }
 std::string vorbis_get_version() {
-#if MLX_HAS_VORBIS
-  return std::string(vorbis_version_string());
-#else
   return {};
-#endif
 }
 std::string opus_get_version() {
-#if MLX_HAS_OPUS
-  return std::string(opus_get_version_string());
-#else
   return {};
-#endif
 }
 std::string mpg123_get_version() {
-#if MLX_HAS_MPEG
-  return std::string(mpg123_distversion(nullptr, nullptr, nullptr));
-#else
   return {};
-#endif
 }
+#endif
 std::string samplerate_get_version() {
 #if MLX_HAS_SAMPLERATE
   return std::string(src_get_version());
@@ -207,82 +235,7 @@ std::string version() {
   return std::string(MLX_DATA_VERSION_STRINGIFY(MLX_DATA_VERSION));
 }
 
-std::unordered_map<std::string, bool> supported_libs() {
-  static std::unordered_map<std::string, bool> libs;
-  if (libs.empty()) {
-#if MLX_HAS_ZLIB
-    libs["zlib"] = true;
-#else
-    libs["zlib"] = false;
-#endif
-#if MLX_HAS_BZIP2
-    libs["bzip2"] = true;
-#else
-    libs["bzip2"] = false;
-#endif
-#if MLX_HAS_LIBZMA
-    libs["libzma"] = true;
-#else
-    libs["libzma"] = false;
-#endif
-#if MLX_HAS_ZSTD
-    libs["zstd"] = true;
-#else
-    libs["zstd"] = false;
-#endif
-#if MLX_HAS_JPEG
-    libs["jpeg"] = true;
-#else
-    libs["jpeg"] = false;
-#endif
-#if MLX_HAS_SNDFILE
-// Support for old libsndfile versions
-#if !defined(SF_FORMAT_MPEG)
-#define SF_FORMAT_MPEG 0x230000
-#endif
-#if !defined(SF_FORMAT_MPEG_LAYER_I)
-#define SF_FORMAT_MPEG_LAYER_I 0x0080
-#endif
-#if !defined(SF_FORMAT_OPUS)
-#define SF_FORMAT_OPUS 0x0064
-#endif
-    libs["sndfile"] = true;
-    SF_INFO sfinfo;
-    memset(&sfinfo, 0, sizeof(sfinfo));
-    sfinfo.samplerate = 44000;
-    sfinfo.channels = 1;
-    sfinfo.format = SF_FORMAT_WAV | SF_FORMAT_PCM_16;
-    libs["sndfile_wav"] = sf_format_check(&sfinfo);
-    sfinfo.format = SF_FORMAT_FLAC | SF_FORMAT_PCM_16;
-    libs["sndfile_flac"] = sf_format_check(&sfinfo);
-    sfinfo.format = SF_FORMAT_OGG | SF_FORMAT_VORBIS;
-    libs["sndfile_ogg"] = sf_format_check(&sfinfo);
-    sfinfo.format = SF_FORMAT_OGG | SF_FORMAT_OPUS;
-    libs["sndfile_opus"] = sf_format_check(&sfinfo);
-    sfinfo.format = SF_FORMAT_MPEG | SF_FORMAT_MPEG_LAYER_I;
-    libs["sndfile_mpeg"] = sf_format_check(&sfinfo);
-#else
-    libs["sndfile"] = false;
-    libs["sndfile_wav"] = false;
-    libs["sndfile_flac"] = false;
-    libs["sndfile_ogg"] = false;
-    libs["sndfile_opus"] = false;
-    libs["sndfile_mpeg"] = false;
-#endif
-#if MLX_HAS_AWS
-    libs["aws"] = true;
-#else
-    libs["aws"] = false;
-#endif
-#if MLX_HAS_FFMPEG
-    libs["ffmpeg"] = true;
-#else
-    libs["ffmpeg"] = false;
-#endif
-  }
-  return libs;
-}
-std::unordered_map<std::string, std::string> supported_libs_version() {
+std::unordered_map<std::string, std::string> libs_version() {
   static std::unordered_map<std::string, std::string> libs;
   if (libs.empty()) {
     libs["zlib"] = zlib_get_version();
@@ -291,23 +244,10 @@ std::unordered_map<std::string, std::string> supported_libs_version() {
     libs["zstd"] = zstd_get_version();
     libs["jpeg"] = jpeg_get_version();
     libs["sndfile"] = sndfile_get_version();
-    libs["sndfile_flac"] =
-        (sndfile_supports_format(SF_FORMAT_FLAC | SF_FORMAT_PCM_16) ? "enabled"
-                                                                    : "");
-    libs["sndfile_vorbis"] =
-        (sndfile_supports_format(SF_FORMAT_OGG | SF_FORMAT_VORBIS) ? "enabled"
-                                                                   : "");
-    libs["sndfile_opus"] =
-        (sndfile_supports_format(SF_FORMAT_OGG | SF_FORMAT_OPUS) ? "enabled"
-                                                                 : "");
-    libs["sndfile_mpeg"] =
-        (sndfile_supports_format(SF_FORMAT_MPEG | SF_FORMAT_MPEG_LAYER_I)
-             ? "enabled"
-             : "");
-    libs["flac"] = flac_get_version();
-    libs["vorbis"] = vorbis_get_version();
-    libs["opus"] = opus_get_version();
-    libs["mpg123"] = mpg123_get_version();
+    libs["sndfile_flac"] = flac_get_version();
+    libs["sndfile_vorbis"] = vorbis_get_version();
+    libs["sndfile_opus"] = opus_get_version();
+    libs["sndfile_mpeg"] = mpg123_get_version();
     libs["samplerate"] = samplerate_get_version();
     libs["ffmpeg"] = ffmpeg_get_version();
     libs["aws"] = aws_get_version();

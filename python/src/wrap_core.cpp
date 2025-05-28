@@ -39,8 +39,7 @@ void init_mlx_data_core(py::module& m) {
       .export_values();
 
   m.def("version", &version);
-  m.def("supported_libs", &supported_libs);
-  m.def("supported_libs_version", &supported_libs_version);
+  m.def("libs_version", &libs_version);
 
   m.def("set_state", &set_state, py::arg("seed") = 1234);
 
