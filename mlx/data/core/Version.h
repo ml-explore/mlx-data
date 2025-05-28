@@ -8,8 +8,7 @@ namespace data {
 namespace core {
 
 std::string version();
-std::unordered_map<std::string, bool> supported_libs();
-std::unordered_map<std::string, std::string> supported_libs_version();
+std::unordered_map<std::string, std::string> libs_version();
 
 } // namespace core
 } // namespace data
