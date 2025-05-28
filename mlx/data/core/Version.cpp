@@ -194,8 +194,8 @@ std::string aws_get_version() {
 }
 } // namespace
 
-#define STRING_MLX_DATA_VERSION_(x) #x
-#define STRING_MLX_DATA_VERSION(x) STRING_MLX_DATA_VERSION_(x)
+#define MLX_DATA_VERSION_STRINGIFY_(x) #x
+#define MLX_DATA_VERSION_STRINGIFY(x) MLX_DATA_VERSION_STRINGIFY_(x)
 
 namespace {}
 
@@ -204,7 +204,7 @@ namespace data {
 namespace core {
 
 std::string version() {
-  return std::string(STRING_MLX_DATA_VERSION_(MLX_DATA_VERSION));
+  return std::string(MLX_DATA_VERSION_STRINGIFY(MLX_DATA_VERSION));
 }
 
 std::unordered_map<std::string, bool> supported_libs() {
