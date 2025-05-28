@@ -219,6 +219,7 @@ get_directory_property(BXZSTR_HAS_LZMA DIRECTORY ${bxzstr_SOURCE_DIR}
                                                  DEFINITION LIBLZMA_FOUND)
 get_directory_property(BXZSTR_HAS_ZSTD DIRECTORY ${bxzstr_SOURCE_DIR}
                                                  DEFINITION ZSTD_FOUND)
+set(VERSION_DEFINITIONS "MLX_DATA_VERSION=${MLX_DATA_VERSION}")
 if(BXZSTR_HAS_ZLIB)
   list(APPEND VERSION_DEFINITIONS "MLX_HAS_ZLIB")
 endif()
