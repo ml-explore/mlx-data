@@ -119,6 +119,7 @@ ExternalProject_Add(
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
              -DENABLE_SHARED=OFF
              -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+             -DWITH_JPEG8=ON
              -DCMAKE_ASM_NASM_COMPILER=${CMAKE_BINARY_DIR}/deps/bin/nasm
              -DCMAKE_PREFIX_PATH=${CMAKE_BINARY_DIR}/deps
              -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/deps
