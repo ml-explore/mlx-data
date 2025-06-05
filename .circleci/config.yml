@@ -106,7 +106,7 @@ jobs:
            cd aws-sdk-cpp
            mkdir build
            cd build
-           cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY="s3" -DBUILD_SHARED_LIBS=OFF
+           cmake .. -DCMAKE_BUILD_TYPE=Release -DBUILD_ONLY="s3" -DBUILD_SHARED_LIBS=OFF -DCMAKE_POSITION_INDEPENDENT_CODE=ON
            make
            sudo make install
       - run:
