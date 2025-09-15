@@ -33,6 +33,29 @@ void FromVector::check_samples_() const {
   }
 }
 
+std::shared_ptr<FromVector> FromVector::merge(
+    const std::shared_ptr<FromVector>& buffer) const {
+  std::vector<Sample> samples = buffer_;
+  samples.insert(
+      samples.begin(), buffer->buffer_.begin(), buffer->buffer_.end());
+  return std::make_shared<FromVector>(std::move(samples));
+}
+
+std::shared_ptr<FromVector> FromVector::perm(
+    const std::vector<int64_t>& indices) const {
+  std::vector<Sample> samples;
+  auto n = buffer_.size();
+  samples.reserve(indices.size());
+  for (int64_t idx : indices) {
+    if ((idx >= 0) && (idx < n)) {
+      samples.push_back(buffer_[idx]);
+    } else {
+      throw std::runtime_error("FromVector: index out of bound");
+    }
+  }
+  return std::make_shared<FromVector>(std::move(samples));
+}
+
 } // namespace buffer
 } // namespace data
 } // namespace mlx

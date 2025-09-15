@@ -16,6 +16,10 @@ class FromVector : public Buffer {
   Sample get(int64_t idx) const override;
   virtual int64_t size() const override;
 
+  std::shared_ptr<FromVector> merge(
+      const std::shared_ptr<FromVector>& buffer) const;
+  std::shared_ptr<FromVector> perm(const std::vector<int64_t>& indices) const;
+
  private:
   void check_samples_() const;
   std::vector<Sample> buffer_;
