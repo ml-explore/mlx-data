@@ -12,6 +12,8 @@
 
 find_package(SndFile CONFIG QUIET)
 
+include(CheckSymbolExists)
+
 # this function runtime-checks if SndFile supports the given format
 function(sndfile_supports_format format_name format var)
   set(src_${format_name}
@@ -185,6 +187,10 @@ else()
         get_target_property(MPG123_LIB MPG123::libmpg123 IMPORTED_LOCATION)
         get_target_property(MP3LAME_LIB mp3lame::mp3lame IMPORTED_LOCATION)
         list(APPEND SNDFILE_DEP_LIBRARIES ${MPG123_LIB} ${MP3LAME_LIB})
+        set(CMAKE_REQUIRED_INCLUDES ${mpg123_INCLUDE_DIR})
+        set(CMAKE_REQUIRED_LIBRARIES ${MPG123_LIB})
+        check_symbol_exists(mpg123_distversion "mpg123.h"
+                            MPG123_HAS_DISTVERSION)
       else()
         message(
           FATAL_ERROR "SndFile supports MPEG but mpg123 and mp3lame not found")

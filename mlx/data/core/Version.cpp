@@ -174,7 +174,11 @@ std::string opus_get_version() {
 std::string mpg123_get_version() {
   if (sndfile_supports_format(SF_FORMAT_MPEG | SF_FORMAT_MPEG_LAYER_I)) {
 #if MLX_HAS_MPEG
+#if MLX_HAS_MPEG_DISTVERSION
     return std::string(mpg123_distversion(nullptr, nullptr, nullptr));
+#else
+    return std::string("unknown");
+#endif
 #else
     return "unknown";
 #endif
