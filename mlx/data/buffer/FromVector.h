@@ -13,6 +13,9 @@ class FromVector : public Buffer {
   FromVector(const std::vector<Sample>& data);
   FromVector(std::vector<Sample>&& data);
 
+  // Concretize an existing buffer
+  FromVector(const std::shared_ptr<Buffer>& buffer);
+
   Sample get(int64_t idx) const override;
   virtual int64_t size() const override;
 

@@ -14,6 +14,14 @@ FromVector::FromVector(std::vector<Sample>&& data) : buffer_(std::move(data)) {
   check_samples_();
 }
 
+FromVector::FromVector(const std::shared_ptr<Buffer>& buffer) {
+  int64_t n = buffer->size();
+  buffer_.reserve(n);
+  for (int64_t i = 0; i < n; i++) {
+    buffer_.push_back(buffer->get(i));
+  }
+}
+
 Sample FromVector::get(int64_t idx) const {
   if (idx < 0 || idx >= buffer_.size()) {
     throw std::out_of_range("FromVector: index out of range");

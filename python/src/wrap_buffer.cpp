@@ -241,7 +241,15 @@ void init_mlx_data_buffer(py::module& m) {
               "to_stream",
               &Buffer::to_stream,
               py::call_guard<py::gil_scoped_release>(),
-              "Make a stream that yields the elements of the buffer.");
+              "Make a stream that yields the elements of the buffer.")
+          .def(
+              "concretize",
+              &Buffer::concretize,
+              py::call_guard<py::gil_scoped_release>(),
+              R"pbcopy(
+                Make a buffer by concretizing all the elements of the buffer.
+							  The returned buffer does not have buffer parent dependency.
+              )pbcopy");
   mlx_data_export_dataset(buffer_class);
 
   m.def(

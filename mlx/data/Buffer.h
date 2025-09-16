@@ -53,6 +53,8 @@ class Buffer : public Dataset<Buffer, buffer::Buffer> {
 
   Stream to_stream();
 
+  Buffer concretize();
+
   friend class Stream;
 };
 
