@@ -99,6 +99,10 @@ Stream Buffer::to_stream() {
   return Stream(std::make_shared<stream::FromBuffer>(self_));
 }
 
+Buffer Buffer::concretize() {
+  return Buffer(std::make_shared<buffer::FromVector>(self_));
+}
+
 // Buffer buffered(
 //     int64_t bufferSize,
 //     std::function<BufferInterface(const BufferInterface)>
