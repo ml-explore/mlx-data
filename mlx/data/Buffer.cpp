@@ -2,6 +2,7 @@
 
 #include "mlx/data/Buffer.h"
 #include "mlx/data/Stream.h"
+#include "mlx/data/buffer/Append.h"
 #include "mlx/data/buffer/Batch.h"
 #include "mlx/data/buffer/DynamicBatch.h"
 #include "mlx/data/buffer/FilesFromTAR.h"
@@ -78,6 +79,10 @@ Buffer Buffer::partition_if(
   } else {
     return Buffer(self_);
   }
+}
+
+Buffer Buffer::append(const Buffer& buffer) {
+  return Buffer(std::make_shared<buffer::Append>(self_, buffer.self_));
 }
 
 Buffer Buffer::perm(const std::vector<int64_t>& perm) {

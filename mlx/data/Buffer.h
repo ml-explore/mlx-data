@@ -46,6 +46,8 @@ class Buffer : public Dataset<Buffer, buffer::Buffer> {
   Buffer partition_if(bool cond, int64_t num_partitions, int64_t partition)
       const;
 
+  Buffer append(const Buffer& buffer);
+
   Buffer perm(const std::vector<int64_t>& perm);
 
   Buffer shuffle();
