@@ -206,6 +206,20 @@ void init_mlx_data_buffer(py::module& m) {
               py::arg("partition"),
               "Conditional :meth:`Buffer.partition`.")
           .def(
+              "append",
+              &Buffer::append,
+              py::call_guard<py::gil_scoped_release>(),
+              py::arg("buffer"),
+              R"pbcopy(
+                Append the given buffer to the current buffer.
+
+                Resulting buffer contains elements of the calling buffer,
+                followed by elements of the buffer passed as an argument.
+
+                Args:
+                  buffer: buffer appended to the current buffer.
+              )pbcopy")
+          .def(
               "perm",
               &Buffer::perm,
               py::call_guard<py::gil_scoped_release>(),

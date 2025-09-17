@@ -102,6 +102,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/image/ImageJPEG.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/Video.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/video/VideoFFMPEG.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Append.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Buffer.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Batch.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/DynamicBatch.cpp
