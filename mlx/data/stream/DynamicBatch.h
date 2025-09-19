@@ -20,15 +20,17 @@ class DynamicBatch : public Buffered {
       bool shuffle = false,
       int num_thread = 1);
 
+ protected:
+  std::shared_ptr<buffer::Buffer> on_refill(
+      const std::shared_ptr<buffer::Buffer>&) const override;
+
  private:
-  static std::function<
-      std::shared_ptr<buffer::Buffer>(const std::shared_ptr<buffer::Buffer>)>
-  onRefill_(
-      const std::string& key,
-      int64_t max_data_size,
-      const std::unordered_map<std::string, double>& pad_values,
-      const std::unordered_map<std::string, int>& batch_dims,
-      bool shuffle);
+  int buffer_size_;
+  std::string key_;
+  int64_t max_data_size_;
+  std::unordered_map<std::string, double> pad_values_;
+  std::unordered_map<std::string, int> batch_dims_;
+  bool shuffle_;
 };
 
 } // namespace stream
