@@ -26,7 +26,9 @@ class TestDynamicBatch(unittest.TestCase):
         naive_padding = sum(count_padding(s) for s in dset.to_stream().batch(16))
         dynbatch_padding = sum(
             count_padding(s)
-            for s in dset.to_stream().dynamic_batch(500, "tokens", 16 * 1024)
+            for s in dset.to_stream().dynamic_batch(
+                500, "tokens", max_data_size=16 * 1024
+            )
         )
         # Count the total valid tokens
         valid_tokens = sum(d["length"] for d in dset)
