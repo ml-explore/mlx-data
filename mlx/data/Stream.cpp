@@ -46,7 +46,7 @@ Stream Stream::buffered(
       [on_refill](const std::shared_ptr<buffer::Buffer>& buf) {
         return on_refill(Buffer(buf)).self_;
       };
-  return Stream(std::make_shared<stream::Buffered>(
+  return Stream(std::make_shared<stream::CallbackBuffered>(
       self_, buffer_size, on_refill_stream, num_thread));
 };
 
