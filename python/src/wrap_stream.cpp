@@ -161,6 +161,7 @@ void init_mlx_data_stream(py::module& m) {
               py::call_guard<py::gil_scoped_release>(),
               py::arg("buffer_size"),
               py::arg("key"),
+              py::kw_only(),
               py::arg("min_data_size") = -1,
               py::arg("max_data_size") = -1,
               py::arg("pad") = std::unordered_map<std::string, double>(),

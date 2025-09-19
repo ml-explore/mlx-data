@@ -147,22 +147,37 @@ void init_mlx_data_buffer(py::module& m) {
               "dynamic_batch",
               [](const Buffer& b,
                  const std::string& key,
+                 const std::optional<Buffer>& bsize,
                  int64_t min_data_size,
                  int64_t max_data_size,
                  const std::unordered_map<std::string, double>& pad_values,
                  const std::unordered_map<std::string, int>& batch_dims,
                  bool drop_outliers) {
-                return b.dynamic_batch(
-                    key,
-                    min_data_size,
-                    max_data_size,
-                    pad_values,
-                    batch_dims,
-                    drop_outliers);
+                if (bsize) {
+                  return b.dynamic_batch(
+                      bsize.value(),
+                      key,
+                      min_data_size,
+                      max_data_size,
+                      pad_values,
+                      batch_dims,
+                      drop_outliers);
+
+                } else {
+                  return b.dynamic_batch(
+                      key,
+                      min_data_size,
+                      max_data_size,
+                      pad_values,
+                      batch_dims,
+                      drop_outliers);
+                }
               },
               // &Buffer::dynamic_batch,
               py::call_guard<py::gil_scoped_release>(),
               py::arg("key"),
+              py::kw_only(),
+              py::arg("size_buffer") = nullptr,
               py::arg("min_data_size") = -1,
               py::arg("max_data_size") = -1,
               py::arg("pad") = std::unordered_map<std::string, double>(),
@@ -212,8 +227,13 @@ void init_mlx_data_buffer(py::module& m) {
                   # and 5% of tokens in the second case
 
                 Args:
-                  buffer_size (int): How many buffers to consider when computing the dynamic batching
                   key (str): Which array's size to use for the dynamic batching
+                  size_buffer (Buffer): Optional buffer containg sizes of the chosen `key`
+                    arrays contained in self. These sizes should be provided using the
+                    same `key` field, and must be integers. If provided, these sizes will
+                    be used instead of computing array's sizes in the `self` Buffer. This
+                    approach allows to provide alternative size metrics, or avoid materializing
+                    the whole samples when computing sizes.
                   min_data_size (int): How many elements of the array at
                     ``key`` should each batch have, at least. If less or equal to 0 then
                     the value is ignored. (default: -1)
@@ -223,12 +243,8 @@ void init_mlx_data_buffer(py::module& m) {
                     similar to ``batch``. (default: -1)
                   pad (dict): The values to use for padding for each key in the samples.
                   dim (dict): The dimension to concatenate over.
-                  shuffle (bool): If true shuffle the batches before returning
-                    them. Otherwise the larger batch sizes with smaller samples
-                    will be first and so on. (default: False)
                   drop_outliers (bool): If true then drops samples which are larger than the specified
                     ``max_data_size``, if ``max_data_size`` > 0. (default: False)
-                  num_threads (int): How many parallel threads to use to fill the buffer. (default: 1)
               )pbcopy")
           .def(
               "ordered_prefetch",
