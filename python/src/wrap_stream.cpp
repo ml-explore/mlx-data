@@ -161,10 +161,13 @@ void init_mlx_data_stream(py::module& m) {
               py::call_guard<py::gil_scoped_release>(),
               py::arg("buffer_size"),
               py::arg("key"),
+              py::arg("min_data_size") = -1,
               py::arg("max_data_size") = -1,
               py::arg("pad") = std::unordered_map<std::string, double>(),
               py::arg("dim") = std::unordered_map<std::string, int>(),
               py::arg("shuffle") = false,
+              py::arg("drop_outliers") = false,
+              py::arg("max_skipped_samples") = 1000,
               py::arg("num_threads") = 1,
               R"pbcopy(
                 Dynamic batching returns batches with approximately the same
@@ -198,7 +201,7 @@ void init_mlx_data_stream(py::module& m) {
                   # And with dynamic padding. Keep in mind that this also
                   # ensures that the number of tokens in a batch are
                   # approximately constant.
-                  dynbatch_padding = sum(count_padding(s) for s in dset.to_stream().dynamic_batch(500, "tokens", 16*1024))
+                  dynbatch_padding = sum(count_padding(s) for s in dset.to_stream().dynamic_batch(500, "tokens", -1, 16*1024))
 
                   # Count the total valid tokens
                   valid_tokens = sum(d["length"] for d in dset)
@@ -210,10 +213,13 @@ void init_mlx_data_stream(py::module& m) {
                   # and 5% of tokens in the second case
 
                 Args:
-                  buffer_size (int): How many buffers to consider when computing the dynamic batching
+                  buffer_size (int): How many samples to consider when computing the dynamic batching
                   key (str): Which array's size to use for the dynamic batching
+                  min_data_size (int): How many elements of the array at
+                    ``key`` should each batch have, at least. If less or equal to 0 then
+                    the value is ignored. (default: -1)
                   max_data_size (int): How many elements of the array at
-                    ``key`` should each batch have. If less or equal to 0 then
+                    ``key`` should each batch have, at most. If less or equal to 0 then
                     batch the whole buffer in which case dynamic batching behaves
                     similar to ``batch``. (default: -1)
                   pad (dict): The values to use for padding for each key in the samples.
@@ -221,6 +227,12 @@ void init_mlx_data_stream(py::module& m) {
                   shuffle (bool): If true shuffle the batches before returning
                     them. Otherwise the larger batch sizes with smaller samples
                     will be first and so on. (default: False)
+                  drop_outliers (bool): If true then drops samples which are larger than the specified
+                    ``max_data_size``, if ``max_data_size`` > 0. (default: False)
+                  max_skip_samples (int): When ``min_data_size`` is provided, it may not always be possible
+                    to pack samples in a way which satisfies the size constraints. In that case, samples may
+                    be skipped, until there is a working combination satisfying the size constraints.
+                    ``max_skip_samples`` controls the maximum number of skipped samples. (default: 1000)
                   num_threads (int): How many parallel threads to use to fill the buffer. (default: 1)
               )pbcopy")
           .def(

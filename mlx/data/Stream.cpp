@@ -75,19 +75,25 @@ Stream Stream::line_reader_from_key(
 Stream Stream::dynamic_batch(
     int64_t buffer_size,
     const std::string& key,
+    int64_t min_data_size,
     int64_t max_data_size,
     const std::unordered_map<std::string, double>& pad_values,
     const std::unordered_map<std::string, int>& batch_dims,
     bool shuffle,
+    bool drop_outliers,
+    int64_t max_skipped_samples,
     int num_thread) const {
   return Stream(std::make_shared<stream::DynamicBatch>(
       self_,
       buffer_size,
       key,
+      min_data_size,
       max_data_size,
       pad_values,
       batch_dims,
       shuffle,
+      drop_outliers,
+      max_skipped_samples,
       num_thread));
 }
 

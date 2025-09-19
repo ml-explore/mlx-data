@@ -47,10 +47,13 @@ class Stream : public Dataset<Stream, stream::Stream> {
   Stream dynamic_batch(
       int64_t buffer_size,
       const std::string& key,
+      int64_t min_data_size = 0, // ignore if <= 0
       int64_t max_data_size = 0, // batch everything if <= 0
       const std::unordered_map<std::string, double>& pad_values = {},
       const std::unordered_map<std::string, int>& batch_dims = {},
       bool shuffle = false,
+      bool drop_outliers = false,
+      int64_t max_skipped_samples = 1000,
       int num_thread = 1) const;
 
   Stream partition(int64_t num_partitions, int64_t partition) const;

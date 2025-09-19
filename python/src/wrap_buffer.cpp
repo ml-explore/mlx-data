@@ -144,6 +144,93 @@ void init_mlx_data_buffer(py::module& m) {
                   dim (dict): The dimension to concatenate over.
               )pbdoc")
           .def(
+              "dynamic_batch",
+              [](const Buffer& b,
+                 const std::string& key,
+                 int64_t min_data_size,
+                 int64_t max_data_size,
+                 const std::unordered_map<std::string, double>& pad_values,
+                 const std::unordered_map<std::string, int>& batch_dims,
+                 bool drop_outliers) {
+                return b.dynamic_batch(
+                    key,
+                    min_data_size,
+                    max_data_size,
+                    pad_values,
+                    batch_dims,
+                    drop_outliers);
+              },
+              // &Buffer::dynamic_batch,
+              py::call_guard<py::gil_scoped_release>(),
+              py::arg("key"),
+              py::arg("min_data_size") = -1,
+              py::arg("max_data_size") = -1,
+              py::arg("pad") = std::unordered_map<std::string, double>(),
+              py::arg("dim") = std::unordered_map<std::string, int>(),
+              py::arg("drop_outliers") = false,
+              R"pbcopy(
+                Dynamic batching returns batches with approximately the same
+                number of total elements.
+
+                This is used to minimize padding and waste of computation when
+                dealing with samples that can have large variance in sizes.
+
+                For instance if we have a buffer with a key 'tokens' and we
+                want batches that contain approximately 16k tokens but the
+                sample sizes vary from 64 to 1024 we can use dynamic batching
+                to group together smaller samples to reduce padding but keep
+                the total amount of work approximately constant.
+
+                .. code-block:: python
+
+                  import mlx.data as dx
+
+                  def random_sample():
+                      N = int(np.random.rand() * (1024 - 64) + 64)
+                      return {"tokens": np.random.rand(N), "length": N}
+
+                  def count_padding(sample):
+                      return (sample["tokens"].shape[-1] - sample["length"]).sum()
+
+                  dset = dx.buffer_from_vector([random_sample() for _ in range(10_000)])
+
+                  # Compute the average padding size with naive batching
+                  naive_padding = sum(count_padding(s) for s in dset.to_stream().batch(16))
+
+                  # And with dynamic padding. Keep in mind that this also
+                  # ensures that the number of tokens in a batch are
+                  # approximately constant.
+                  dynbatch_padding = sum(count_padding(s) for s in dset.dynamic_batch("tokens", -1, 16*1024))
+
+                  # Count the total valid tokens
+                  valid_tokens = sum(d["length"] for d in dset)
+
+                  print("Simple batching: ", naive_padding / (valid_tokens + naive_padding), " of tokens were padding")
+                  print("Dynamic batching: ", dynbatch_padding / (valid_tokens + dynbatch_padding), " of tokens were padding")
+
+                  # prints approximately 40% of tokens were padding in the first case
+                  # and 5% of tokens in the second case
+
+                Args:
+                  buffer_size (int): How many buffers to consider when computing the dynamic batching
+                  key (str): Which array's size to use for the dynamic batching
+                  min_data_size (int): How many elements of the array at
+                    ``key`` should each batch have, at least. If less or equal to 0 then
+                    the value is ignored. (default: -1)
+                  max_data_size (int): How many elements of the array at
+                    ``key`` should each batch have, at most. If less or equal to 0 then
+                    batch the whole buffer in which case dynamic batching behaves
+                    similar to ``batch``. (default: -1)
+                  pad (dict): The values to use for padding for each key in the samples.
+                  dim (dict): The dimension to concatenate over.
+                  shuffle (bool): If true shuffle the batches before returning
+                    them. Otherwise the larger batch sizes with smaller samples
+                    will be first and so on. (default: False)
+                  drop_outliers (bool): If true then drops samples which are larger than the specified
+                    ``max_data_size``, if ``max_data_size`` > 0. (default: False)
+                  num_threads (int): How many parallel threads to use to fill the buffer. (default: 1)
+              )pbcopy")
+          .def(
               "ordered_prefetch",
               &Buffer::ordered_prefetch,
               py::call_guard<py::gil_scoped_release>(),
