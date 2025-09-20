@@ -3,6 +3,7 @@
 #include "mlx/data/stream/DynamicBatch.h"
 #include "mlx/data/buffer/Append.h"
 #include "mlx/data/buffer/DynamicBatch.h"
+#include "mlx/data/buffer/FromVector.h"
 #include "mlx/data/buffer/Shuffle.h"
 
 namespace mlx {
@@ -54,7 +55,9 @@ std::shared_ptr<buffer::Buffer> DynamicBatch::on_refill(
     }
     skipped_samples_buffer_ =
         std::make_shared<buffer::Perm>(new_buffer, skipped_samples);
-    // DEBUG: concretize
+    // concretize the buffer to avoid a long hierarchy of shared_ptr
+    skipped_samples_buffer_ =
+        std::make_shared<buffer::FromVector>(skipped_samples_buffer_);
   } else {
     skipped_samples_buffer_ = nullptr;
   }
