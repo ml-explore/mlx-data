@@ -42,6 +42,7 @@ class Buffered : public Stream {
   mutable std::shared_ptr<buffer::Buffer> buffer_;
   mutable std::future<std::shared_ptr<buffer::Buffer>> next_buffer_;
   mutable std::shared_mutex mutex_;
+  mutable std::shared_mutex pool_mutex_;
 };
 
 class CallbackBuffered : public Buffered {

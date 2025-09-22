@@ -24,10 +24,16 @@ std::future<std::shared_ptr<buffer::Buffer>>
 Buffered::background_buffer_fetch_() const {
   return pool_->enqueue([this]() -> std::shared_ptr<buffer::Buffer> {
     std::vector<std::future<Sample>> future_buffer;
-    for (int i = 0; pool_is_alive_ && (i < buffer_size_); i++) {
-      future_buffer.push_back(
-          pool_->enqueue([this] { return stream_->next(); }));
+    {
+      std::unique_lock lock(pool_mutex_);
+      if (pool_is_alive_) {
+        for (int i = 0; i < buffer_size_; i++) {
+          future_buffer.push_back(
+              pool_->enqueue([this] { return stream_->next(); }));
+        }
+      }
     }
+
     std::vector<Sample> buffer;
     for (auto& fsample : future_buffer) {
       Sample sample = fsample.get();
@@ -36,13 +42,14 @@ Buffered::background_buffer_fetch_() const {
       }
     }
 
-    if (pool_is_alive_)
-      // note: only one on_refill() will run at the same time
-      // as background_buffer_fetch_() call is guarded by a mutex
-      return on_refill(std::make_shared<FromVector>(buffer));
-    else {
-      return nullptr;
+    {
+      std::unique_lock lock(pool_mutex_);
+      if (pool_is_alive_) {
+        return on_refill(std::make_shared<FromVector>(buffer));
+      }
     }
+
+    return nullptr;
   });
 }
 
@@ -90,7 +97,10 @@ std::shared_ptr<buffer::Buffer> Buffered::on_refill(
 }
 
 void Buffered::finish_background_tasks() {
-  pool_is_alive_ = false;
+  {
+    std::unique_lock lock(pool_mutex_);
+    pool_is_alive_ = false;
+  }
   pool_ = nullptr;
 }
 
