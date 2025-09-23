@@ -215,7 +215,7 @@ void init_mlx_data_buffer(py::module& m) {
                   # And with dynamic padding. Keep in mind that this also
                   # ensures that the number of tokens in a batch are
                   # approximately constant.
-                  dynbatch_padding = sum(count_padding(s) for s in dset.dynamic_batch("tokens", -1, 16*1024))
+                  dynbatch_padding = sum(count_padding(s) for s in dset.dynamic_batch("tokens", max_data_size=16*1024))
 
                   # Count the total valid tokens
                   valid_tokens = sum(d["length"] for d in dset)
