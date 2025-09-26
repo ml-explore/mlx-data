@@ -19,7 +19,6 @@ except AttributeError:
 
 del numpy
 
-from . import tokenizer_helpers
+from . import datasets, tokenizer_helpers
 from ._c import *
 from ._c import __version__
-from . import datasets
