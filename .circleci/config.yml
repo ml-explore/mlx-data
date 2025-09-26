@@ -23,7 +23,7 @@ jobs:
         type: boolean
         default: false
     macos:
-      xcode: "15.0.0"
+      xcode: "15.2.0"
     resource_class: m2pro.medium
     steps:
       - checkout
@@ -125,7 +125,7 @@ jobs:
     parameters:
       xcode_version:
         type: string
-        default: "15.0.0"
+        default: "15.2.0"
     macos:
       xcode: << parameters.xcode_version >>
     resource_class: macos.m1.medium.gen1
@@ -202,7 +202,7 @@ jobs:
     parameters:
       xcode_version:
         type: string
-        default: "15.0.0"
+        default: "15.2.0"
       python_version:
         type: string
         default: "3.9"
@@ -287,7 +287,7 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-              xcode_version: ["15.0.0"]
+              xcode_version: ["15.2.0"]
               extra_env: ["DEV_RELEASE=1"]
 
   build_pypi_release:
@@ -305,7 +305,7 @@ workflows:
           matrix:
             parameters:
               python_version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
-              xcode_version: ["15.0.0"]
+              xcode_version: ["15.2.0"]
               extra_env: ["PYPI_RELEASE=1"]
       - build_documentation:
           upload-docs: true

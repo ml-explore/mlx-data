@@ -29,16 +29,20 @@ class Buffer : public Dataset<Buffer, buffer::Buffer> {
 
   Buffer dynamic_batch(
       const std::string& key,
+      int64_t min_data_size = 0, // ignore if <= 0
       int64_t max_data_size = 0, // batch everything if <= 0
       const std::unordered_map<std::string, double>& pad_values = {},
-      const std::unordered_map<std::string, int>& batch_dims = {}) const;
+      const std::unordered_map<std::string, int>& batch_dims = {},
+      bool drop_outliers = false) const;
 
   Buffer dynamic_batch(
       const Buffer& size_buffer,
       const std::string& key,
+      int64_t min_data_size,
       int64_t max_data_size,
       const std::unordered_map<std::string, double>& pad_values = {},
-      const std::unordered_map<std::string, int>& batch_dims = {}) const;
+      const std::unordered_map<std::string, int>& batch_dims = {},
+      bool drop_outliers = false) const;
 
   Stream ordered_prefetch(int prefetch_size, int num_thread) const;
 

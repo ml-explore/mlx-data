@@ -44,21 +44,38 @@ Buffer Buffer::batch(
 
 Buffer Buffer::dynamic_batch(
     const std::string& key,
+    int64_t min_data_size,
     int64_t max_data_size,
     const std::unordered_map<std::string, double>& pad_values,
-    const std::unordered_map<std::string, int>& batch_dims) const {
+    const std::unordered_map<std::string, int>& batch_dims,
+    bool drop_outliers) const {
   return Buffer(std::make_shared<buffer::DynamicBatch>(
-      self_, key, max_data_size, pad_values, batch_dims));
+      self_,
+      key,
+      min_data_size,
+      max_data_size,
+      pad_values,
+      batch_dims,
+      drop_outliers));
 }
 
 Buffer Buffer::dynamic_batch(
     const Buffer& size_buffer,
     const std::string& key,
+    int64_t min_data_size,
     int64_t max_data_size,
     const std::unordered_map<std::string, double>& pad_values,
-    const std::unordered_map<std::string, int>& batch_dims) const {
+    const std::unordered_map<std::string, int>& batch_dims,
+    bool drop_outliers) const {
   return Buffer(std::make_shared<buffer::DynamicBatch>(
-      self_, size_buffer.self_, key, max_data_size, pad_values, batch_dims));
+      self_,
+      size_buffer.self_,
+      key,
+      min_data_size,
+      max_data_size,
+      pad_values,
+      batch_dims,
+      drop_outliers));
 }
 
 Stream Buffer::ordered_prefetch(int prefetch_size, int num_thread) const {
