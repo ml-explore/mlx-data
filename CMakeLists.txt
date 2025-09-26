@@ -9,7 +9,7 @@ set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 option(MLX_BUILD_PYTHON_BINDINGS "Build python bindings for mlx data" OFF)
 
 if(NOT MLX_DATA_VERSION)
-  set(MLX_DATA_VERSION 0.1.0)
+  set(MLX_DATA_VERSION 0.2.0)
 endif()
 
 # ----------------------------- 3rdparty -----------------------------
