@@ -52,3 +52,6 @@ or a plain text vocabulary file.
    core.CharTrie
    tokenizer_helpers.read_trie_from_vocab
    tokenizer_helpers.read_trie_from_spm
+   tokenizer_helpers.read_bpe_from_spm
+   tokenizer_helpers.read_bpe_from_hf
+   tokenizer_helpers.gpt2_byte_map
