@@ -114,4 +114,9 @@ if __name__ == "__main__":
         cmdclass={"build_ext": CMakeBuild},
         zip_safe=False,
         install_requires=["numpy"],
+        include_package_data=True,
+        package_data={
+            "mlx.data": ["py.typed"],
+            "mlx.data._c": ["*.pyi", "py.typed"],
+        },
     )
