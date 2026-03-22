@@ -51,7 +51,10 @@ ThreadPool::ThreadPool(size_t thread_count) {
 }
 
 ThreadPool::~ThreadPool() {
-  stop_threads_ = true;
+  {
+    std::lock_guard<std::mutex> lock(task_mutex_);
+    stop_threads_ = true;
+  }
   task_cv_.notify_all();
 
   for (std::thread& thread : threads_) {
