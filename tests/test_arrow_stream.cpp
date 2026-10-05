@@ -1,5 +1,5 @@
 // Runtime check for ArrowStream: a hand-built ArrowArrayStream, so neither side
-// needs Arrow.
+// needs Arrow C++ or a test framework.
 //
 // Proves the three things compiling cannot: the values land in the right
 // Arrays, a sliced batch (non-zero `offset`) is read from the right place, and
@@ -10,6 +10,10 @@
 #include <cstdio>
 #include <cstring>
 #include <vector>
+
+// For the C Data Interface structs the producer below fills in: ArrowStream.h
+// only forward declares them.
+#include <nanoarrow/nanoarrow.h>
 
 #include "mlx/data/stream/ArrowStream.h"
 
@@ -27,6 +31,8 @@ struct Producer {
 // storage that outlives the batches
 int64_t A[8] = {10, 11, 12, 13, 14, 15, 16, 17};
 float B[8] = {1.5f, 2.5f, 3.5f, 4.5f, 5.5f, 6.5f, 7.5f, 8.5f};
+// every value valid: 8 set bits, so the computed null count is 0
+uint8_t VALID[1] = {0xFF};
 
 void release_child(ArrowArray* a) {
   delete[] a->buffers;
@@ -50,10 +56,13 @@ ArrowArray* make_child(const void* values, int64_t length, int64_t offset) {
   std::memset(c, 0, sizeof(ArrowArray));
   c->length = length;
   c->offset = offset;
-  c->null_count = 0;
+  // -1 is "not computed", which the spec allows and real producers emit. The
+  // validity bitmap says every value is present, so the count has to be
+  // computed from it: trusting this field rejects a null-free column.
+  c->null_count = -1;
   c->n_buffers = 2;
   auto** bufs = new const void*[2];
-  bufs[0] = nullptr; // validity
+  bufs[0] = VALID;
   bufs[1] = values;
   c->buffers = bufs;
   c->release = release_child;
@@ -145,7 +154,9 @@ int main() {
         "the producer's stream should be marked moved-from");
 
     Sample b1 = st.next();
-    CHECK(b1.size() == 2, "batch 1 should have two columns");
+    CHECK(
+        b1.size() == 2,
+        "batch 1 should have two columns, with null_count=-1 accepted");
     std::shared_ptr<Array> a1 = b1.at("a");
     std::shared_ptr<Array> f1 = b1.at("b");
     CHECK(a1->shape(0) == 4, "batch 1 length");

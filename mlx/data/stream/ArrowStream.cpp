@@ -3,103 +3,122 @@
 #include "mlx/data/stream/ArrowStream.h"
 
 #include <cstring>
+#include <mutex>
 #include <stdexcept>
+
+#include <nanoarrow/nanoarrow.h>
 
 namespace mlx {
 namespace data {
 namespace stream {
 
+struct ArrowStream::Impl {
+  mutable ArrowArrayStream stream;
+  // The schema outlives every batch: `ArrowArrayViewInitFromSchema` reads it
+  // for each one, so it cannot be released once bound.
+  ArrowSchema schema;
+  std::vector<std::string> keys;
+  std::vector<ArrayType> types;
+  mutable std::mutex mutex;
+
+  ~Impl() {
+    if (stream.release != nullptr) {
+      stream.release(&stream);
+    }
+    if (schema.release != nullptr) {
+      schema.release(&schema);
+    }
+  }
+};
+
 namespace {
 
-// Arrow's format strings, from the C Data Interface spec. Only the fixed-width
-// types that `ArrayType` can hold are accepted: there is no bool, no 16-bit, no
-// unsigned above a byte, and no string type, so anything else is refused by
-// name rather than approximated.
-ArrayType array_type_of(const char* format) {
-  if (format == nullptr) {
+// Only the fixed-width types `ArrayType` can hold are accepted. nanoarrow
+// parses the format string, so a type is refused by name -- "string",
+// "timestamp" -- rather than by raw format character, and parameterised types
+// (decimals, timestamps with a timezone, fixed-size lists) no longer have to
+// be recognised here by hand.
+ArrayType array_type_of(const ArrowSchema* schema, const std::string& key) {
+  ArrowSchemaView view;
+  ArrowError error;
+  if (ArrowSchemaViewInit(&view, schema, &error) != NANOARROW_OK) {
     throw std::runtime_error(
-        "ArrowStream: a child schema has no format string");
+        "ArrowStream: column '" + key +
+        "' has an unreadable schema: " + ArrowErrorMessage(&error));
   }
-  const std::string f(format);
-  if (f == "c") {
-    return ArrayType::Int8;
-  } else if (f == "C" || f == "b") {
-    // "b" is Arrow's boolean, and it is a *bitmap*, not one byte per value --
-    // adopting its buffer would silently reinterpret 8 values as 1. Refused
-    // below instead.
-    if (f == "b") {
+  switch (view.type) {
+    case NANOARROW_TYPE_INT8:
+      return ArrayType::Int8;
+    case NANOARROW_TYPE_UINT8:
+      return ArrayType::UInt8;
+    case NANOARROW_TYPE_INT32:
+      return ArrayType::Int32;
+    case NANOARROW_TYPE_INT64:
+      return ArrayType::Int64;
+    case NANOARROW_TYPE_FLOAT:
+      return ArrayType::Float;
+    case NANOARROW_TYPE_DOUBLE:
+      return ArrayType::Double;
+    case NANOARROW_TYPE_BOOL:
+      // Arrow's boolean is a *bitmap*, one bit per value, and `ArrayType` has
+      // no bool: adopting the buffer would reinterpret 8 values as 1.
       throw std::runtime_error(
-          "ArrowStream: boolean columns are a bitmap, one bit per value, and cannot be "
-          "adopted as a byte array; cast to int8 before exporting");
-    }
-    return ArrayType::UInt8;
-  } else if (f == "i") {
-    return ArrayType::Int32;
-  } else if (f == "l") {
-    return ArrayType::Int64;
-  } else if (f == "f") {
-    return ArrayType::Float;
-  } else if (f == "g") {
-    return ArrayType::Double;
+          "ArrowStream: column '" + key +
+          "' is boolean, which Arrow stores as a bitmap of one bit per value, so it "
+          "cannot be adopted as a byte array; cast to int8 before exporting");
+    default:
+      throw std::runtime_error(
+          "ArrowStream: column '" + key + "' is " + ArrowTypeString(view.type) +
+          ", and no ArrayType holds it. Fixed-width int8/uint8/int32/int64/float/double "
+          "are supported; strings, booleans, 16-bit and nested types are not.");
   }
-  throw std::runtime_error(
-      "ArrowStream: no ArrayType holds Arrow format '" + f +
-      "'. Fixed-width int8/uint8/int32/int64/float/double are supported; strings, "
-      "booleans, 16-bit and nested types are not.");
 }
 
 } // namespace
 
-ArrowStream::ArrowStream(ArrowArrayStream* stream) {
+ArrowStream::ArrowStream(ArrowArrayStream* stream) : impl_(new Impl()) {
+  std::memset(&impl_->stream, 0, sizeof(ArrowArrayStream));
+  std::memset(&impl_->schema, 0, sizeof(ArrowSchema));
   if (stream == nullptr || stream->release == nullptr) {
     throw std::runtime_error(
         "ArrowStream: got a released or null ArrowArrayStream");
   }
   // Move: the producer hands over ownership, and a moved-from stream is marked
   // released so nobody calls it twice. This is the convention the C Data
-  // Interface specifies.
-  std::memcpy(&stream_, stream, sizeof(ArrowArrayStream));
-  stream->release = nullptr;
-  bind_schema_();
-}
+  // Interface specifies, and nanoarrow spells it.
+  ArrowArrayStreamMove(stream, &impl_->stream);
 
-ArrowStream::~ArrowStream() {
-  if (stream_.release != nullptr) {
-    stream_.release(&stream_);
-  }
-}
-
-void ArrowStream::bind_schema_() {
-  ArrowSchema schema;
-  if (stream_.get_schema(&stream_, &schema) != 0) {
-    const char* msg =
-        stream_.get_last_error ? stream_.get_last_error(&stream_) : nullptr;
+  if (impl_->stream.get_schema(&impl_->stream, &impl_->schema) != 0) {
+    const char* msg = impl_->stream.get_last_error
+        ? impl_->stream.get_last_error(&impl_->stream)
+        : nullptr;
     throw std::runtime_error(
         std::string("ArrowStream: get_schema failed: ") +
         (msg ? msg : "unknown"));
   }
-  // A struct at the top level is how a batch is described; its children are the
-  // columns.
-  for (int64_t c = 0; c < schema.n_children; ++c) {
-    const ArrowSchema* child = schema.children[c];
-    keys_.push_back(child->name ? child->name : ("col" + std::to_string(c)));
-    types_.push_back(array_type_of(child->format));
-  }
-  if (schema.release != nullptr) {
-    schema.release(&schema);
+  // A struct at the top level is how a batch is described; its children are
+  // the columns.
+  for (int64_t c = 0; c < impl_->schema.n_children; ++c) {
+    const ArrowSchema* child = impl_->schema.children[c];
+    std::string key = child->name ? child->name : ("col" + std::to_string(c));
+    impl_->keys.push_back(key);
+    impl_->types.push_back(array_type_of(child, key));
   }
 }
+
+ArrowStream::~ArrowStream() = default;
 
 Sample ArrowStream::next() const {
   ArrowArray batch;
   {
-    std::unique_lock lock(mutex_);
-    if (stream_.release == nullptr) {
+    std::unique_lock lock(impl_->mutex);
+    if (impl_->stream.release == nullptr) {
       return Sample();
     }
-    if (stream_.get_next(&stream_, &batch) != 0) {
-      const char* msg =
-          stream_.get_last_error ? stream_.get_last_error(&stream_) : nullptr;
+    if (impl_->stream.get_next(&impl_->stream, &batch) != 0) {
+      const char* msg = impl_->stream.get_last_error
+          ? impl_->stream.get_last_error(&impl_->stream)
+          : nullptr;
       throw std::runtime_error(
           std::string("ArrowStream: get_next failed: ") +
           (msg ? msg : "unknown"));
@@ -123,29 +142,61 @@ Sample ArrowStream::next() const {
 
   Sample sample;
   for (int64_t c = 0; c < keep->n_children; ++c) {
-    const ArrowArray* child = keep->children[c];
-    if (child->null_count != 0) {
+    const std::string& key = impl_->keys.at(c);
+
+    // A fresh view per batch rather than one reused across calls: `next` is
+    // const and callers may be concurrent, and a view carries per-batch state.
+    // Setting it also validates the batch against the schema, which is what
+    // the hand-written `n_buffers` check used to approximate.
+    ArrowArrayView view;
+    ArrowError error;
+    if (ArrowArrayViewInitFromSchema(
+            &view, impl_->schema.children[c], &error) != NANOARROW_OK) {
       throw std::runtime_error(
-          "ArrowStream: column '" + keys_.at(c) + "' has " +
-          std::to_string(child->null_count) +
+          "ArrowStream: column '" + key +
+          "' could not be viewed: " + ArrowErrorMessage(&error));
+    }
+    struct ViewGuard {
+      ArrowArrayView* v;
+      ~ViewGuard() {
+        ArrowArrayViewReset(v);
+      }
+    } guard{&view};
+
+    if (ArrowArrayViewSetArray(&view, keep->children[c], &error) !=
+        NANOARROW_OK) {
+      throw std::runtime_error(
+          "ArrowStream: column '" + key +
+          "' does not match its schema: " + ArrowErrorMessage(&error));
+    }
+
+    // An array's own `null_count` is -1 when the producer never counted, so
+    // ask the view instead: it reads the validity bitmap, rather than
+    // rejecting a null-free column that merely declined to report a count.
+    const int64_t nulls = ArrowArrayViewComputeNullCount(&view);
+    if (nulls != 0) {
+      throw std::runtime_error(
+          "ArrowStream: column '" + key + "' has " + std::to_string(nulls) +
           " null(s), and a Sample has nowhere to record which values are absent. Fill or "
           "drop them before exporting.");
     }
-    if (child->n_buffers < 2 || child->buffers[1] == nullptr) {
+
+    const void* base = view.buffer_views[1].data.data;
+    if (base == nullptr) {
       throw std::runtime_error(
-          "ArrowStream: column '" + keys_.at(c) +
+          "ArrowStream: column '" + key +
           "' has no values buffer, so it is not a fixed-width column");
     }
     // The offset is in *values*, not bytes, and a sliced batch has a non-zero
     // one. Ignoring it would silently return the wrong rows.
-    auto* base = static_cast<char*>(const_cast<void*>(child->buffers[1]));
-    Array probe(types_.at(c), std::vector<int64_t>{0});
-    void* values = base + child->offset * probe.itemsize();
+    Array probe(impl_->types.at(c), std::vector<int64_t>{0});
+    void* values = static_cast<char*>(const_cast<void*>(base)) +
+        view.offset * probe.itemsize();
     // Aliasing constructor: points at this column's buffer, owns the whole
     // batch.
-    sample[keys_.at(c)] = std::make_shared<Array>(
-        types_.at(c),
-        std::vector<int64_t>{child->length},
+    sample[key] = std::make_shared<Array>(
+        impl_->types.at(c),
+        std::vector<int64_t>{view.length},
         std::shared_ptr<void>(keep, values));
   }
   return sample;

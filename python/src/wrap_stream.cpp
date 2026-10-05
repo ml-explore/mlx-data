@@ -621,8 +621,7 @@ void init_mlx_data_stream(py::module& m) {
         // The PyCapsule protocol, not a raw address: any object exposing
         // `__arrow_c_stream__` works, which covers pyarrow (Table, RecordBatch,
         // RecordBatchReader, ParquetFile.iter_batches), polars, duckdb, Lance
-        // and pyiceberg. mlx-data links nothing for this -- `core/arrow/abi.h`
-        // is a header whose only include is <stdint.h>.
+        // and pyiceberg.
         if (!py::hasattr(obj, "__arrow_c_stream__")) {
           throw std::invalid_argument(
               "stream_arrow: expected an object exposing __arrow_c_stream__ (a pyarrow "

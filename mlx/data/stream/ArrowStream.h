@@ -2,13 +2,18 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "mlx/data/Array.h"
 #include "mlx/data/Sample.h"
-#include "mlx/data/core/arrow/abi.h"
 #include "mlx/data/stream/Stream.h"
+
+// The C Data Interface struct, declared rather than included. This header is
+// installed, so pulling nanoarrow in here would put it on the include path of
+// everything downstream; it stays behind `Impl` in the .cpp instead.
+extern "C" struct ArrowArrayStream;
 
 namespace mlx {
 namespace data {
@@ -41,12 +46,11 @@ class ArrowStream : public Stream {
   void reset() override;
 
  private:
-  void bind_schema_();
-
-  mutable ArrowArrayStream stream_;
-  std::vector<std::string> keys_;
-  std::vector<ArrayType> types_;
-  mutable std::mutex mutex_;
+  // Holds the moved-from stream, the schema it described (kept alive because
+  // nanoarrow's array views are initialised from it), and the column keys and
+  // types derived from that schema.
+  struct Impl;
+  std::unique_ptr<Impl> impl_;
 };
 
 } // namespace stream
