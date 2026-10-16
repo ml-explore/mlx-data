@@ -15,7 +15,11 @@
 #include "wrap.h"
 #include "wrap_dataset.h"
 
+#include <atomic>
 #include <iostream>
+#include <memory>
+#include <mutex>
+#include <stdexcept>
 
 namespace py = pybind11;
 
@@ -64,6 +68,61 @@ class PyStream : public stream::Stream {
   py::function iterable_factory_;
   py::function next_;
   mutable std::mutex mutex_;
+};
+
+// A stream over an object that can export Arrow data more than once.
+//
+// ArrowStream itself cannot reset (the C Data Interface has no rewind), so this
+// holds the Python object and re-exports a fresh ArrowStream on reset().
+class PyArrowStream : public stream::Stream {
+ public:
+  explicit PyArrowStream(py::object source) : source_(std::move(source)) {
+    inner_ = export_from(source_);
+  }
+  ~PyArrowStream() {
+    // Drop the Python reference under the GIL, same pattern as ~PyStream.
+    py::gil_scoped_acquire gil;
+    source_.release().dec_ref();
+  }
+
+  virtual void reset() {
+    py::gil_scoped_acquire gil;
+    auto fresh = export_from(source_);
+    prev_epoch_batches_ = epoch_batches_.load();
+    epoch_batches_ = 0;
+    inner_ = std::move(fresh);
+  }
+
+  virtual Sample next() const {
+    Sample s = inner_->next();
+    if (!s.empty()) {
+      ++epoch_batches_;
+    } else if (epoch_batches_ == 0 && prev_epoch_batches_ > 0) {
+      throw std::runtime_error(
+          "stream_arrow: the source produced no data on a second pass. A one-shot "
+          "reader (e.g. a pyarrow RecordBatchReader) cannot be re-read; pass a "
+          "pyarrow Table instead.");
+    }
+    return s;
+  }
+
+ private:
+  static std::shared_ptr<stream::ArrowStream> export_from(
+      const py::object& src) {
+    py::object capsule = src.attr("__arrow_c_stream__")();
+    auto* stream = static_cast<ArrowArrayStream*>(
+        PyCapsule_GetPointer(capsule.ptr(), "arrow_array_stream"));
+    if (stream == nullptr) {
+      throw std::runtime_error(
+          "stream_arrow: __arrow_c_stream__ did not return an 'arrow_array_stream' "
+          "capsule");
+    }
+    return std::make_shared<stream::ArrowStream>(stream);
+  }
+  py::object source_;
+  std::shared_ptr<stream::ArrowStream> inner_;
+  mutable std::atomic<int64_t> epoch_batches_{0};
+  mutable std::atomic<int64_t> prev_epoch_batches_{0};
 };
 
 void init_mlx_data_stream(py::module& m) {
@@ -628,19 +687,7 @@ void init_mlx_data_stream(py::module& m) {
               "Table, RecordBatch, RecordBatchReader, or anything else implementing the "
               "Arrow PyCapsule interface)");
         }
-        py::object capsule = obj.attr("__arrow_c_stream__")();
-        auto* stream = static_cast<ArrowArrayStream*>(
-            PyCapsule_GetPointer(capsule.ptr(), "arrow_array_stream"));
-        if (stream == nullptr) {
-          throw std::runtime_error(
-              "stream_arrow: __arrow_c_stream__ did not return an 'arrow_array_stream' "
-              "capsule");
-        }
-        // `ArrowStream`'s constructor moves out of the struct and marks it
-        // released, which is what the protocol requires of a consumer --
-        // otherwise the capsule's own destructor would release it a second
-        // time.
-        return Stream(std::make_shared<stream::ArrowStream>(stream));
+        return Stream(std::make_shared<PyArrowStream>(obj));
       },
       py::arg("data"),
       R"pbcopy(
@@ -652,15 +699,44 @@ void init_mlx_data_stream(py::module& m) {
         whatever produced the data.
 
         Consequently :meth:`Stream.batch` on top of this re-batches and undoes the saving.
-        Choose the size where the data is produced instead, e.g.
-        ``pq.ParquetFile(path).iter_batches(batch_size=32)``.
+        Choose the size where the data is produced instead (see the examples below).
+
+        .. note::
+           If the data is a fixed-width numeric table that fits in memory, you
+           usually do not need this: ``mx.array(table["col"].to_numpy())`` plus
+           indexing is all a training loop requires. This stream is for the cases
+           where there is latency to hide or work to spread out, such as reading
+           data that does not fit in memory, sharding it, or prefetching it in
+           background threads.
+
+        **Number of passes.** What happens on :meth:`Stream.reset` (a second epoch,
+        or :meth:`Stream.repeat`) depends on what was passed in, because the
+        stream asks the object for a fresh Arrow export each time:
+
+        * A **pyarrow Table** can be exported again, so every epoch sees the same
+          data.
+        * A **RecordBatchReader**, or a dataset scanner's reader, is consumed by
+          the first pass. Exporting it again gives an empty stream, so the second
+          pass raises ``RuntimeError`` rather than silently yielding an empty epoch.
+          Use these for a single pass only.
 
         .. code-block:: python
 
           import mlx.data as dx
-          import pyarrow.parquet as pq
+          import pyarrow as pa
+          import pyarrow.dataset as ds
 
-          dset = dx.stream_arrow(pq.ParquetFile("train.parquet").iter_batches(1024))
+          # In memory, any number of epochs. Re-chunk the table to choose the
+          # batch size (32 rows per sample here).
+          table = pa.table({"x": pa.array(range(100), pa.int64())})
+          table = pa.Table.from_batches(table.to_batches(max_chunksize=32))
+          dset = dx.stream_arrow(table)
+
+          # Streamed from disk, a single pass. A plain generator such as
+          # ``ParquetFile.iter_batches()`` does not expose ``__arrow_c_stream__``
+          # and is not accepted; a dataset scanner's reader is.
+          reader = ds.dataset("train.parquet").scanner(batch_size=1024).to_reader()
+          dset = dx.stream_arrow(reader)
           batch = next(dset)          # {'col': array of 1024, ...}
 
         Only fixed-width numeric columns are supported: int8, uint8, int32, int64, float
@@ -668,9 +744,6 @@ void init_mlx_data_stream(py::module& m) {
         strings and nested types need more than one buffer and do not fit a single array; a
         column with nulls is refused, because a sample has nowhere to record which values
         are absent.
-
-        An Arrow stream is consumed once, so :meth:`Stream.reset` raises. Use
-        :func:`stream_python_iterable` with a factory if more than one pass is needed.
 
         Args:
           data (object): anything exposing ``__arrow_c_stream__``.

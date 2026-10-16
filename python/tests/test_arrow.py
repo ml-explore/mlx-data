@@ -77,10 +77,35 @@ class TestArrow(unittest.TestCase):
         with self.assertRaises(RuntimeError):
             next(dx.stream_arrow(t))
 
-    def test_reset_refuses(self):
+    def test_reset_rereads_a_table(self):
+        # A Table can be exported again, so every epoch sees the same data.
         st = dx.stream_arrow(pa.table({"a": pa.array([1, 2], pa.int64())}))
-        with self.assertRaises(RuntimeError):
+        for _ in range(3):
+            batches = list(st)
+            self.assertEqual(len(batches), 1)
+            self.assertTrue(np.array_equal(batches[0]["a"], [1, 2]))
             st.reset()
+
+    def test_reset_of_a_one_shot_reader_raises(self):
+        # A RecordBatchReader is consumed by the first pass; exporting it again
+        # yields an empty stream. That must be an error, not a silent empty epoch.
+        t = pa.table({"a": pa.array([1, 2], pa.int64())})
+        reader = pa.RecordBatchReader.from_batches(t.schema, t.to_batches())
+        st = dx.stream_arrow(reader)
+        self.assertEqual(len(list(st)), 1)
+        st.reset()
+        with self.assertRaises(RuntimeError):
+            next(st)
+
+    def test_reset_of_an_empty_source_is_not_an_error(self):
+        # An empty source is empty every time; there is no earlier pass to
+        # compare against, so nothing is wrong.
+        t = pa.table({"a": pa.array([], pa.int64())})
+        reader = pa.RecordBatchReader.from_batches(t.schema, [])
+        st = dx.stream_arrow(reader)
+        self.assertEqual(len(list(st)), 0)
+        st.reset()
+        self.assertEqual(len(list(st)), 0)
 
     def test_rejects_a_non_arrow_object(self):
         with self.assertRaises(ValueError):
