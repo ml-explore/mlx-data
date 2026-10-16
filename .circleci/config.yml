@@ -120,6 +120,12 @@ jobs:
             python -m xmlrunner discover -v python/tests -o test-results/
       - store_test_results:
           path: test-results
+      - run:
+          name: Run C++ tests
+          command: |
+            cmake -B build-tests -DMLX_BUILD_TESTS=ON
+            cmake --build build-tests --parallel `nproc` --target test_arrow_stream
+            ctest --test-dir build-tests --output-on-failure
 
   mac_build_on_commit:
     parameters:

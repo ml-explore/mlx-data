@@ -35,6 +35,42 @@ FetchContent_Declare(
   UPDATE_COMMAND "")
 FetchContent_MakeAvailable(bxzstr)
 
+# nanoarrow: the Arrow C Data Interface structs, plus schema parsing and array
+# views. Fetched like stb and bxzstr above, but compiled as part of mlxdata
+# rather than by its own CMake project. Its CMakeLists installs headers, a
+# static and a shared library and cmake package files, all of which otherwise
+# land in mlx-data's install tree and inside the python wheel -- and its install
+# rule for the shared library fails outright unless the whole default target has
+# been built. Pointing SOURCE_SUBDIR at a directory with no CMakeLists.txt
+# populates the source and skips add_subdirectory.
+FetchContent_Declare(
+  nanoarrow
+  GIT_REPOSITORY "https://github.com/apache/arrow-nanoarrow.git"
+  GIT_TAG "apache-arrow-nanoarrow-0.9.0"
+  SOURCE_SUBDIR "src")
+FetchContent_MakeAvailable(nanoarrow)
+
+# The config header nanoarrow.h expects, which its CMakeLists would otherwise
+# generate. NANOARROW_NAMESPACE prefixes its exported symbols, which matters
+# because the python extension is routinely loaded into a process that already
+# holds pyarrow's own copy of nanoarrow.
+set(NANOARROW_VERSION_MAJOR 0)
+set(NANOARROW_VERSION_MINOR 9)
+set(NANOARROW_VERSION_PATCH 0)
+set(NANOARROW_VERSION "0.9.0")
+set(NANOARROW_NAMESPACE_DEFINE "#define NANOARROW_NAMESPACE MlxData")
+set(NANOARROW_CONFIG_INCLUDE_DIR ${CMAKE_CURRENT_BINARY_DIR}/nanoarrow-config)
+configure_file(
+  ${nanoarrow_SOURCE_DIR}/src/nanoarrow/nanoarrow_config.h.in
+  ${NANOARROW_CONFIG_INCLUDE_DIR}/nanoarrow/nanoarrow_config.h @ONLY)
+set(nanoarrow-src
+    ${nanoarrow_SOURCE_DIR}/src/nanoarrow/common/array.c
+    ${nanoarrow_SOURCE_DIR}/src/nanoarrow/common/schema.c
+    ${nanoarrow_SOURCE_DIR}/src/nanoarrow/common/array_stream.c
+    ${nanoarrow_SOURCE_DIR}/src/nanoarrow/common/utils.c)
+set(nanoarrow-include ${nanoarrow_SOURCE_DIR}/src
+                      ${NANOARROW_CONFIG_INCLUDE_DIR})
+
 # ----------------------------- lib -----------------------------
 
 find_package(SndFile)
@@ -114,6 +150,7 @@ set(mlxdata-src
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Shuffle.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/buffer/Transform.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Stream.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/ArrowStream.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Batch.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/Buffered.cpp
     ${CMAKE_CURRENT_LIST_DIR}/mlx/data/stream/DynamicBatch.cpp
@@ -156,7 +193,7 @@ if(AWSSDK_FOUND)
        ${CMAKE_CURRENT_LIST_DIR}/mlx/data/core/AWSFileFetcher.cpp)
 endif()
 
-add_library(mlxdata STATIC ${mlxdata-src})
+add_library(mlxdata STATIC ${mlxdata-src} ${nanoarrow-src})
 
 if(HAS_DLOPEN AND HAS_RTLD_NOLOAD)
   target_compile_definitions(mlxdata PRIVATE MLX_HAS_DLOPEN_NOLOAD)
@@ -172,6 +209,9 @@ elseif(HAS_DYLD_GET_IMAGE_NAME)
 endif()
 target_link_libraries(mlxdata PRIVATE $<BUILD_INTERFACE:stb>
                                       $<BUILD_INTERFACE:bxzstr>)
+# nanoarrow is compiled into mlxdata, so its headers are a private include path:
+# ArrowStream.h, which is installed, only forward declares the structs.
+target_include_directories(mlxdata PRIVATE ${nanoarrow-include})
 target_include_directories(
   mlxdata PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>
                  $<INSTALL_INTERFACE:include>)

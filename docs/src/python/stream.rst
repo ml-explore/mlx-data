@@ -55,6 +55,7 @@ cast to a stream using :meth:`Buffer.to_stream`.
 .. autosummary::
    :toctree: _autosummary
 
+   stream_arrow
    stream_csv_reader
    stream_csv_reader_from_string
    stream_line_reader
